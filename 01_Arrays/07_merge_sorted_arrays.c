@@ -112,7 +112,129 @@
  * arr1 = [1, 3, 5, _, _, _]  (size = n1 + n2)
  * arr2 = [2, 4, 6]
  *
- * Start from END of both arrays, fill arr1 from end:
+ * ============================================================================
+ * WHY START FROM THE END? (THE KEY INSIGHT!)
+ * ============================================================================
+ *
+ * PROBLEM WITH STARTING FROM BEGINNING:
+ *
+ *   arr1 = [1, 3, 5, _, _, _]    arr2 = [2, 4, 6]
+ *           ^                            ^
+ *           p1                           p2
+ *           ^
+ *           p (write position)
+ *
+ *   Step 1: arr1[0]=1 < arr2[0]=2, so write 1 at position 0
+ *           arr1[0] = 1  (OK, same value)
+ *           Move p1 to 1, p to 1
+ *
+ *   Step 2: arr1[1]=3 > arr2[0]=2, so write 2 at position 1
+ *           arr1[1] = 2  *** OVERWRITES 3! DATA LOST! ***
+ *
+ * SOLUTION: START FROM THE END!
+ *
+ *   The "extra space" is at the END of arr1.
+ *   If we fill from the END, we write into empty space first.
+ *   By the time we reach the original data, we've already read it!
+ *
+ * ============================================================================
+ * STEP-BY-STEP IN-PLACE MERGE VISUALIZATION:
+ * ============================================================================
+ *
+ * INITIAL STATE:
+ *   arr1 = [1, 3, 5, _, _, _]    arr2 = [2, 4, 6]
+ *           0  1  2  3  4  5            0  1  2
+ *
+ *   p1 = 2 (points to 5, last real element in arr1)
+ *   p2 = 2 (points to 6, last element in arr2)
+ *   p  = 5 (points to last position in arr1, where we'll write)
+ *
+ *   [1, 3, 5, _, _, _]    [2, 4, 6]
+ *          ^p1       ^p         ^p2
+ *
+ * -------------------------------------------------------------------------
+ * STEP 1: Compare arr1[p1]=5 vs arr2[p2]=6
+ *         6 > 5, so copy 6 to arr1[p]
+ *
+ *   arr1[5] = arr2[2] = 6
+ *   p2-- (now 1), p-- (now 4)
+ *
+ *   [1, 3, 5, _, _, 6]    [2, 4, 6]
+ *          ^p1    ^p          ^p2
+ *
+ * -------------------------------------------------------------------------
+ * STEP 2: Compare arr1[p1]=5 vs arr2[p2]=4
+ *         5 > 4, so copy 5 to arr1[p]
+ *
+ *   arr1[4] = arr1[2] = 5
+ *   p1-- (now 1), p-- (now 3)
+ *
+ *   [1, 3, 5, _, 5, 6]    [2, 4, 6]
+ *       ^p1   ^p              ^p2
+ *
+ *   Note: arr1[2] still has 5, but p1 moved past it. It's "logically consumed"
+ *
+ * -------------------------------------------------------------------------
+ * STEP 3: Compare arr1[p1]=3 vs arr2[p2]=4
+ *         4 > 3, so copy 4 to arr1[p]
+ *
+ *   arr1[3] = arr2[1] = 4
+ *   p2-- (now 0), p-- (now 2)
+ *
+ *   [1, 3, 5, 4, 5, 6]    [2, 4, 6]
+ *       ^p1^p              ^p2
+ *
+ * -------------------------------------------------------------------------
+ * STEP 4: Compare arr1[p1]=3 vs arr2[p2]=2
+ *         3 > 2, so copy 3 to arr1[p]
+ *
+ *   arr1[2] = arr1[1] = 3
+ *   p1-- (now 0), p-- (now 1)
+ *
+ *   [1, 3, 3, 4, 5, 6]    [2, 4, 6]
+ *    ^p1^p                 ^p2
+ *
+ * -------------------------------------------------------------------------
+ * STEP 5: Compare arr1[p1]=1 vs arr2[p2]=2
+ *         2 > 1, so copy 2 to arr1[p]
+ *
+ *   arr1[1] = arr2[0] = 2
+ *   p2-- (now -1), p-- (now 0)
+ *
+ *   [1, 2, 3, 4, 5, 6]    [2, 4, 6]
+ *    ^p1                   (p2 done)
+ *    ^p
+ *
+ * -------------------------------------------------------------------------
+ * STEP 6: p2 < 0, so arr2 is exhausted
+ *         arr1 elements are already in place!
+ *         (No need to copy remaining arr1 elements)
+ *
+ * FINAL RESULT:
+ *   [1, 2, 3, 4, 5, 6]
+ *
+ * ============================================================================
+ * WHY THIS WORKS - THE MATHEMATICAL GUARANTEE:
+ * ============================================================================
+ *
+ * Key observation: When we write to position p, we have p1 + p2 + 2 elements
+ * left to place (p1+1 from arr1, p2+1 from arr2).
+ *
+ * Since p = p1 + p2 + 1 (initially, and maintained throughout):
+ *   - Position p is ALWAYS >= p1
+ *   - We NEVER overwrite an unread element from arr1!
+ *
+ * Proof by example:
+ *   - Initially: p=5, p1=2, p2=2 → p > p1 ✓
+ *   - After step 1: p=4, p1=2, p2=1 → p > p1 ✓
+ *   - After step 2: p=3, p1=1, p2=1 → p > p1 ✓
+ *   - After step 3: p=2, p1=1, p2=0 → p > p1 ✓
+ *   - After step 4: p=1, p1=0, p2=0 → p > p1 ✓
+ *   - After step 5: p=0, p1=0, p2=-1 → p >= p1 ✓
+ *
+ * ============================================================================
+ * ALGORITHM PSEUDOCODE:
+ * ============================================================================
  *
  *   p1 = n1-1, p2 = n2-1, p = n1+n2-1
  *
@@ -121,6 +243,11 @@
  *           arr1[p--] = arr1[p1--]
  *       else:
  *           arr1[p--] = arr2[p2--]
+ *
+ *   // Only need to copy remaining arr2 elements
+ *   // (arr1 elements are already in correct position)
+ *   while (p2 >= 0):
+ *       arr1[p--] = arr2[p2--]
  *
  * This is O(1) extra space!
  *
