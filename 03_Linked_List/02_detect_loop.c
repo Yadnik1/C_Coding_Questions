@@ -129,6 +129,83 @@
  * - No extra data structure
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why does fast move 2 steps? Would 3 steps work?"
+ * A1: Yes, any speed > 1 works! But 2 is optimal.
+ *
+ *     Why 2 is best:
+ *     - Minimizes iterations (fast catches slow quickly)
+ *     - Simple implementation (just fast->next->next)
+ *     - Guaranteed to meet within one loop traversal
+ *
+ *     With speed 3: Fast might "jump over" slow if loop is small,
+ *     requiring more iterations to catch up.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do you FIND where the loop starts, not just detect it?"
+ * A2: After detection (slow == fast), reset slow to head.
+ *     Move BOTH one step at a time. They meet at loop start!
+ *
+ *     Mathematical proof:
+ *     Let:
+ *       - x = distance from head to loop start
+ *       - y = distance from loop start to meeting point
+ *       - c = loop length
+ *
+ *     When they meet:
+ *       slow traveled: x + y
+ *       fast traveled: x + y + n*c (some complete loops)
+ *
+ *     Since fast = 2*slow:
+ *       x + y + n*c = 2(x + y)
+ *       n*c = x + y
+ *       x = n*c - y
+ *
+ *     This means: distance from head = distance from meeting point
+ *     (going around the loop). They meet at loop start!
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can you detect loop using hash set? Trade-offs?"
+ * A3: Yes! Store visited nodes, check if current node already seen.
+ *
+ *     Hash Set approach:
+ *     - Time: O(n) - one pass
+ *     - Space: O(n) - store all nodes
+ *
+ *     Floyd's approach:
+ *     - Time: O(n) - same
+ *     - Space: O(1) - constant!
+ *
+ *     Floyd's is better for memory-constrained embedded systems.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What if the loop starts at the head (entire list is a loop)?"
+ * A4: Floyd's algorithm still works!
+ *
+ *     Example: 1 -> 2 -> 3 -> 1 (back to head)
+ *
+ *     The pointers will still meet inside the loop.
+ *     When resetting slow to head, slow == fast already,
+ *     so loop start is head.
+ *
+ * -------------------------------------------------------------------------
+ * Q5: "How would you REMOVE the loop once detected?"
+ * A5: Find the node whose next points to loop start, set it to NULL.
+ *
+ *     1. Find loop start (using Phase 2 above)
+ *     2. Traverse loop to find the node pointing back to start
+ *     3. Set that node's next = NULL
+ *
+ *     Code:
+ *     Node* curr = loopStart;
+ *     while (curr->next != loopStart) {
+ *         curr = curr->next;
+ *     }
+ *     curr->next = NULL;  // Break the loop
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
