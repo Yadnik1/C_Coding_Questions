@@ -6,6 +6,49 @@
  * DIFFICULTY: Easy | TIME: 10 mins | FREQUENCY: VERY HIGH (Embedded)
  *
  * Essential bit operations for embedded systems programming.
+ * These are MUST-KNOW operations for any embedded/firmware interview.
+ *
+ * ============================================================================
+ * WHAT YOU MUST KNOW BEFORE SOLVING:
+ * ============================================================================
+ *
+ * 1. BIT POSITIONS:
+ *    - Bit 0 is the RIGHTMOST (LSB - Least Significant Bit)
+ *    - Bit 7 is the LEFTMOST in a byte (MSB - Most Significant Bit)
+ *    - Bits are numbered from RIGHT to LEFT starting at 0
+ *
+ *    Example (8-bit number):
+ *    Value:    0b01011010
+ *    Position:   76543210
+ *                ^^^^^^^^
+ *                ||||||||
+ *                |||||||+-- Bit 0 (LSB) = 0
+ *                ||||||+--- Bit 1 = 1
+ *                |||||+---- Bit 2 = 0
+ *                ||||+----- Bit 3 = 1
+ *                |||+------ Bit 4 = 1
+ *                ||+------- Bit 5 = 0
+ *                |+-------- Bit 6 = 1
+ *                +--------- Bit 7 (MSB) = 0
+ *
+ * 2. THE MASK: (1 << n)
+ *    - Creates a number with ONLY bit n set to 1
+ *    - All other bits are 0
+ *
+ *    1 << 0 = 0b00000001
+ *    1 << 1 = 0b00000010
+ *    1 << 2 = 0b00000100
+ *    1 << 3 = 0b00001000
+ *    1 << 4 = 0b00010000
+ *    1 << 5 = 0b00100000
+ *    1 << 6 = 0b01000000
+ *    1 << 7 = 0b10000000
+ *
+ * 3. BITWISE OPERATORS:
+ *    &  (AND):  1 & 1 = 1, all others = 0  (keeps bits where BOTH are 1)
+ *    |  (OR):   0 | 0 = 0, all others = 1  (sets bit if EITHER is 1)
+ *    ^  (XOR):  same = 0, different = 1    (toggles bits)
+ *    ~  (NOT):  flips all bits             (0→1, 1→0)
  *
  * ============================================================================
  * BIT MANIPULATION CHEAT SHEET:
@@ -19,18 +62,256 @@
  *   Even/Odd:       num & 1 == 0 (even), num & 1 == 1 (odd)
  *
  * ============================================================================
- * VISUALIZATION:
+ * OPERATION 1: SET BIT (Turn ON)
  * ============================================================================
  *
- *   num = 0b00001010 (10 in decimal)
+ * Formula: num |= (1 << n)
  *
- *   SET bit 2:    0b00001010 | 0b00000100 = 0b00001110
- *   CLEAR bit 1:  0b00001010 & 0b11111101 = 0b00001000
- *   TOGGLE bit 3: 0b00001010 ^ 0b00001000 = 0b00000010
- *   CHECK bit 1:  (0b00001010 >> 1) & 1 = 1
+ * To set bit n, we OR with a mask that has only bit n as 1:
+ *
+ *   num = 0b00001010 (10)
+ *   Set bit 2:
+ *
+ *   Step 1: Create mask
+ *   1 << 2 = 0b00000100
+ *
+ *   Step 2: OR the mask
+ *   0b00001010  (num)
+ * | 0b00000100  (mask: 1 << 2)
+ *   ----------
+ *   0b00001110  (result: 14)
+ *          ^
+ *          Bit 2 is now SET
+ *
+ * WHY OR?
+ *   x | 0 = x  (original bit unchanged)
+ *   x | 1 = 1  (bit becomes 1 regardless of original)
  *
  * ============================================================================
- * TIME: O(1) | SPACE: O(1)
+ * OPERATION 2: CLEAR BIT (Turn OFF)
+ * ============================================================================
+ *
+ * Formula: num &= ~(1 << n)
+ *
+ * To clear bit n, we AND with a mask that has all 1s EXCEPT bit n:
+ *
+ *   num = 0b00001010 (10)
+ *   Clear bit 1:
+ *
+ *   Step 1: Create mask
+ *   1 << 1    = 0b00000010
+ *   ~(1 << 1) = 0b11111101  (flip all bits)
+ *
+ *   Step 2: AND the inverted mask
+ *   0b00001010  (num)
+ * & 0b11111101  (mask: ~(1 << 1))
+ *   ----------
+ *   0b00001000  (result: 8)
+ *         ^
+ *         Bit 1 is now CLEAR
+ *
+ * WHY AND with inverted mask?
+ *   x & 1 = x  (original bit unchanged)
+ *   x & 0 = 0  (bit becomes 0 regardless of original)
+ *
+ * ============================================================================
+ * OPERATION 3: TOGGLE BIT (Flip)
+ * ============================================================================
+ *
+ * Formula: num ^= (1 << n)
+ *
+ * To toggle bit n, we XOR with a mask that has only bit n as 1:
+ *
+ *   num = 0b00001010 (10)
+ *   Toggle bit 3:
+ *
+ *   Step 1: Create mask
+ *   1 << 3 = 0b00001000
+ *
+ *   Step 2: XOR the mask
+ *   0b00001010  (num)
+ * ^ 0b00001000  (mask: 1 << 3)
+ *   ----------
+ *   0b00000010  (result: 2)
+ *       ^
+ *       Bit 3 flipped from 1 to 0
+ *
+ * WHY XOR?
+ *   x ^ 0 = x  (original bit unchanged)
+ *   x ^ 1 = ~x (bit is flipped: 0→1, 1→0)
+ *
+ * Toggle bit 3 again:
+ *   0b00000010  (num)
+ * ^ 0b00001000  (mask)
+ *   ----------
+ *   0b00001010  (back to original!)
+ *
+ * ============================================================================
+ * OPERATION 4: CHECK BIT (Read/Test)
+ * ============================================================================
+ *
+ * Method 1: (num >> n) & 1
+ *
+ *   num = 0b00001010 (10)
+ *   Check bit 1:
+ *
+ *   Step 1: Shift right to bring bit n to position 0
+ *   num >> 1 = 0b00000101
+ *
+ *   Step 2: AND with 1 to isolate the bit
+ *   0b00000101 & 0b00000001 = 0b00000001 = 1
+ *
+ *   Result: Bit 1 is SET (returns 1)
+ *
+ *   Check bit 2:
+ *   num >> 2 = 0b00000010
+ *   0b00000010 & 0b00000001 = 0b00000000 = 0
+ *
+ *   Result: Bit 2 is CLEAR (returns 0)
+ *
+ * Method 2: num & (1 << n)
+ *
+ *   Check bit 1:
+ *   0b00001010 & (1 << 1)
+ *   0b00001010 & 0b00000010 = 0b00000010 = 2 (non-zero = true)
+ *
+ *   Check bit 2:
+ *   0b00001010 & (1 << 2)
+ *   0b00001010 & 0b00000100 = 0b00000000 = 0 (zero = false)
+ *
+ * ============================================================================
+ * OPERATION 5: CHECK EVEN/ODD
+ * ============================================================================
+ *
+ * Formula: num & 1
+ *
+ * The LSB (bit 0) determines even/odd:
+ *   - If bit 0 is 0 → number is EVEN
+ *   - If bit 0 is 1 → number is ODD
+ *
+ * Why? In binary:
+ *   Even numbers: 2=10, 4=100, 6=110, 8=1000, 10=1010
+ *   Odd numbers:  1=1,  3=11,  5=101, 7=111,  9=1001
+ *                       ^           ^         ^
+ *                       All odd numbers end in 1
+ *
+ * Example:
+ *   10 & 1 = 0b1010 & 0b0001 = 0 → EVEN
+ *   7 & 1  = 0b0111 & 0b0001 = 1 → ODD
+ *
+ * ============================================================================
+ * EMBEDDED SYSTEMS EXAMPLE: GPIO REGISTER
+ * ============================================================================
+ *
+ * Suppose GPIO register at 0x40020014 controls 8 LEDs (one bit each):
+ *
+ *   volatile uint8_t *GPIO = (volatile uint8_t *)0x40020014;
+ *
+ *   // Turn ON LED 3
+ *   *GPIO |= (1 << 3);
+ *
+ *   // Turn OFF LED 5
+ *   *GPIO &= ~(1 << 5);
+ *
+ *   // Toggle LED 7
+ *   *GPIO ^= (1 << 7);
+ *
+ *   // Check if LED 2 is ON
+ *   if (*GPIO & (1 << 2)) {
+ *       // LED 2 is ON
+ *   }
+ *
+ * ============================================================================
+ * IMPORTANT: USE 1U FOR UNSIGNED OPERATIONS
+ * ============================================================================
+ *
+ * Always use 1U (unsigned) instead of 1 to avoid signed overflow:
+ *
+ *   BAD:  (1 << 31)   // Undefined behavior! (signed overflow)
+ *   GOOD: (1U << 31)  // Safe, unsigned shift
+ *
+ * For 64-bit operations:
+ *   GOOD: (1ULL << 63)
+ *
+ * ============================================================================
+ * TIME COMPLEXITY: O(1)
+ * ============================================================================
+ * - All bit operations are single CPU instructions
+ * - Constant time regardless of value
+ *
+ * ============================================================================
+ * SPACE COMPLEXITY: O(1)
+ * ============================================================================
+ * - No extra memory needed
+ * - Operations modify value in place
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use (1U << n) instead of (1 << n)?"
+ * A1: 1 is a signed int (typically 32 bits). Shifting a signed value left
+ *     into the sign bit is UNDEFINED BEHAVIOR.
+ *
+ *     Example: 1 << 31 is UB on 32-bit int!
+ *     But: 1U << 31 is safe (unsigned shift).
+ *
+ *     For 64-bit: use 1ULL << n
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why do we use ~(1 << n) for clearing? Why not just (0 << n)?"
+ * A2: (0 << n) is always 0! It doesn't create a useful mask.
+ *
+ *     We need: all 1s except position n
+ *     ~(1 << n) does this:
+ *       1 << 3   = 0b00001000
+ *       ~(1 << 3) = 0b11110111  ← AND with this clears bit 3
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What's the difference between (num >> n) & 1 and num & (1 << n)?"
+ * A3: Both check if bit n is set, but return different values:
+ *
+ *     (num >> n) & 1    → Returns 0 or 1 (clean boolean)
+ *     num & (1 << n)    → Returns 0 or (1 << n) (non-zero is true)
+ *
+ *     Example: num = 0b1010, n = 3
+ *     (0b1010 >> 3) & 1  = 0b1 & 1 = 1
+ *     0b1010 & (1 << 3)  = 0b1010 & 0b1000 = 0b1000 = 8
+ *
+ *     Both are "true" in if statements, but first is cleaner for storage.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How would you set multiple bits at once, say bits 2, 4, and 6?"
+ * A4: Create a combined mask and OR it:
+ *
+ *     mask = (1 << 2) | (1 << 4) | (1 << 6)
+ *          = 0b01010100 = 0x54
+ *
+ *     num |= mask;  // Sets bits 2, 4, and 6
+ *
+ *     Or using hex directly: num |= 0x54;
+ *
+ * -------------------------------------------------------------------------
+ * Q5: "In embedded systems, how do you atomically set a bit in a register?"
+ * A5: In multi-threaded or interrupt contexts, read-modify-write operations
+ *     are NOT atomic and can cause race conditions.
+ *
+ *     Solutions:
+ *     1. Disable interrupts around the operation
+ *        __disable_irq();
+ *        REG |= (1 << 5);
+ *        __enable_irq();
+ *
+ *     2. Use hardware bit-banding (ARM Cortex-M)
+ *        *BIT_BAND_ADDR = 1;  // Atomic bit write
+ *
+ *     3. Use atomic builtins
+ *        __atomic_or_fetch(&reg, (1 << 5), __ATOMIC_SEQ_CST);
+ *
+ *     4. Some hardware has SET/CLEAR registers
+ *        GPIO_BSRR = (1 << 5);  // Atomic set
+ *        GPIO_BRR = (1 << 5);   // Atomic clear
+ *
  * ============================================================================
  */
 
