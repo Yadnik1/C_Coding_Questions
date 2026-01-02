@@ -222,7 +222,7 @@ void print_array(int arr[], int n) {
 
 int main() {
     int arr1[] = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
-    int n1 = 9;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
 
     printf("Array: ");
     print_array(arr1, n1);

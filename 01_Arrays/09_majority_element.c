@@ -214,14 +214,14 @@ void print_array(int arr[], int n) {
 
 int main() {
     int arr1[] = {2, 2, 1, 1, 1, 2, 2};
-    int n1 = 7;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
 
     printf("Array: ");
     print_array(arr1, n1);
     printf("\nMajority element: %d\n", find_majority(arr1, n1));
 
     int arr2[] = {3, 2, 3};
-    int n2 = 3;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
 
     printf("\nArray: ");
     print_array(arr2, n2);
@@ -229,7 +229,7 @@ int main() {
 
     // Test with no majority
     int arr3[] = {1, 2, 3, 4};
-    int n3 = 4;
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
     bool found;
 
     printf("\nArray: ");

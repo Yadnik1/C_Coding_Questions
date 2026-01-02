@@ -66,14 +66,14 @@ int main() {
     printf("=== Remove Duplicates (Two Pointer) ===\n\n");
 
     int arr1[] = {1, 1, 2, 2, 2, 3, 4, 4};
-    int n1 = 8;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
     printf("Before: "); printArray(arr1, n1);
     int newLen1 = removeDuplicates(arr1, n1);
     printf("After:  "); printArray(arr1, newLen1);
     printf("New length: %d\n\n", newLen1);
 
     int arr2[] = {1, 1, 1};
-    int n2 = 3;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
     printf("Before: "); printArray(arr2, n2);
     int newLen2 = removeDuplicates(arr2, n2);
     printf("After:  "); printArray(arr2, newLen2);

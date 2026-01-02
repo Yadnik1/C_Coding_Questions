@@ -59,14 +59,14 @@ int main() {
     printf("=== Reverse Array (Two Pointer) ===\n\n");
 
     int arr1[] = {1, 2, 3, 4, 5};
-    int n1 = 5;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
     printf("Before: "); printArray(arr1, n1);
     reverseArray(arr1, n1);
     printf("After:  "); printArray(arr1, n1);
     printf("\n");
 
     int arr2[] = {1, 2, 3, 4, 5, 6};
-    int n2 = 6;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
     printf("Before: "); printArray(arr2, n2);
     reverseArray(arr2, n2);
     printf("After:  "); printArray(arr2, n2);

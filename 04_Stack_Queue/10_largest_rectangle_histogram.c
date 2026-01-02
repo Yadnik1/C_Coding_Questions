@@ -165,19 +165,19 @@ int main() {
     printf("=== Largest Rectangle in Histogram ===\n\n");
 
     int heights1[] = {2, 1, 5, 6, 2, 3};
-    int n1 = 6;
+    int n1 = sizeof(heights1) / sizeof(heights1[0]);
     printf("Histogram 1:\n");
     printHistogram(heights1, n1);
     printf("\nLargest area: %d\n\n", largestRectangleArea(heights1, n1));
 
     int heights2[] = {2, 4};
-    int n2 = 2;
+    int n2 = sizeof(heights2) / sizeof(heights2[0]);
     printf("Histogram 2:\n");
     printHistogram(heights2, n2);
     printf("\nLargest area: %d\n\n", largestRectangleArea(heights2, n2));
 
     int heights3[] = {6, 2, 5, 4, 5, 1, 6};
-    int n3 = 7;
+    int n3 = sizeof(heights3) / sizeof(heights3[0]);
     printf("Histogram 3:\n");
     printHistogram(heights3, n3);
     printf("\nLargest area: %d\n\n", largestRectangleArea(heights3, n3));

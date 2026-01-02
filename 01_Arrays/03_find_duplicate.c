@@ -187,21 +187,21 @@ void print_array(int arr[], int n) {
 
 int main() {
     int arr1[] = {1, 3, 4, 2, 2};
-    int n1 = 5;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
 
     printf("Array: ");
     print_array(arr1, n1);
     printf("\nDuplicate (Floyd): %d\n", find_duplicate_floyd(arr1, n1));
 
     int arr2[] = {3, 1, 3, 4, 2};
-    int n2 = 5;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
 
     printf("\nArray: ");
     print_array(arr2, n2);
     printf("\nDuplicate (Floyd): %d\n", find_duplicate_floyd(arr2, n2));
 
     int arr3[] = {1, 1};
-    int n3 = 2;
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
 
     printf("\nArray: ");
     print_array(arr3, n3);

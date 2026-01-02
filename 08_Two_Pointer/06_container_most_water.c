@@ -68,18 +68,18 @@ int main() {
     printf("=== Container With Most Water ===\n\n");
 
     int heights1[] = {1, 8, 6, 2, 5, 4, 8, 3, 7};
-    int n1 = 9;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
     printf("Heights: [1, 8, 6, 2, 5, 4, 8, 3, 7]\n");
     printf("Max water: %d\n", maxArea(heights1, n1));
     printf("(Between index 1 and 8: min(8,7) * 7 = 49)\n\n");
 
     int heights2[] = {1, 1};
-    int n2 = 2;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
     printf("Heights: [1, 1]\n");
     printf("Max water: %d\n\n", maxArea(heights2, n2));
 
     int heights3[] = {4, 3, 2, 1, 4};
-    int n3 = 5;
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
     printf("Heights: [4, 3, 2, 1, 4]\n");
     printf("Max water: %d\n", maxArea(heights3, n3));
     printf("(Between index 0 and 4: min(4,4) * 4 = 16)\n");

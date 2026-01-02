@@ -205,7 +205,7 @@ void print_array(int arr[], int n) {
 
 int main() {
     int arr1[] = {0, 1, 0, 3, 12};
-    int n1 = 5;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
 
     printf("Original: ");
     print_array(arr1, n1);
@@ -216,7 +216,7 @@ int main() {
 
     // Test swap method
     int arr2[] = {0, 0, 1, 0, 3, 0, 12};
-    int n2 = 7;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
 
     printf("\n\nOriginal: ");
     print_array(arr2, n2);

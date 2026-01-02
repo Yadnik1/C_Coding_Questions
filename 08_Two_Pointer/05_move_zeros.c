@@ -86,21 +86,21 @@ int main() {
     printf("=== Move Zeros to End (Two Pointer) ===\n\n");
 
     int arr1[] = {0, 1, 0, 3, 12};
-    int n1 = 5;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
     printf("Before: "); printArray(arr1, n1);
     moveZeros(arr1, n1);
     printf("After:  "); printArray(arr1, n1);
     printf("\n");
 
     int arr2[] = {0, 0, 1};
-    int n2 = 3;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
     printf("Before: "); printArray(arr2, n2);
     moveZeros(arr2, n2);
     printf("After:  "); printArray(arr2, n2);
     printf("\n");
 
     int arr3[] = {1, 2, 3};
-    int n3 = 3;
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
     printf("Before: "); printArray(arr3, n3);
     moveZeros(arr3, n3);
     printf("After:  "); printArray(arr3, n3);

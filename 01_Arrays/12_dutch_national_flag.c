@@ -88,21 +88,21 @@ int main() {
     printf("=== Dutch National Flag (Sort 0, 1, 2) ===\n\n");
 
     int arr1[] = {2, 0, 1, 2, 1, 0};
-    int n1 = 6;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
     printf("Before: "); printArray(arr1, n1);
     dutchNationalFlag(arr1, n1);
     printf("After:  "); printArray(arr1, n1);
     printf("\n");
 
     int arr2[] = {0, 1, 2, 0, 1, 2};
-    int n2 = 6;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
     printf("Before: "); printArray(arr2, n2);
     dutchNationalFlag(arr2, n2);
     printf("After:  "); printArray(arr2, n2);
     printf("\n");
 
     int arr3[] = {2, 2, 1, 1, 0, 0};
-    int n3 = 6;
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
     printf("Before: "); printArray(arr3, n3);
     dutchNationalFlag(arr3, n3);
     printf("After:  "); printArray(arr3, n3);

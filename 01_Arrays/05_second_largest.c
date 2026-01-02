@@ -175,7 +175,7 @@ void print_array(int arr[], int n) {
 
 int main() {
     int arr1[] = {12, 35, 1, 10, 34, 1};
-    int n1 = 6;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
 
     printf("Array: ");
     print_array(arr1, n1);
@@ -183,7 +183,7 @@ int main() {
 
     // Test with duplicates of largest
     int arr2[] = {10, 10, 10, 5, 3};
-    int n2 = 5;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
 
     printf("\nArray: ");
     print_array(arr2, n2);
@@ -191,7 +191,7 @@ int main() {
 
     // Test with negative numbers
     int arr3[] = {-5, -1, -10, -3};
-    int n3 = 4;
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
 
     printf("\nArray: ");
     print_array(arr3, n3);
@@ -199,7 +199,7 @@ int main() {
 
     // Test with two elements
     int arr4[] = {5, 10};
-    int n4 = 2;
+    int n4 = sizeof(arr4) / sizeof(arr4[0]);
 
     printf("\nArray: ");
     print_array(arr4, n4);

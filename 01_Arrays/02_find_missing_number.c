@@ -150,13 +150,13 @@ int main() {
 
     // Test case 2
     int arr2[] = {2, 3, 4, 5};
-    int n2 = 5;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
     printf("\nArray: [2, 3, 4, 5]\n");
     printf("Missing: %d\n", find_missing_xor(arr2, n2));
 
     // Test case 3
     int arr3[] = {1, 2, 3, 4};
-    int n3 = 5;
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
     printf("\nArray: [1, 2, 3, 4]\n");
     printf("Missing: %d\n", find_missing_xor(arr3, n3));
 

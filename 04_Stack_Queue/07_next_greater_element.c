@@ -123,7 +123,7 @@ int main() {
 
     // Another test
     int arr2[] = {13, 7, 6, 12};
-    int n2 = 4;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
     int result2[4];
 
     printf("\nInput:  ");

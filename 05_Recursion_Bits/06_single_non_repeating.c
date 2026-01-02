@@ -84,13 +84,13 @@ int main() {
     printf("=== Find Single Non-Repeating Element ===\n\n");
 
     int arr1[] = {4, 1, 2, 1, 2};
-    int n1 = 5;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
     printf("Array: ");
     printArray(arr1, n1);
     printf("\nSingle element: %d\n\n", findSingle(arr1, n1));
 
     int arr2[] = {2, 3, 5, 4, 5, 3, 4};
-    int n2 = 7;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
     printf("Array: ");
     printArray(arr2, n2);
     printf("\nSingle element: %d\n\n", findSingle(arr2, n2));

@@ -82,13 +82,13 @@ int main() {
     printf("=== Find Peak Element ===\n\n");
 
     int arr1[] = {1, 2, 3, 1};
-    int n1 = 4;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
     printf("Array: [1, 2, 3, 1]\n");
     int peak1 = findPeakElement(arr1, n1);
     printf("Peak at index %d (value %d)\n\n", peak1, arr1[peak1]);
 
     int arr2[] = {1, 2, 1, 3, 5, 6, 4};
-    int n2 = 7;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
     printf("Array: [1, 2, 1, 3, 5, 6, 4]\n");
     int peak2 = findPeakElement(arr2, n2);
     printf("Peak at index %d (value %d)\n\n", peak2, arr2[peak2]);
