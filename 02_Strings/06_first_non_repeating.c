@@ -125,40 +125,64 @@
 
 // Return the first non-repeating character
 char first_non_repeating(char str[]) {
+    // Create frequency count array
+    // Say: "I'll use a two-pass approach: first count frequencies, then find the first unique character"
     int count[26] = {0};
 
     // Pass 1: Count frequencies
+    // Say: "In the first pass, I count how many times each character appears"
     for (int i = 0; str[i] != '\0'; i++) {
+        // Increment count for this character
+        // Say: "I increment the count for each character using its position in the alphabet"
         count[str[i] - 'a']++;
     }
 
     // Pass 2: Find first with count = 1
+    // Say: "In the second pass, I find the first character with a count of 1"
     for (int i = 0; str[i] != '\0'; i++) {
+        // Check if this character appears only once
+        // Say: "I check if the current character has a count of 1"
         if (count[str[i] - 'a'] == 1) {
+            // Found first non-repeating character
+            // Say: "Found the first non-repeating character, so I return it"
             return str[i];
         }
     }
 
-    return '\0';  // No non-repeating character
+    // No non-repeating character found
+    // Say: "If no non-repeating character exists, I return null character"
+    return '\0';
 }
 
 // Return the index of first non-repeating character
 int first_non_repeating_index(char str[]) {
+    // Create frequency count array
+    // Say: "This variation returns the index instead of the character itself"
     int count[26] = {0};
 
     // Pass 1: Count frequencies
+    // Say: "First, I count the frequency of each character"
     for (int i = 0; str[i] != '\0'; i++) {
+        // Increment count for this character
+        // Say: "I increment the count for this character"
         count[str[i] - 'a']++;
     }
 
     // Pass 2: Find first with count = 1
+    // Say: "Then I scan through to find the first unique character"
     for (int i = 0; str[i] != '\0'; i++) {
+        // Check if this character appears only once
+        // Say: "I check if the count is 1"
         if (count[str[i] - 'a'] == 1) {
+            // Return index of first non-repeating
+            // Say: "Found it at index i, so I return that index"
             return i;
         }
     }
 
-    return -1;  // No non-repeating character
+    // No non-repeating character found
+    // Say: "If no unique character exists, I return -1"
+    return -1;
 }
 
 int main() {

@@ -66,17 +66,33 @@ Node* createNode(int data) {
 }
 
 Node* getIntersection(Node* headA, Node* headB) {
+    // Edge case: if either list is empty
+    // Say: "First check if either list is empty - no intersection possible"
     if (headA == NULL || headB == NULL) return NULL;
 
+    // Initialize pointer for list A
+    // Say: "I'll use two pointers, one for each list"
     Node* pA = headA;
+
+    // Initialize pointer for list B
+    // Say: "Both pointers start at their respective heads"
     Node* pB = headB;
 
+    // Traverse both lists simultaneously
+    // Say: "Move both pointers until they meet or both become NULL"
     while (pA != pB) {
+        // Move pA forward, or switch to headB if at end
+        // Say: "If pA reaches the end, redirect it to headB, otherwise move forward"
         pA = (pA == NULL) ? headB : pA->next;
+
+        // Move pB forward, or switch to headA if at end
+        // Say: "If pB reaches the end, redirect it to headA, otherwise move forward"
         pB = (pB == NULL) ? headA : pB->next;
     }
 
-    return pA;  // Either intersection or NULL
+    // Either intersection or both NULL
+    // Say: "When they meet, that's either the intersection or NULL if no intersection"
+    return pA;
 }
 
 int main() {

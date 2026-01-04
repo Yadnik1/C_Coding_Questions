@@ -64,19 +64,39 @@ Node* createNode(int data) {
 }
 
 Node* removeDuplicates(Node* head) {
+    // Start at head
+    // Say: "I'll traverse the list starting from the head"
     Node* curr = head;
 
+    // Traverse until end
+    // Say: "For each node, I'll check if it's equal to the next node"
     while (curr != NULL && curr->next != NULL) {
+        // Check if current equals next
+        // Say: "Compare current node's value with next node's value"
         if (curr->data == curr->next->data) {
-            // Skip duplicate
+            // Found duplicate, skip it
+            // Say: "Found a duplicate, so I'll skip the next node"
+
+            // Save duplicate node
+            // Say: "Save the duplicate node so we can free it"
             Node* duplicate = curr->next;
+
+            // Skip the duplicate
+            // Say: "Point current's next to the node after the duplicate"
             curr->next = curr->next->next;
+
+            // Free duplicate node
+            // Say: "Free the memory of the duplicate node"
             free(duplicate);
         } else {
+            // Not a duplicate, move forward
+            // Say: "No duplicate found, move to the next node"
             curr = curr->next;
         }
     }
 
+    // Return head (unchanged)
+    // Say: "Return the head of the modified list"
     return head;
 }
 

@@ -50,39 +50,61 @@
 
 // Method 1: Using union
 bool isLittleEndian_Union(void) {
+    // Say: "I'll use a union to overlay a 16-bit value with a byte array"
+    // Declare union with 16-bit value and 2-byte array
     union {
         uint16_t value;
         uint8_t bytes[2];
     } test;
 
+    // Say: "I'll set the value to 0x0001"
+    // Set value to 0x0001
     test.value = 0x0001;
 
-    // If bytes[0] is 1, LSB is at lowest address = little-endian
+    // Say: "If bytes[0] is 1, then LSB is at lowest address, meaning little-endian"
+    // Check if first byte is 0x01 (little-endian) or 0x00 (big-endian)
     return test.bytes[0] == 0x01;
 }
 
 // Method 2: Using pointer cast
 bool isLittleEndian_Pointer(void) {
+    // Say: "I'll create a 32-bit value and cast a pointer to it as a byte pointer"
+    // Declare 32-bit value with LSB = 1
     uint32_t value = 0x00000001;
+
+    // Say: "I'll cast the address of value to a byte pointer"
+    // Cast to byte pointer to access individual bytes
     uint8_t* bytePtr = (uint8_t*)&value;
 
+    // Say: "If the first byte is 1, the system is little-endian"
+    // Check if first byte in memory is 0x01
     return *bytePtr == 0x01;
 }
 
 // Method 3: Using char pointer (most portable)
 bool isLittleEndian_Char(void) {
+    // Say: "This is the most portable method using a char pointer"
+    // Declare int value
     int value = 1;
+
+    // Say: "I'll cast the address to a char pointer and check the first byte"
+    // Cast to char pointer and check first byte
     return *(char*)&value == 1;
 }
 
 // Show memory layout
 void showMemoryLayout(uint32_t value) {
+    // Say: "Let me show how the value is actually laid out in memory"
+    // Cast value address to byte pointer
     uint8_t* bytes = (uint8_t*)&value;
 
     printf("   Value: 0x%08X\n", value);
     printf("   Memory layout (address order):\n");
     printf("   ");
+
+    // Loop through 4 bytes in memory order
     for (int i = 0; i < 4; i++) {
+        // Print byte at address offset i
         printf("[0x%02X] ", bytes[i]);
     }
     printf("\n");
@@ -103,9 +125,11 @@ int main() {
 
     // Show memory layout
     printf("2. Memory Layout:\n");
+    // Show layout of test value
     showMemoryLayout(0x01020304);
     printf("\n");
 
+    // Explain the layout
     if (isLittleEndian_Union()) {
         printf("   Interpretation: Little-Endian\n");
         printf("   - LSB (0x04) at lowest address\n");

@@ -110,55 +110,112 @@
 
 // Basic palindrome check
 bool is_palindrome(char str[]) {
+    // Initialize left pointer at start
+    // Say: "I'll use two pointers to compare characters from both ends"
     int left = 0;
+
+    // Initialize right pointer at end
+    // Say: "Left starts at 0, right starts at the last character"
     int right = strlen(str) - 1;
 
+    // Compare characters until pointers meet
+    // Say: "I'll keep comparing until the pointers cross"
     while (left < right) {
+        // Check if characters at both ends match
+        // Say: "If characters don't match, it's not a palindrome"
         if (str[left] != str[right]) {
+            // Say: "Found a mismatch, so I return false immediately"
             return false;
         }
+
+        // Move left pointer forward
+        // Say: "Characters match, so I move both pointers toward the center"
         left++;
+
+        // Move right pointer backward
         right--;
     }
+
+    // All characters matched
+    // Say: "All characters matched, so it's a palindrome"
     return true;
 }
 
 // Case-insensitive palindrome check
 bool is_palindrome_ignore_case(char str[]) {
+    // Initialize left pointer at start
+    // Say: "For case-insensitive checking, I'll use the same two-pointer approach"
     int left = 0;
+
+    // Initialize right pointer at end
+    // Say: "Left at 0, right at the last character"
     int right = strlen(str) - 1;
 
+    // Compare characters until pointers meet
+    // Say: "I'll compare characters ignoring case differences"
     while (left < right) {
+        // Check if lowercase versions match
+        // Say: "I convert both characters to lowercase before comparing"
         if (tolower(str[left]) != tolower(str[right])) {
+            // Say: "Found a mismatch even after lowercasing, return false"
             return false;
         }
+
+        // Move left pointer forward
+        // Say: "Characters match, move both pointers inward"
         left++;
+
+        // Move right pointer backward
         right--;
     }
+
+    // All characters matched
+    // Say: "All characters matched ignoring case, it's a palindrome"
     return true;
 }
 
 // Ignore non-alphanumeric characters
 bool is_palindrome_alphanumeric(char str[]) {
+    // Initialize left pointer at start
+    // Say: "For alphanumeric-only checking, I start with two pointers"
     int left = 0;
+
+    // Initialize right pointer at end
+    // Say: "Left at 0, right at the end"
     int right = strlen(str) - 1;
 
+    // Process until pointers meet
+    // Say: "I'll skip non-alphanumeric characters and compare only letters and digits"
     while (left < right) {
-        // Skip non-alphanumeric on left
+        // Skip non-alphanumeric characters from left
+        // Say: "First, I skip any spaces or punctuation from the left"
         while (left < right && !isalnum(str[left])) {
+            // Say: "Moving left pointer past non-alphanumeric characters"
             left++;
         }
-        // Skip non-alphanumeric on right
+
+        // Skip non-alphanumeric characters from right
+        // Say: "Then, I skip spaces or punctuation from the right"
         while (left < right && !isalnum(str[right])) {
+            // Say: "Moving right pointer past non-alphanumeric characters"
             right--;
         }
 
+        // Compare the alphanumeric characters (case-insensitive)
+        // Say: "Now I compare the actual alphanumeric characters, ignoring case"
         if (tolower(str[left]) != tolower(str[right])) {
+            // Say: "Characters don't match, not a palindrome"
             return false;
         }
+
+        // Move both pointers inward
+        // Say: "Characters match, move both pointers toward center"
         left++;
         right--;
     }
+
+    // All alphanumeric characters matched
+    // Say: "All alphanumeric characters matched, it's a palindrome"
     return true;
 }
 

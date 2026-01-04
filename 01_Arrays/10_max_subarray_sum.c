@@ -111,19 +111,6 @@
  *   return max_sum
  *
  * ============================================================================
- * ALTERNATE FORM (RESET TO ZERO):
- * ============================================================================
- *
- *   max_sum = INT_MIN
- *   current_sum = 0
- *
- *   for each element:
- *       current_sum += element
- *       max_sum = max(max_sum, current_sum)
- *       if current_sum < 0:
- *           current_sum = 0  // Reset
- *
- * ============================================================================
  * TIME COMPLEXITY: O(n)
  * ============================================================================
  * - Single pass through array
@@ -134,19 +121,6 @@
  * ============================================================================
  * - Only two variables
  * - Constant space
- *
- * ============================================================================
- * VARIATIONS:
- * ============================================================================
- *
- * 1. Find the actual subarray (not just sum):
- *    - Track start/end indices when max updates
- *
- * 2. Maximum circular subarray sum:
- *    - max(Kadane's result, total_sum - min_subarray_sum)
- *
- * 3. Maximum product subarray:
- *    - Track both max and min (negative * negative = positive)
  *
  * ============================================================================
  * EDGE CASES:
@@ -164,50 +138,97 @@
 
 // Basic Kadane's Algorithm
 int max_subarray_sum(int arr[], int n) {
+    // Initialize max_sum with first element
+    // Say: "I'll use Kadane's algorithm starting with the first element as max"
     int max_sum = arr[0];
+
+    // Initialize current_sum with first element
+    // Say: "And current sum also starts at the first element"
     int current_sum = arr[0];
 
+    // Iterate through rest of array starting from index 1
+    // Say: "I scan through the array from the second element onward"
     for (int i = 1; i < n; i++) {
         // Either extend or start fresh
+        // Say: "For each element, I decide whether to extend the current subarray or start fresh"
         if (current_sum + arr[i] > arr[i]) {
+            // Extending current subarray is better
+            // Say: "If adding to current sum is better, I extend the subarray"
             current_sum = current_sum + arr[i];
         } else {
+            // Starting fresh is better
+            // Say: "Otherwise, I start a new subarray from this element"
             current_sum = arr[i];
         }
 
         // Update max
+        // Say: "Then I check if current sum is the new maximum"
         if (current_sum > max_sum) {
+            // Found new maximum
+            // Say: "If yes, I update the maximum sum"
             max_sum = current_sum;
         }
     }
 
+    // Return the maximum sum found
+    // Say: "Finally, I return the maximum subarray sum"
     return max_sum;
 }
 
 // Kadane's with subarray indices
 int max_subarray_with_indices(int arr[], int n, int *start, int *end) {
+    // Initialize max_sum with first element
+    // Say: "To track indices, I start the same way with first element as max"
     int max_sum = arr[0];
+
+    // Initialize current_sum with first element
+    // Say: "Current sum starts at first element"
     int current_sum = arr[0];
+
+    // Track temporary start index
+    // Say: "I use temp_start to track where current subarray begins"
     int temp_start = 0;
 
+    // Initialize start and end indices
+    // Say: "And I initialize start and end indices to zero"
     *start = 0;
     *end = 0;
 
+    // Iterate through rest of array
+    // Say: "I scan through from the second element"
     for (int i = 1; i < n; i++) {
+        // Decide whether to extend or start fresh
+        // Say: "At each element, I check if extending is better"
         if (current_sum + arr[i] > arr[i]) {
+            // Extend current subarray
+            // Say: "If extending is better, I add to current sum"
             current_sum = current_sum + arr[i];
         } else {
+            // Start new subarray
+            // Say: "If starting fresh is better, I reset current sum"
             current_sum = arr[i];
-            temp_start = i;  // New subarray starts here
+
+            // New subarray starts here
+            // Say: "And I mark this index as the temporary start"
+            temp_start = i;
         }
 
+        // Check if we found new maximum
+        // Say: "Then I check if we have a new maximum sum"
         if (current_sum > max_sum) {
+            // Update maximum sum
+            // Say: "If yes, I update the max sum"
             max_sum = current_sum;
+
+            // Update start and end indices
+            // Say: "And I record the start and end indices of this subarray"
             *start = temp_start;
             *end = i;
         }
     }
 
+    // Return the maximum sum
+    // Say: "Finally, I return the maximum sum with indices captured in start and end"
     return max_sum;
 }
 

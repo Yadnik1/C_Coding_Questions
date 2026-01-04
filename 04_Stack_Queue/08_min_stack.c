@@ -52,77 +52,154 @@
 #include <stdio.h>
 #include <limits.h>
 
+// Define maximum stack size
+// Say: "I'll define the maximum capacity for the stack"
 #define MAX_SIZE 100
 
+// MinStack structure with two parallel stacks
+// Say: "I create a MinStack struct with two arrays: one for values, one for minimums"
 typedef struct {
-    int mainStack[MAX_SIZE];
-    int minStack[MAX_SIZE];
-    int top;
+    int mainStack[MAX_SIZE];  // Main stack for actual values
+    int minStack[MAX_SIZE];   // Parallel stack to track minimum at each level
+    int top;                  // Shared top index for both stacks
 } MinStack;
 
+// Initialize min stack
+// Say: "This initializes the min stack to empty"
 void initMinStack(MinStack* ms) {
+    // Set top to -1
+    // Say: "I set top to -1 for an empty stack"
     ms->top = -1;
 }
 
+// Check if stack is empty
+// Say: "This checks if the stack is empty"
 int isEmpty(MinStack* ms) {
+    // Return true if top is -1
+    // Say: "I return true when top is -1"
     return ms->top == -1;
 }
 
+// Push value onto min stack
+// Say: "Now I'll implement push which maintains the minimum at each level"
 void push(MinStack* ms, int val) {
+    // Increment top
+    // Say: "First I increment top to make room for the new element"
     ms->top++;
+
+    // Store value in main stack
+    // Say: "I store the value in the main stack"
     ms->mainStack[ms->top] = val;
 
-    // Track minimum
+    // Update min stack
+    // Say: "Now I need to update the min stack"
     if (ms->top == 0 || val < ms->minStack[ms->top - 1]) {
+        // New minimum found
+        // Say: "If this is the first element or less than previous min, I push it"
         ms->minStack[ms->top] = val;
     } else {
+        // Current minimum still holds
+        // Say: "Otherwise, I carry forward the previous minimum"
         ms->minStack[ms->top] = ms->minStack[ms->top - 1];
     }
 }
 
+// Pop value from min stack
+// Say: "This pops the top element from both stacks"
 int pop(MinStack* ms) {
-    if (isEmpty(ms)) return INT_MIN;
+    // Check if empty
+    // Say: "First I check if the stack is empty"
+    if (isEmpty(ms)) {
+        // Return error value
+        // Say: "If empty, I return INT_MIN as an error code"
+        return INT_MIN;
+    }
+
+    // Return and decrement
+    // Say: "I return the top value and decrement top, removing from both stacks"
     return ms->mainStack[ms->top--];
 }
 
+// Get top element
+// Say: "This returns the top element without removing it"
 int top(MinStack* ms) {
-    if (isEmpty(ms)) return INT_MIN;
+    // Check if empty
+    // Say: "I check if the stack is empty"
+    if (isEmpty(ms)) {
+        // Return error value
+        // Say: "If empty, I return INT_MIN"
+        return INT_MIN;
+    }
+
+    // Return top value from main stack
+    // Say: "I return the top value from the main stack"
     return ms->mainStack[ms->top];
 }
 
+// Get minimum element in O(1)
+// Say: "This returns the minimum element in constant time"
 int getMin(MinStack* ms) {
-    if (isEmpty(ms)) return INT_MIN;
+    // Check if empty
+    // Say: "I check if the stack is empty"
+    if (isEmpty(ms)) {
+        // Return error value
+        // Say: "If empty, I return INT_MIN"
+        return INT_MIN;
+    }
+
+    // Return top of min stack
+    // Say: "I simply return the top of the min stack, which is the current minimum"
     return ms->minStack[ms->top];
 }
 
 int main() {
+    // Say: "Let me demonstrate the min stack implementation"
     printf("=== Min Stack ===\n\n");
 
+    // Declare min stack
+    // Say: "I declare a MinStack variable"
     MinStack ms;
+
+    // Initialize
+    // Say: "I initialize the stack to empty"
     initMinStack(&ms);
 
+    // Push 5
+    // Say: "Let me push 5 and check the minimum"
     printf("Push 5: ");
     push(&ms, 5);
     printf("Min = %d\n", getMin(&ms));
 
+    // Push 3
+    // Say: "Now I push 3, which becomes the new minimum"
     printf("Push 3: ");
     push(&ms, 3);
     printf("Min = %d\n", getMin(&ms));
 
+    // Push 7
+    // Say: "I push 7, but the minimum remains 3"
     printf("Push 7: ");
     push(&ms, 7);
     printf("Min = %d\n", getMin(&ms));
 
+    // Push 2
+    // Say: "I push 2, which becomes the new minimum"
     printf("Push 2: ");
     push(&ms, 2);
     printf("Min = %d\n", getMin(&ms));
 
+    // Pop 2
+    // Say: "Now I'll pop, which removes 2"
     printf("\nPop %d: ", pop(&ms));
     printf("Min = %d\n", getMin(&ms));
 
+    // Pop 7
+    // Say: "I pop again, removing 7"
     printf("Pop %d: ", pop(&ms));
     printf("Min = %d\n", getMin(&ms));
 
+    // Pop 3
+    // Say: "I pop again, removing 3"
     printf("Pop %d: ", pop(&ms));
     printf("Min = %d\n", getMin(&ms));
 

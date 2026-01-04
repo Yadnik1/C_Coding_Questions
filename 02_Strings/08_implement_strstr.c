@@ -132,42 +132,66 @@
 // Implement strstr from scratch
 char* my_strstr(char* haystack, char* needle) {
     // Empty needle returns haystack
+    // Say: "By convention, an empty needle returns the haystack itself"
     if (*needle == '\0') {
         return haystack;
     }
 
+    // Get length of haystack
+    // Say: "I'll get the lengths to optimize my search boundaries"
     int h_len = strlen(haystack);
+
+    // Get length of needle
     int n_len = strlen(needle);
 
     // Needle longer than haystack
+    // Say: "If needle is longer than haystack, it can't possibly be found"
     if (n_len > h_len) {
         return NULL;
     }
 
     // Try each starting position
+    // Say: "I'll try matching the needle at each valid position in the haystack"
     for (int i = 0; i <= h_len - n_len; i++) {
+        // Initialize match counter
+        // Say: "For this position, I'll count how many characters match"
         int j = 0;
 
         // Try to match needle starting at position i
+        // Say: "I compare characters one by one until I find a mismatch or match completely"
         while (j < n_len && haystack[i + j] == needle[j]) {
+            // Say: "Characters match, so I move to the next character"
             j++;
         }
 
         // If we matched all of needle
+        // Say: "If j equals the needle length, I've found a complete match"
         if (j == n_len) {
+            // Say: "I return a pointer to the start of the match in the haystack"
             return &haystack[i];
         }
+        // Say: "Otherwise, I try the next position"
     }
 
-    return NULL;  // Not found
+    // Not found
+    // Say: "If I've tried all positions without finding a match, I return NULL"
+    return NULL;
 }
 
 // Return index instead of pointer
 int strstr_index(char* haystack, char* needle) {
+    // Call my_strstr to get pointer
+    // Say: "This helper function returns the index instead of a pointer"
     char* result = my_strstr(haystack, needle);
+
+    // Check if found
+    // Say: "If not found, I return -1"
     if (result == NULL) {
         return -1;
     }
+
+    // Calculate index from pointer difference
+    // Say: "Otherwise, I calculate the index by subtracting pointers"
     return result - haystack;
 }
 

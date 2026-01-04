@@ -124,17 +124,6 @@
  *       return "No majority"
  *
  * ============================================================================
- * COMPARISON OF APPROACHES:
- * ============================================================================
- *
- *   Method          | Time       | Space   | Notes
- *   ----------------|------------|---------|------------------
- *   Brute Force     | O(n^2)     | O(1)    | Count each element
- *   Sorting         | O(n log n) | O(1)    | Middle element
- *   Hash Map        | O(n)       | O(n)    | Count frequencies
- *   Boyer-Moore     | O(n)       | O(1)    | OPTIMAL
- *
- * ============================================================================
  * TIME COMPLEXITY: O(n)
  * ============================================================================
  * - Single pass to find candidate
@@ -164,40 +153,78 @@
 // Boyer-Moore Voting Algorithm
 int find_majority(int arr[], int n) {
     // Phase 1: Find candidate
+    // Say: "I'll use Boyer-Moore voting algorithm to find the majority element"
+
+    // Initialize candidate to zero
+    // Say: "I start with candidate set to zero"
     int candidate = 0;
+
+    // Initialize vote count to zero
+    // Say: "And count set to zero"
     int count = 0;
 
+    // Iterate through all elements
+    // Say: "I scan through the array treating it like voting"
     for (int i = 0; i < n; i++) {
+        // Check if count is zero
+        // Say: "Whenever count reaches zero, I pick a new candidate"
         if (count == 0) {
+            // Set new candidate to current element
+            // Say: "I set the candidate to the current element"
             candidate = arr[i];
+
+            // Initialize count to 1
+            // Say: "And reset count to 1"
             count = 1;
         } else if (arr[i] == candidate) {
+            // Current element matches candidate
+            // Say: "If the element matches the candidate, I increment the count"
             count++;
         } else {
+            // Current element is different
+            // Say: "If it's different, I decrement the count, canceling out one vote"
             count--;
         }
     }
 
+    // Return the candidate as majority element
+    // Say: "The remaining candidate is the majority element"
     return candidate;
 }
 
 // With verification (when majority not guaranteed)
 int find_majority_verified(int arr[], int n, bool *found) {
     // Phase 1: Find candidate
+    // Say: "First, I find the candidate using the voting algorithm"
     int candidate = find_majority(arr, n);
 
     // Phase 2: Verify
+    // Say: "Then I verify if this candidate actually appears more than n over 2 times"
+
+    // Initialize counter for verification
+    // Say: "I'll count how many times the candidate appears"
     int count = 0;
+
+    // Count occurrences of candidate
+    // Say: "I scan through the array counting occurrences of the candidate"
     for (int i = 0; i < n; i++) {
+        // Check if element equals candidate
+        // Say: "Each time I find the candidate, I increment the count"
         if (arr[i] == candidate) {
             count++;
         }
     }
 
+    // Verify if count is greater than n/2
+    // Say: "Finally, I check if the count is greater than n divided by 2"
     if (count > n / 2) {
+        // Majority element found
+        // Say: "If yes, I've found the majority element"
         *found = true;
         return candidate;
     } else {
+        // No majority element
+        // Say: "Otherwise, there's no majority element in the array"
         *found = false;
         return -1;
     }

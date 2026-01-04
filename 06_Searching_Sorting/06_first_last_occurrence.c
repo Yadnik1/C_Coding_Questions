@@ -43,68 +43,124 @@
 
 #include <stdio.h>
 
+// Find first occurrence of target using modified binary search
+// Say: "I'll use modified binary search to find the first occurrence"
 int findFirst(int arr[], int n, int target) {
+    // Initialize search boundaries
+    // Say: "I initialize low to 0 and high to n minus 1"
     int low = 0, high = n - 1;
+    // Variable to store result index
+    // Say: "I use result to track the first occurrence found so far"
     int result = -1;
 
+    // Binary search loop
+    // Say: "I search while the search space is valid"
     while (low <= high) {
+        // Calculate middle index
+        // Say: "I calculate mid to avoid overflow"
         int mid = low + (high - low) / 2;
 
+        // Found the target
+        // Say: "If I find the target at mid"
         if (arr[mid] == target) {
+            // Save this position
+            // Say: "I save this index as a potential first occurrence"
             result = mid;      // Save position
+            // Continue searching left for earlier occurrence
+            // Say: "But I keep searching left to find an earlier occurrence"
             high = mid - 1;    // Keep searching left
         }
+        // Target is in right half
+        // Say: "If mid is less than target, I search right"
         else if (arr[mid] < target) {
+            // Move search to right half
             low = mid + 1;
         }
+        // Target is in left half
+        // Say: "Otherwise, I search left"
         else {
+            // Move search to left half
             high = mid - 1;
         }
     }
 
+    // Return first occurrence index (or -1 if not found)
+    // Say: "I return the first occurrence index, or negative 1 if not found"
     return result;
 }
 
+// Find last occurrence of target using modified binary search
+// Say: "Now I'll find the last occurrence by searching right when found"
 int findLast(int arr[], int n, int target) {
+    // Initialize search boundaries
+    // Say: "I initialize low to 0 and high to n minus 1"
     int low = 0, high = n - 1;
+    // Variable to store result index
+    // Say: "I use result to track the last occurrence found so far"
     int result = -1;
 
+    // Binary search loop
+    // Say: "I search while the search space is valid"
     while (low <= high) {
+        // Calculate middle index
+        // Say: "I calculate mid to avoid overflow"
         int mid = low + (high - low) / 2;
 
+        // Found the target
+        // Say: "If I find the target at mid"
         if (arr[mid] == target) {
+            // Save this position
+            // Say: "I save this index as a potential last occurrence"
             result = mid;      // Save position
+            // Continue searching right for later occurrence
+            // Say: "But I keep searching right to find a later occurrence"
             low = mid + 1;     // Keep searching right
         }
+        // Target is in right half
+        // Say: "If mid is less than target, I search right"
         else if (arr[mid] < target) {
+            // Move search to right half
             low = mid + 1;
         }
+        // Target is in left half
+        // Say: "Otherwise, I search left"
         else {
+            // Move search to left half
             high = mid - 1;
         }
     }
 
+    // Return last occurrence index (or -1 if not found)
+    // Say: "I return the last occurrence index, or negative 1 if not found"
     return result;
 }
 
 int main() {
     printf("=== First and Last Occurrence ===\n\n");
 
+    // Initialize sorted array with duplicate values
     int arr[] = {5, 7, 7, 8, 8, 10};
+    // Array size
     int n = 6;
 
     printf("Array: [5, 7, 7, 8, 8, 10]\n\n");
 
+    // Test case 1: Find occurrences of 8
+    // Say: "First, I'll find the first and last occurrence of 8"
     int target = 8;
     printf("Target: %d\n", target);
     printf("First occurrence: %d\n", findFirst(arr, n, target));
     printf("Last occurrence:  %d\n", findLast(arr, n, target));
 
+    // Test case 2: Find occurrences of 7
+    // Say: "Next, I'll find the first and last occurrence of 7"
     target = 7;
     printf("\nTarget: %d\n", target);
     printf("First occurrence: %d\n", findFirst(arr, n, target));
     printf("Last occurrence:  %d\n", findLast(arr, n, target));
 
+    // Test case 3: Element not in array
+    // Say: "Finally, I'll test with an element not in the array"
     target = 6;
     printf("\nTarget: %d\n", target);
     printf("First occurrence: %d\n", findFirst(arr, n, target));

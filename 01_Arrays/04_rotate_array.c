@@ -136,31 +136,75 @@
 #include <stdio.h>
 
 void reverse(int arr[], int start, int end) {
+    // Keep swapping elements from both ends moving toward center
+    // Say: "I'll reverse this portion by swapping elements from both ends"
     while (start < end) {
+        // Save start element in temporary variable
+        // Say: "I save the start element in temp"
         int temp = arr[start];
+
+        // Copy end element to start position
+        // Say: "Copy end element to start position"
         arr[start] = arr[end];
+
+        // Copy saved start element to end position
+        // Say: "And put the saved start element at the end"
         arr[end] = temp;
+
+        // Move start pointer forward
+        // Say: "Move start pointer forward"
         start++;
+
+        // Move end pointer backward
+        // Say: "Move end pointer backward"
         end--;
     }
 }
 
 void rotate_right(int arr[], int n, int k) {
-    k = k % n;  // Handle k > n
+    // Handle case when k is larger than array size
+    // Say: "First, I handle the case where k is larger than n by taking modulo"
+    k = k % n;
+
+    // If k is zero, no rotation needed
+    // Say: "If k is zero, the array is already in the correct position"
     if (k == 0) return;
 
-    reverse(arr, 0, n - 1);      // Reverse all
-    reverse(arr, 0, k - 1);      // Reverse first k
-    reverse(arr, k, n - 1);      // Reverse rest
+    // Step 1: Reverse the entire array
+    // Say: "Step one: I reverse the entire array"
+    reverse(arr, 0, n - 1);
+
+    // Step 2: Reverse first k elements
+    // Say: "Step two: I reverse the first k elements"
+    reverse(arr, 0, k - 1);
+
+    // Step 3: Reverse remaining n-k elements
+    // Say: "Step three: I reverse the remaining n minus k elements"
+    reverse(arr, k, n - 1);
+    // Say: "And now the array is rotated right by k positions"
 }
 
 void rotate_left(int arr[], int n, int k) {
-    k = k % n;  // Handle k > n
+    // Handle case when k is larger than array size
+    // Say: "For left rotation, I also handle k greater than n using modulo"
+    k = k % n;
+
+    // If k is zero, no rotation needed
+    // Say: "If k is zero, no rotation is needed"
     if (k == 0) return;
 
-    reverse(arr, 0, k - 1);      // Reverse first k
-    reverse(arr, k, n - 1);      // Reverse rest
-    reverse(arr, 0, n - 1);      // Reverse all
+    // Step 1: Reverse first k elements
+    // Say: "For left rotation, I first reverse the first k elements"
+    reverse(arr, 0, k - 1);
+
+    // Step 2: Reverse remaining elements
+    // Say: "Then I reverse the remaining elements"
+    reverse(arr, k, n - 1);
+
+    // Step 3: Reverse entire array
+    // Say: "Finally, I reverse the entire array"
+    reverse(arr, 0, n - 1);
+    // Say: "Now the array is rotated left by k positions"
 }
 
 void print_array(int arr[], int n) {

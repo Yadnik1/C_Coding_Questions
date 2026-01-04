@@ -367,22 +367,31 @@
 #include <stdio.h>
 
 int main() {
+    // Say: "Let me demonstrate the key concepts of stacks and queues"
     printf("=== Stack & Queue Theory ===\n\n");
 
+    // Explain stack operations
+    // Say: "A stack follows LIFO - Last In, First Out principle"
     printf("STACK (LIFO):\n");
     printf("  - Push: Add to top\n");
     printf("  - Pop: Remove from top\n");
     printf("  - Used for: Function calls, undo, parsing\n\n");
 
+    // Explain queue operations
+    // Say: "A queue follows FIFO - First In, First Out principle"
     printf("QUEUE (FIFO):\n");
     printf("  - Enqueue: Add to rear\n");
     printf("  - Dequeue: Remove from front\n");
     printf("  - Used for: Buffers, message queues, scheduling\n\n");
 
+    // Explain embedded context
+    // Say: "In embedded systems, these are critical for system operation"
     printf("EMBEDDED CONTEXT:\n");
     printf("  - Stack: Call stack, interrupt handling\n");
     printf("  - Queue: UART buffers, RTOS messages\n\n");
 
+    // Direct user to implementation files
+    // Say: "See the individual problem files for actual implementations"
     printf("See individual problem files for implementations!\n");
 
     return 0;

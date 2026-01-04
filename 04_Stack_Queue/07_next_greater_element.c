@@ -60,77 +60,177 @@
 
 #include <stdio.h>
 
+// Define maximum stack size
+// Say: "I'll define the maximum size for the stack"
 #define MAX_SIZE 100
 
+// Stack structure
+// Say: "I create a stack struct to hold integers"
 typedef struct {
-    int arr[MAX_SIZE];
-    int top;
+    int arr[MAX_SIZE];  // Array for stack elements
+    int top;            // Top index
 } Stack;
 
-void initStack(Stack* s) { s->top = -1; }
-int isEmpty(Stack* s) { return s->top == -1; }
-void push(Stack* s, int val) { s->arr[++s->top] = val; }
-int pop(Stack* s) { return s->arr[s->top--]; }
-int peek(Stack* s) { return s->arr[s->top]; }
+// Initialize stack
+// Say: "This initializes the stack to empty"
+void initStack(Stack* s) {
+    // Set top to -1
+    // Say: "I set top to -1 for empty stack"
+    s->top = -1;
+}
 
+// Check if empty
+// Say: "This checks if the stack is empty"
+int isEmpty(Stack* s) {
+    // Return true if top is -1
+    // Say: "I return true when top is -1"
+    return s->top == -1;
+}
+
+// Push value
+// Say: "This pushes a value onto the stack"
+void push(Stack* s, int val) {
+    // Increment top and store
+    // Say: "I increment top and store the value"
+    s->arr[++s->top] = val;
+}
+
+// Pop value
+// Say: "This pops and returns the top value"
+int pop(Stack* s) {
+    // Return and decrement
+    // Say: "I return the top value and decrement top"
+    return s->arr[s->top--];
+}
+
+// Peek at top
+// Say: "This returns the top value without removing it"
+int peek(Stack* s) {
+    // Return top value
+    // Say: "I return the value at top"
+    return s->arr[s->top];
+}
+
+// Find next greater element for each element
+// Say: "Now I'll implement the main function to find next greater elements"
 void nextGreaterElement(int arr[], int n, int result[]) {
+    // Declare stack
+    // Say: "I declare a stack to hold candidates"
     Stack s;
+
+    // Initialize stack
+    // Say: "I initialize the stack to empty"
     initStack(&s);
 
     // Process from right to left
+    // Say: "I'll traverse the array from right to left"
     for (int i = n - 1; i >= 0; i--) {
-        // Pop elements smaller than current
+        // Pop elements smaller than or equal to current
+        // Say: "First I pop all elements from stack that are smaller or equal to current"
         while (!isEmpty(&s) && peek(&s) <= arr[i]) {
+            // Pop smaller element
+            // Say: "I pop this smaller element since it can't be the answer"
             pop(&s);
         }
 
-        // If stack empty, no greater element
+        // Assign result
+        // Say: "If stack is empty, there's no greater element, so I assign -1"
         result[i] = isEmpty(&s) ? -1 : peek(&s);
+        // Say: "Otherwise, the top of stack is the next greater element"
 
         // Push current element
+        // Say: "Finally, I push the current element onto the stack"
         push(&s, arr[i]);
     }
 }
 
+// Helper function to print array
+// Say: "This is a helper function to print an array nicely"
 void printArray(int arr[], int n) {
+    // Print opening bracket
+    // Say: "I print an opening bracket"
     printf("[");
+
+    // Print each element
+    // Say: "Then I print each element with commas"
     for (int i = 0; i < n; i++) {
+        // Print element
         printf("%d", arr[i]);
-        if (i < n - 1) printf(", ");
+
+        // Print comma if not last
+        // Say: "I add a comma if it's not the last element"
+        if (i < n - 1) {
+            printf(", ");
+        }
     }
+
+    // Print closing bracket
+    // Say: "Finally I print the closing bracket and newline"
     printf("]\n");
 }
 
 int main() {
+    // Say: "Let me demonstrate the next greater element algorithm"
     printf("=== Next Greater Element ===\n\n");
 
+    // First test array
+    // Say: "I'll create the first test array"
     int arr[] = {4, 5, 2, 25};
+
+    // Get array size
+    // Say: "I calculate the array size"
     int n = 4;
+
+    // Result array
+    // Say: "I declare a result array to store answers"
     int result[4];
 
+    // Print input
+    // Say: "Let me show the input array"
     printf("Input:  ");
     printArray(arr, n);
 
+    // Find next greater elements
+    // Say: "Now I call the function to find next greater elements"
     nextGreaterElement(arr, n, result);
 
+    // Print output
+    // Say: "And here's the output"
     printf("Output: ");
     printArray(result, n);
 
+    // Print mapping
+    // Say: "Let me also show the element to NGE mapping"
     printf("\nElement → NGE:\n");
     for (int i = 0; i < n; i++) {
+        // Print each mapping
+        // Say: "I print each element and its next greater element"
         printf("  %d → %d\n", arr[i], result[i]);
     }
 
-    // Another test
+    // Second test
+    // Say: "Let me try another example"
     int arr2[] = {13, 7, 6, 12};
+
+    // Get size
+    // Say: "I get the size of the second array"
     int n2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    // Result array
+    // Say: "I declare another result array"
     int result2[4];
 
+    // Print input
+    // Say: "Here's the second input"
     printf("\nInput:  ");
     printArray(arr2, n2);
 
+    // Find NGE
+    // Say: "I find the next greater elements"
     nextGreaterElement(arr2, n2, result2);
 
+    // Print output
+    // Say: "And here's the result"
     printf("Output: ");
     printArray(result2, n2);
 

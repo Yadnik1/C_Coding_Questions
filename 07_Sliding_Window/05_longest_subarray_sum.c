@@ -37,28 +37,56 @@
 
 // Version 1: Positive integers only - Sliding Window
 int longestSubarraySumPositive(int arr[], int n, int target) {
+    // Initialize left pointer
+    // Say: "I'll start with the left pointer at index 0"
     int left = 0;
+
+    // Initialize running sum
+    // Say: "I'll initialize the running sum to 0"
     int sum = 0;
+
+    // Initialize maximum length
+    // Say: "I'll initialize the maximum length to 0"
     int maxLen = 0;
 
+    // Expand window using right pointer
+    // Say: "Now I'll expand the window using the right pointer"
     for (int right = 0; right < n; right++) {
+        // Add element at right to sum
+        // Say: "I add the element at the right pointer to the sum"
         sum += arr[right];
 
-        // Shrink window while sum > target
+        // Shrink window while sum exceeds target
+        // Say: "If the sum is greater than the target, I need to shrink the window from the left"
         while (sum > target && left <= right) {
+            // Remove element at left from sum
+            // Say: "I remove the element at the left pointer from the sum"
             sum -= arr[left];
+
+            // Move left pointer forward
+            // Say: "And I increment the left pointer"
             left++;
         }
 
-        // Check if we found target sum
+        // Check if we found the target sum
+        // Say: "Now I check if the current sum equals the target"
         if (sum == target) {
+            // Calculate current window length
+            // Say: "Yes, so I calculate the window length"
             int len = right - left + 1;
+
+            // Update maximum if current is longer
+            // Say: "I check if this is the longest subarray so far"
             if (len > maxLen) {
+                // Update maximum length
+                // Say: "Yes, so I update the maximum length"
                 maxLen = len;
             }
         }
     }
 
+    // Return maximum length found
+    // Say: "Finally, I return the maximum length"
     return maxLen;
 }
 
@@ -67,67 +95,131 @@ int longestSubarraySumPositive(int arr[], int n, int target) {
 #define HASH_SIZE 100003
 #define OFFSET 50000  // To handle negative sums
 
+// Hash entry structure
+// Say: "I'll define a hash entry structure to store sum, index, and usage flag"
 typedef struct {
-    int sum;
-    int index;
-    int used;
+    int sum;      // The prefix sum value
+    int index;    // The index where this sum occurred
+    int used;     // Flag to indicate if this entry is occupied
 } HashEntry;
 
 int longestSubarraySumMixed(int arr[], int n, int target) {
+    // Initialize hash table
+    // Say: "I'll create a hash table to store prefix sums and their indices"
     HashEntry hash[HASH_SIZE] = {0};
 
+    // Initialize maximum length
+    // Say: "I'll initialize the maximum length to 0"
     int maxLen = 0;
+
+    // Initialize prefix sum
+    // Say: "I'll initialize the prefix sum to 0"
     int prefixSum = 0;
 
-    // Store index for prefix sum 0 at position -1
+    // Store initial state: prefix sum 0 at index -1
+    // Say: "I'll store the initial prefix sum of 0 at index -1 to handle subarrays starting from index 0"
     int zeroKey = (0 + OFFSET) % HASH_SIZE;
     hash[zeroKey].sum = 0;
     hash[zeroKey].index = -1;
     hash[zeroKey].used = 1;
 
+    // Iterate through array
+    // Say: "Now I'll iterate through the array, maintaining the prefix sum"
     for (int i = 0; i < n; i++) {
+        // Add current element to prefix sum
+        // Say: "I add the current element to the prefix sum"
         prefixSum += arr[i];
 
-        // Look for (prefixSum - target) in hash
+        // Calculate what sum we're looking for in hash
+        // Say: "I calculate what prefix sum I need to find: current prefix sum minus target"
         int lookFor = prefixSum - target;
+
+        // Calculate hash key for the sum we're looking for
+        // Say: "I compute the hash key for this sum"
         int key = ((lookFor % HASH_SIZE) + HASH_SIZE + OFFSET) % HASH_SIZE;
 
+        // Check if we've seen this prefix sum before
+        // Say: "I check if this prefix sum exists in the hash table"
         if (hash[key].used && hash[key].sum == lookFor) {
+            // Calculate subarray length
+            // Say: "Yes, so I calculate the subarray length from that index to current index"
             int len = i - hash[key].index;
+
+            // Update maximum if current is longer
+            // Say: "I check if this is the longest subarray so far"
             if (len > maxLen) {
+                // Update maximum length
+                // Say: "Yes, so I update the maximum length"
                 maxLen = len;
             }
         }
 
-        // Store current prefix sum (only first occurrence for longest)
+        // Store current prefix sum (only first occurrence for longest subarray)
+        // Say: "Now I store the current prefix sum in the hash table if it's not already there"
         int curKey = ((prefixSum % HASH_SIZE) + HASH_SIZE + OFFSET) % HASH_SIZE;
+
+        // Only store if this slot is empty
+        // Say: "I only store it if this prefix sum hasn't been seen before"
         if (!hash[curKey].used) {
+            // Store sum value
+            // Say: "I store the sum value"
             hash[curKey].sum = prefixSum;
+
+            // Store index
+            // Say: "I store the current index"
             hash[curKey].index = i;
+
+            // Mark as used
+            // Say: "And I mark this entry as used"
             hash[curKey].used = 1;
         }
     }
 
+    // Return maximum length found
+    // Say: "Finally, I return the maximum length"
     return maxLen;
 }
 
 // Simple O(n²) version for verification (works with any integers)
 int longestSubarraySumBrute(int arr[], int n, int target) {
+    // Initialize maximum length
+    // Say: "For the brute force approach, I'll check all possible subarrays"
     int maxLen = 0;
 
+    // Iterate through all starting positions
+    // Say: "I iterate through all possible starting positions"
     for (int i = 0; i < n; i++) {
+        // Initialize sum for subarray starting at i
+        // Say: "For each starting position, I initialize the sum to 0"
         int sum = 0;
+
+        // Iterate through all ending positions
+        // Say: "I iterate through all possible ending positions"
         for (int j = i; j < n; j++) {
+            // Add element to sum
+            // Say: "I add the element at j to the running sum"
             sum += arr[j];
+
+            // Check if sum equals target
+            // Say: "I check if the sum equals the target"
             if (sum == target) {
+                // Calculate subarray length
+                // Say: "Yes, so I calculate the subarray length"
                 int len = j - i + 1;
+
+                // Update maximum if current is longer
+                // Say: "I check if this is the longest subarray"
                 if (len > maxLen) {
+                    // Update maximum length
+                    // Say: "Yes, so I update the maximum length"
                     maxLen = len;
                 }
             }
         }
     }
 
+    // Return maximum length found
+    // Say: "Finally, I return the maximum length"
     return maxLen;
 }
 

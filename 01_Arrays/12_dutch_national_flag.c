@@ -277,29 +277,56 @@
 #include <stdio.h>
 
 void swap(int* a, int* b) {
+    // Save first value in temp
+    // Say: "I swap two values using a temporary variable"
     int temp = *a;
+
+    // Copy second to first
     *a = *b;
+
+    // Copy temp to second
     *b = temp;
 }
 
 void dutchNationalFlag(int arr[], int n) {
+    // Initialize low pointer for 0s boundary
+    // Say: "I use three pointers for the Dutch National Flag algorithm"
+    // Say: "Low marks the boundary between zeros and ones"
     int low = 0;
+
+    // Initialize mid pointer for current element
+    // Say: "Mid is the current element I'm examining"
     int mid = 0;
+
+    // Initialize high pointer for 2s boundary
+    // Say: "And high marks the boundary between ones and twos"
     int high = n - 1;
 
+    // Process until mid crosses high
+    // Say: "I keep processing while mid hasn't crossed high"
     while (mid <= high) {
+        // Check if current element is 0
+        // Say: "If the current element is zero"
         if (arr[mid] == 0) {
+            // Swap with low and advance both
+            // Say: "I swap it with the low position and advance both low and mid"
             swap(&arr[low], &arr[mid]);
             low++;
             mid++;
         } else if (arr[mid] == 1) {
+            // Element is 1, just advance mid
+            // Say: "If it's one, it's already in the right section, so I just move mid forward"
             mid++;
         } else {  // arr[mid] == 2
+            // Swap with high and advance high only
+            // Say: "If it's two, I swap with high and move high backward"
             swap(&arr[mid], &arr[high]);
             high--;
             // Don't increment mid - need to check swapped element
+            // Say: "I don't move mid because I need to check what I just swapped in"
         }
     }
+    // Say: "When mid crosses high, all elements are partitioned into zeros, ones, and twos"
 }
 
 void printArray(int arr[], int n) {

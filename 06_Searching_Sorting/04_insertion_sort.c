@@ -54,42 +54,69 @@
 
 #include <stdio.h>
 
+// Insertion sort algorithm
+// Say: "I'll implement insertion sort which works like sorting cards in your hand"
 void insertionSort(int arr[], int n) {
+    // Start from second element (index 1)
+    // Say: "I start from index 1 because a single element is already sorted"
     for (int i = 1; i < n; i++) {
+        // Store the current element to be inserted
+        // Say: "I save the current element as key to insert into sorted portion"
         int key = arr[i];
+        // Start comparing from the element before current
+        // Say: "I initialize j to i minus 1 to compare with previous elements"
         int j = i - 1;
 
-        // Shift elements greater than key
+        // Shift elements greater than key to the right
+        // Say: "Now I shift all elements greater than key one position to the right"
         while (j >= 0 && arr[j] > key) {
+            // Move current element one position right
+            // Say: "I move this element one position right"
             arr[j + 1] = arr[j];
+            // Move to next element on the left
+            // Say: "And check the next element to the left"
             j--;
         }
 
-        // Insert key at correct position
+        // Insert key at its correct position
+        // Say: "Finally, I insert the key at its correct sorted position"
         arr[j + 1] = key;
     }
 }
 
+// Helper function to print array
 void printArray(int arr[], int n) {
+    // Print opening bracket
     printf("[");
+    // Iterate through all elements
     for (int i = 0; i < n; i++) {
+        // Print current element
         printf("%d", arr[i]);
+        // Add comma separator except after last element
         if (i < n - 1) printf(", ");
     }
+    // Print closing bracket and newline
     printf("]\n");
 }
 
 int main() {
     printf("=== Insertion Sort ===\n\n");
 
+    // Initialize unsorted test array
+    // Say: "I'll test with an unsorted array"
     int arr[] = {5, 2, 4, 6, 1, 3};
+    // Calculate array size
     int n = 6;
 
+    // Display original unsorted array
     printf("Original: ");
     printArray(arr, n);
 
+    // Sort the array using insertion sort
+    // Say: "I call insertion sort to sort the array in-place"
     insertionSort(arr, n);
 
+    // Display sorted array
     printf("Sorted:   ");
     printArray(arr, n);
 

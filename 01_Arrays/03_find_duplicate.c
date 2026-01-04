@@ -128,13 +128,23 @@
 // Method 1: Sorting approach
 int find_duplicate_sort(int arr[], int n) {
     // Create copy to avoid modifying original
+    // Say: "I'll create a copy of the array to sort without modifying the original"
     int *temp = (int *)malloc(n * sizeof(int));
+
+    // Copy all elements to temp array
+    // Say: "Let me copy all elements to the temporary array"
     for (int i = 0; i < n; i++) temp[i] = arr[i];
 
     // Simple bubble sort
+    // Say: "Now I'll sort the array using bubble sort"
     for (int i = 0; i < n - 1; i++) {
+        // Inner loop for comparisons
+        // Say: "For each position, I bubble the larger element up"
         for (int j = 0; j < n - i - 1; j++) {
+            // Compare adjacent elements
+            // Say: "If current element is greater than next, I swap them"
             if (temp[j] > temp[j + 1]) {
+                // Swap using temporary variable
                 int t = temp[j];
                 temp[j] = temp[j + 1];
                 temp[j + 1] = t;
@@ -143,36 +153,68 @@ int find_duplicate_sort(int arr[], int n) {
     }
 
     // Find adjacent duplicate
+    // Say: "After sorting, duplicates will be adjacent, so I scan for them"
     for (int i = 0; i < n - 1; i++) {
+        // Check if current equals next
+        // Say: "I check if current element equals the next one"
         if (temp[i] == temp[i + 1]) {
+            // Save the duplicate before freeing memory
             int result = temp[i];
             free(temp);
+            // Say: "Found the duplicate, so I return it"
             return result;
         }
     }
 
     free(temp);
+    // Say: "If no duplicate found, return negative 1"
     return -1;
 }
 
 // Method 2: Floyd's Cycle Detection (OPTIMAL)
 int find_duplicate_floyd(int arr[], int n) {
     // Phase 1: Find intersection point in cycle
+    // Say: "I'll use Floyd's cycle detection algorithm with two pointers"
+
+    // Initialize both pointers at the starting position
+    // Say: "I start both slow and fast pointers at index 0"
     int slow = arr[0];
     int fast = arr[0];
 
+    // Move pointers until they meet
+    // Say: "I move slow by one step and fast by two steps until they meet"
     do {
-        slow = arr[slow];         // Move 1 step
-        fast = arr[arr[fast]];    // Move 2 steps
+        // Move slow pointer one step
+        // Say: "Slow pointer takes one step"
+        slow = arr[slow];
+
+        // Move fast pointer two steps
+        // Say: "Fast pointer takes two steps at once"
+        fast = arr[arr[fast]];
     } while (slow != fast);
+    // Say: "When they meet, I know there's a cycle"
 
     // Phase 2: Find entrance to cycle (duplicate)
+    // Say: "Now I reset slow pointer to find the cycle entrance"
+
+    // Reset slow to starting position
+    // Say: "I reset slow pointer back to the start"
     slow = arr[0];
+
+    // Move both pointers one step at a time
+    // Say: "I move both pointers one step at a time until they meet again"
     while (slow != fast) {
+        // Move slow one step
+        // Say: "Move slow forward by one"
         slow = arr[slow];
+
+        // Move fast one step
+        // Say: "Move fast forward by one"
         fast = arr[fast];
     }
 
+    // Return the duplicate value
+    // Say: "Where they meet is the duplicate number"
     return slow;
 }
 

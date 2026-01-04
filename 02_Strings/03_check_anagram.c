@@ -132,55 +132,94 @@
 
 // Using character count (optimal)
 bool are_anagrams(char str1[], char str2[]) {
+    // Get length of first string
+    // Say: "First, I check if both strings have the same length"
     int len1 = strlen(str1);
+
+    // Get length of second string
     int len2 = strlen(str2);
 
     // Different lengths can't be anagrams
+    // Say: "If lengths differ, they can't be anagrams, so I return false"
     if (len1 != len2) {
         return false;
     }
 
     // Count array for 26 lowercase letters
+    // Say: "I'll use an array of 26 to count character frequencies"
     int count[26] = {0};
 
     // Increment for str1, decrement for str2
+    // Say: "I'll increment counts for str1 and decrement for str2 in one pass"
     for (int i = 0; i < len1; i++) {
+        // Increment count for character in first string
+        // Say: "For each character in str1, I increment its count"
         count[str1[i] - 'a']++;
+
+        // Decrement count for character in second string
+        // Say: "For the same position in str2, I decrement its count"
         count[str2[i] - 'a']--;
     }
 
     // Check if all counts are zero
+    // Say: "Now I check if all counts are zero, which means they're anagrams"
     for (int i = 0; i < 26; i++) {
+        // If any count is non-zero, not anagrams
+        // Say: "If any count is non-zero, the strings aren't anagrams"
         if (count[i] != 0) {
+            // Say: "Found a non-zero count, returning false"
             return false;
         }
     }
 
+    // All counts are zero, strings are anagrams
+    // Say: "All counts are zero, so the strings are anagrams"
     return true;
 }
 
 // Case-insensitive version
 bool are_anagrams_ignore_case(char str1[], char str2[]) {
+    // Get length of first string
+    // Say: "For case-insensitive anagram check, I first compare lengths"
     int len1 = strlen(str1);
+
+    // Get length of second string
     int len2 = strlen(str2);
 
+    // Different lengths can't be anagrams
+    // Say: "Different lengths mean not anagrams"
     if (len1 != len2) {
         return false;
     }
 
+    // Count array for 26 lowercase letters
+    // Say: "I create a count array for the 26 letters"
     int count[26] = {0};
 
+    // Process both strings character by character
+    // Say: "I'll convert each character to lowercase before counting"
     for (int i = 0; i < len1; i++) {
+        // Increment count for lowercase character in first string
+        // Say: "I increment the count for the lowercase version of str1's character"
         count[tolower(str1[i]) - 'a']++;
+
+        // Decrement count for lowercase character in second string
+        // Say: "And decrement for str2's lowercase character"
         count[tolower(str2[i]) - 'a']--;
     }
 
+    // Check if all counts are zero
+    // Say: "Finally, I verify all counts are zero"
     for (int i = 0; i < 26; i++) {
+        // If any count is non-zero, not anagrams
+        // Say: "Any non-zero count means they're not anagrams"
         if (count[i] != 0) {
             return false;
         }
     }
 
+    // All counts are zero, strings are anagrams
+    // Say: "All zeros, so they're anagrams regardless of case"
     return true;
 }
 

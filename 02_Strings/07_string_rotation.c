@@ -124,48 +124,86 @@
 #include <stdlib.h>
 
 bool is_rotation(char str1[], char str2[]) {
+    // Get length of first string
+    // Say: "I'll first check if both strings have the same length"
     int len1 = strlen(str1);
+
+    // Get length of second string
     int len2 = strlen(str2);
 
     // Must be same length
+    // Say: "If lengths are different, they can't be rotations"
     if (len1 != len2) {
         return false;
     }
 
     // Empty strings are rotations of each other
+    // Say: "Empty strings are considered rotations of each other"
     if (len1 == 0) {
         return true;
     }
 
     // Concatenate str1 with itself
+    // Say: "Now I'll use the concatenation trick: I'll create str1 plus str1"
     char *concat = (char *)malloc(2 * len1 + 1);
+
+    // Copy first instance of str1
+    // Say: "First, I copy str1 to the concatenated string"
     strcpy(concat, str1);
+
+    // Append second instance of str1
+    // Say: "Then I append str1 again to create the doubled string"
     strcat(concat, str1);
 
     // Check if str2 is substring of concat
+    // Say: "If str2 is a rotation, it will be a substring of this doubled string"
     bool result = (strstr(concat, str2) != NULL);
 
+    // Free allocated memory
+    // Say: "Finally, I free the memory and return the result"
     free(concat);
     return result;
 }
 
 // Alternative: Manual check without extra space
 bool is_rotation_manual(char str1[], char str2[]) {
+    // Get length and check equality
+    // Say: "This alternative method tries all possible rotation points"
     int len = strlen(str1);
+
+    // Check if lengths match
     if (len != strlen(str2)) return false;
+
+    // Handle empty strings
     if (len == 0) return true;
 
     // Try each rotation point
+    // Say: "I'll try rotating at each possible position"
     for (int i = 0; i < len; i++) {
+        // Assume this rotation works
+        // Say: "For each rotation point, I check if all characters match"
         bool match = true;
+
+        // Check all positions for this rotation
+        // Say: "I compare characters using modulo arithmetic for wrapping"
         for (int j = 0; j < len; j++) {
+            // Check if characters match at this position
+            // Say: "I check if str2 at position j matches str1 at rotated position"
             if (str2[j] != str1[(i + j) % len]) {
+                // Mismatch found
+                // Say: "If there's a mismatch, this rotation point doesn't work"
                 match = false;
                 break;
             }
         }
+
+        // If all matched, found rotation
+        // Say: "If all characters matched, I found a valid rotation"
         if (match) return true;
     }
+
+    // No rotation found
+    // Say: "If no rotation point works, they're not rotations"
     return false;
 }
 

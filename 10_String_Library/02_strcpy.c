@@ -31,47 +31,78 @@
 #include <stddef.h>
 
 // strcpy - Copy entire string
+// Say: "I'll implement strcpy by copying each character from source to destination"
 char* my_strcpy(char* dest, const char* src) {
+    // Validate input pointers to avoid crashes
+    // Say: "First, I check that both pointers are valid"
     if (dest == NULL || src == NULL) return NULL;
 
+    // Save the original destination pointer to return later
+    // Say: "I save the original dest pointer because I need to return it at the end"
     char* original = dest;
 
+    // Copy each character until we hit the null terminator
+    // Say: "Now I copy each character one by one from source to destination"
     while (*src != '\0') {
-        *dest = *src;
-        dest++;
-        src++;
+        *dest = *src;   // Copy the current character
+        dest++;         // Move destination pointer forward
+        src++;          // Move source pointer forward
     }
-    *dest = '\0';  // Don't forget null terminator!
 
+    // Don't forget to copy the null terminator!
+    // Say: "Critical step - I add the null terminator to properly end the string"
+    *dest = '\0';
+
+    // Return the original destination pointer
+    // Say: "Finally, I return the original pointer to the start of dest"
     return original;
 }
 
 // Compact one-liner version
+// Say: "Here's a more compact version that combines the copy and advance in one line"
 char* my_strcpy_compact(char* dest, const char* src) {
+    // Validate input pointers
+    // Say: "Same validation as before"
     if (dest == NULL || src == NULL) return NULL;
 
+    // Save return pointer
+    // Say: "Save the original dest pointer"
     char* ret = dest;
+
+    // Copy and advance in a single expression - stops when it copies '\0'
+    // Say: "This copies each character and advances both pointers, stopping after copying the null"
     while ((*dest++ = *src++) != '\0');
+
+    // Return original pointer
     return ret;
 }
 
 // strncpy - Copy at most n characters
+// Say: "Now I'll implement strncpy which is safer because it limits the number of characters copied"
 char* my_strncpy(char* dest, const char* src, size_t n) {
+    // Validate input pointers
+    // Say: "First, check for NULL pointers"
     if (dest == NULL || src == NULL) return NULL;
 
+    // Save original pointer to return later
+    // Say: "Save the original dest pointer to return"
     char* ret = dest;
     size_t i;
 
-    // Copy up to n chars or until '\0'
+    // Copy up to n characters or until we hit null in source
+    // Say: "I copy characters up to n, or until I hit the source's null terminator"
     for (i = 0; i < n && src[i] != '\0'; i++) {
-        dest[i] = src[i];
+        dest[i] = src[i];   // Copy one character
     }
 
-    // Pad with '\0' if src was shorter than n
+    // Important: Pad remaining space with null bytes if source was shorter than n
+    // Say: "If the source was shorter than n, I pad the rest with null bytes"
     for (; i < n; i++) {
-        dest[i] = '\0';
+        dest[i] = '\0';     // Fill with null bytes
     }
 
+    // Return original destination pointer
+    // Say: "Return the original pointer"
     return ret;
 }
 

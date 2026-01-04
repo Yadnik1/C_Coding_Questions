@@ -43,31 +43,60 @@
 #include <stdio.h>
 
 int longestOnes(int arr[], int n, int k) {
+    // Initialize left pointer of the window
+    // Say: "I'll start with the left pointer at index 0"
     int left = 0;
+
+    // Initialize count of zeros in current window
+    // Say: "I'll track the count of zeros in the current window"
     int zeros = 0;
+
+    // Initialize maximum length found
+    // Say: "I'll initialize the maximum length to 0"
     int maxLen = 0;
 
+    // Expand window using right pointer
+    // Say: "Now I'll expand the window using the right pointer"
     for (int right = 0; right < n; right++) {
-        // Expand: count zeros
+        // Check if current element is zero
+        // Say: "I check if the element at the right pointer is a zero"
         if (arr[right] == 0) {
+            // Increment zero count
+            // Say: "Yes, so I increment the count of zeros"
             zeros++;
         }
 
-        // Shrink if too many zeros
+        // Shrink window while we have too many zeros
+        // Say: "If I have more than k zeros, I need to shrink the window from the left"
         while (zeros > k) {
+            // Check if element at left is zero
+            // Say: "I check if the element at the left pointer is a zero"
             if (arr[left] == 0) {
+                // Decrement zero count
+                // Say: "Yes, so I decrement the count of zeros"
                 zeros--;
             }
+
+            // Move left pointer forward
+            // Say: "I move the left pointer forward to shrink the window"
             left++;
         }
 
-        // Update max length
+        // Calculate current window length
+        // Say: "I calculate the current window length as right minus left plus one"
         int len = right - left + 1;
+
+        // Check if current length is maximum
+        // Say: "I check if this is the longest valid window so far"
         if (len > maxLen) {
+            // Update maximum length
+            // Say: "Yes, so I update the maximum length"
             maxLen = len;
         }
     }
 
+    // Return the maximum length found
+    // Say: "Finally, I return the maximum length"
     return maxLen;
 }
 

@@ -207,40 +207,73 @@
 #include <stdio.h>
 
 // The ONE search you need
+// Say: "I'll implement binary search with the standard pattern"
 int binarySearch(int arr[], int n, int target) {
+    // Initialize search boundaries
+    // Say: "I start with low at 0 and high at n minus 1"
     int low = 0, high = n - 1;
 
+    // Binary search loop - continue while valid search space
+    // Say: "I keep searching while low is less than or equal to high"
     while (low <= high) {
+        // Calculate middle index (avoiding overflow)
+        // Say: "I calculate mid using low plus half the range to prevent overflow"
         int mid = low + (high - low) / 2;
 
+        // Check if we found the target
+        // Say: "If the middle element equals target, I found it"
         if (arr[mid] == target)
             return mid;
+        // Target is in right half
+        // Say: "If middle is less than target, I search the right half"
         else if (arr[mid] < target)
             low = mid + 1;
+        // Target is in left half
+        // Say: "Otherwise, I search the left half"
         else
             high = mid - 1;
     }
+    // Target not found in array
+    // Say: "If I exit the loop, the element wasn't found"
     return -1;
 }
 
 // The ONE sort you need
+// Say: "I'll implement insertion sort, which works like sorting cards in hand"
 void insertionSort(int arr[], int n) {
+    // Start from second element (first is already sorted)
+    // Say: "I start from index 1 since a single element is already sorted"
     for (int i = 1; i < n; i++) {
+        // Store current element to insert
+        // Say: "I save the current element as the key to insert"
         int key = arr[i];
+        // Start comparing with previous elements
+        // Say: "I start from the position just before the key"
         int j = i - 1;
 
+        // Shift elements greater than key to the right
+        // Say: "I shift all elements greater than key one position right"
         while (j >= 0 && arr[j] > key) {
+            // Move element one position right
             arr[j + 1] = arr[j];
+            // Move to next element on the left
             j--;
         }
+
+        // Insert key at correct position
+        // Say: "I insert the key at its correct position"
         arr[j + 1] = key;
     }
 }
 
+// Helper function to print array
 void printArray(int arr[], int n) {
+    // Iterate through array
     for (int i = 0; i < n; i++) {
+        // Print each element
         printf("%d ", arr[i]);
     }
+    // Print newline for formatting
     printf("\n");
 }
 
@@ -248,6 +281,7 @@ int main() {
     printf("=== The ONE Search & ONE Sort You Need ===\n\n");
 
     // Binary Search demo
+    // Declare and initialize sorted array for binary search
     int sorted[] = {1, 3, 5, 7, 9, 11, 13};
     printf("Binary Search in [1,3,5,7,9,11,13]:\n");
     printf("  Find 7: index %d\n", binarySearch(sorted, 7, 7));
@@ -255,10 +289,12 @@ int main() {
     printf("  Find 6: index %d\n\n", binarySearch(sorted, 7, 6));
 
     // Insertion Sort demo
+    // Declare and initialize unsorted array
     int unsorted[] = {5, 2, 4, 6, 1, 3};
     printf("Insertion Sort [5,2,4,6,1,3]:\n");
     printf("  Before: ");
     printArray(unsorted, 6);
+    // Sort the array
     insertionSort(unsorted, 6);
     printf("  After:  ");
     printArray(unsorted, 6);

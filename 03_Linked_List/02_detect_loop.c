@@ -226,67 +226,119 @@ Node* createNode(int data) {
 
 // Detect if loop exists
 bool hasLoop(Node* head) {
+    // Edge case: empty list has no loop
+    // Say: "First, handle the edge case of an empty list"
     if (head == NULL) return false;
 
+    // Initialize slow pointer at head
+    // Say: "I'll use Floyd's cycle detection with two pointers"
     Node* slow = head;
+
+    // Initialize fast pointer at head
+    // Say: "Both pointers start at the head"
     Node* fast = head;
 
+    // Traverse list with two speeds
+    // Say: "I'll move slow by 1 and fast by 2 until they meet or fast reaches end"
     while (fast != NULL && fast->next != NULL) {
-        slow = slow->next;           // Move 1 step
-        fast = fast->next->next;     // Move 2 steps
+        // Move slow pointer one step
+        // Say: "Slow moves one step forward"
+        slow = slow->next;
 
+        // Move fast pointer two steps
+        // Say: "Fast moves two steps forward"
+        fast = fast->next->next;
+
+        // Check if pointers met
+        // Say: "If they meet, we've found a loop"
         if (slow == fast) {
             return true;  // Loop detected!
         }
     }
 
-    return false;  // No loop
+    // Fast reached end without meeting slow
+    // Say: "Fast reached the end, so no loop exists"
+    return false;
 }
 
 // Detect loop and return start node
 Node* detectLoopStart(Node* head) {
+    // Edge case: empty list
+    // Say: "Handle empty list edge case"
     if (head == NULL) return NULL;
 
+    // Initialize pointers for phase 1
+    // Say: "Phase 1: Detect if a loop exists"
     Node* slow = head;
     Node* fast = head;
+
+    // Track whether loop was found
+    // Say: "I'll use a flag to track if we find a loop"
     bool loopExists = false;
 
     // Phase 1: Detect loop
+    // Say: "First, detect if there's a loop using the same algorithm"
     while (fast != NULL && fast->next != NULL) {
+        // Move pointers at different speeds
         slow = slow->next;
         fast = fast->next->next;
 
+        // Check for meeting point
+        // Say: "When they meet, we know a loop exists"
         if (slow == fast) {
             loopExists = true;
             break;
         }
     }
 
+    // No loop found
+    // Say: "If no loop exists, return NULL"
     if (!loopExists) return NULL;
 
     // Phase 2: Find loop start
+    // Say: "Phase 2: Find where the loop starts"
+    // Reset slow to head
+    // Say: "Reset slow to head while keeping fast at the meeting point"
     slow = head;
+
+    // Move both pointers at same speed
+    // Say: "Now move both pointers one step at a time"
     while (slow != fast) {
         slow = slow->next;
         fast = fast->next;  // Both move 1 step now
     }
 
-    return slow;  // Loop start node
+    // They meet at loop start
+    // Say: "When they meet again, that's the start of the loop"
+    return slow;
 }
 
 // Count nodes in loop
 int countLoopLength(Node* head) {
+    // Find where loop starts
+    // Say: "First find the loop start node"
     Node* loopStart = detectLoopStart(head);
+
+    // No loop case
+    // Say: "If there's no loop, return 0"
     if (loopStart == NULL) return 0;
 
+    // Start counting from 1
+    // Say: "Initialize count to 1 for the loop start node"
     int count = 1;
+
+    // Traverse the loop
+    // Say: "Traverse the loop and count nodes until we return to start"
     Node* curr = loopStart->next;
 
+    // Count until we return to start
     while (curr != loopStart) {
         count++;
         curr = curr->next;
     }
 
+    // Return total count
+    // Say: "Return the total number of nodes in the loop"
     return count;
 }
 

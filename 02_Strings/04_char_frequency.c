@@ -116,17 +116,34 @@
 
 // Count lowercase letters only
 void count_frequency_lowercase(char str[]) {
+    // Initialize count array for 26 lowercase letters
+    // Say: "I'll create an array of size 26 to count each lowercase letter"
     int count[26] = {0};
 
+    // Count each character in the string
+    // Say: "I'll iterate through the string and count each lowercase letter"
     for (int i = 0; str[i] != '\0'; i++) {
+        // Check if character is lowercase letter
+        // Say: "For each character, I check if it's a lowercase letter"
         if (str[i] >= 'a' && str[i] <= 'z') {
+            // Increment count for this character
+            // Say: "I use the character minus 'a' as the index and increment the count"
             count[str[i] - 'a']++;
         }
     }
 
+    // Print the frequencies
+    // Say: "Now I'll print the frequency of each character that appeared"
     printf("Character frequencies in \"%s\":\n", str);
+
+    // Iterate through count array
+    // Say: "I iterate through the count array to display non-zero frequencies"
     for (int i = 0; i < 26; i++) {
+        // Only print characters that appeared
+        // Say: "I only print characters that have a count greater than zero"
         if (count[i] > 0) {
+            // Print character and its count
+            // Say: "I convert the index back to a character using 'a' plus i"
             printf("  '%c' = %d\n", 'a' + i, count[i]);
         }
     }
@@ -134,18 +151,35 @@ void count_frequency_lowercase(char str[]) {
 
 // Count all ASCII characters
 void count_frequency_all(char str[]) {
+    // Initialize count array for all ASCII characters
+    // Say: "For all ASCII characters, I create an array of size 128"
     int count[128] = {0};
 
+    // Count each character in the string
+    // Say: "I'll count every character including spaces and punctuation"
     for (int i = 0; str[i] != '\0'; i++) {
+        // Use character value directly as index
+        // Say: "I use the ASCII value of each character as the array index"
         count[(int)str[i]]++;
     }
 
+    // Print the frequencies
+    // Say: "Now I'll display the frequency of all characters"
     printf("All character frequencies in \"%s\":\n", str);
+
+    // Iterate through count array
+    // Say: "I check all 128 ASCII positions for non-zero counts"
     for (int i = 0; i < 128; i++) {
+        // Only print characters that appeared
+        // Say: "I only print characters that actually appeared in the string"
         if (count[i] > 0) {
+            // Handle space character specially
+            // Say: "I handle space specially to make it visible in output"
             if (i == ' ') {
                 printf("  'SPACE' = %d\n", count[i]);
             } else if (i >= 33 && i <= 126) {
+                // Print printable characters
+                // Say: "For printable characters, I display them directly"
                 printf("  '%c' = %d\n", i, count[i]);
             }
         }
@@ -154,21 +188,48 @@ void count_frequency_all(char str[]) {
 
 // Find most frequent character
 char most_frequent(char str[]) {
+    // Initialize count array for lowercase letters
+    // Say: "To find the most frequent character, I'll count and track the maximum"
     int count[26] = {0};
+
+    // Track maximum count and corresponding character
+    // Say: "I'll keep track of the highest count seen so far"
     int max_count = 0;
+
+    // Track character with maximum count
+    // Say: "And I'll remember which character has that highest count"
     char max_char = '\0';
 
+    // Count each character and track maximum
+    // Say: "As I count characters, I'll update the maximum if I find a higher count"
     for (int i = 0; str[i] != '\0'; i++) {
+        // Convert to lowercase
+        // Say: "I convert each character to lowercase for case-insensitive counting"
         char c = tolower(str[i]);
+
+        // Check if it's a letter
+        // Say: "I only process alphabetic characters"
         if (c >= 'a' && c <= 'z') {
+            // Increment count for this character
+            // Say: "I increment the count for this character"
             count[c - 'a']++;
+
+            // Check if this is the new maximum
+            // Say: "If this character's count exceeds the current max, I update it"
             if (count[c - 'a'] > max_count) {
+                // Update maximum count
+                // Say: "I update the maximum count"
                 max_count = count[c - 'a'];
+
+                // Update character with maximum count
+                // Say: "And remember this character as the most frequent"
                 max_char = c;
             }
         }
     }
 
+    // Return the most frequent character
+    // Say: "Finally, I return the most frequent character"
     return max_char;
 }
 

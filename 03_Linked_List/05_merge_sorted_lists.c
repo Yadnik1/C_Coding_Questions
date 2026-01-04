@@ -90,24 +90,52 @@ Node* createNode(int data) {
 }
 
 Node* mergeSortedLists(Node* l1, Node* l2) {
+    // Create dummy node on stack
+    // Say: "I'll create a dummy node to simplify the merge logic"
     Node dummy;
+
+    // Initialize tail pointer
+    // Say: "Tail will track the end of our merged list"
     Node* tail = &dummy;
+
+    // Initialize dummy's next to NULL
+    // Say: "Initialize the dummy's next pointer to NULL"
     dummy.next = NULL;
 
+    // Merge while both lists have nodes
+    // Say: "I'll compare nodes from both lists and attach the smaller one"
     while (l1 != NULL && l2 != NULL) {
+        // Compare current nodes from both lists
+        // Say: "Compare the current nodes from both lists"
         if (l1->data <= l2->data) {
+            // L1's node is smaller or equal
+            // Say: "L1's value is smaller, so attach it to our result"
             tail->next = l1;
+
+            // Move l1 forward
+            // Say: "Move l1 forward to its next node"
             l1 = l1->next;
         } else {
+            // L2's node is smaller
+            // Say: "L2's value is smaller, so attach it to our result"
             tail->next = l2;
+
+            // Move l2 forward
+            // Say: "Move l2 forward to its next node"
             l2 = l2->next;
         }
+
+        // Move tail forward
+        // Say: "Move tail forward to the node we just added"
         tail = tail->next;
     }
 
-    // Attach remaining
+    // Attach remaining nodes from non-empty list
+    // Say: "Attach whichever list still has remaining nodes"
     tail->next = (l1 != NULL) ? l1 : l2;
 
+    // Return the merged list (skip dummy)
+    // Say: "Return dummy's next which is the head of our merged list"
     return dummy.next;
 }
 

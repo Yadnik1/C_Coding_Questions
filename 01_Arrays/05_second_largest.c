@@ -143,24 +143,47 @@
 #include <limits.h>
 
 int find_second_largest(int arr[], int n) {
+    // Check if array has at least 2 elements
+    // Say: "First, I check if the array has at least two elements"
     if (n < 2) {
+        // Say: "If not, there's no second largest, so I return INT_MIN"
         return INT_MIN;  // Not enough elements
     }
 
+    // Initialize largest to smallest possible integer
+    // Say: "I initialize largest to INT_MIN, the smallest possible value"
     int largest = INT_MIN;
+
+    // Initialize second largest to smallest possible integer
+    // Say: "And I also initialize second to INT_MIN"
     int second = INT_MIN;
 
+    // Iterate through each element in the array
+    // Say: "Now I'll loop through the array to find both largest and second largest"
     for (int i = 0; i < n; i++) {
+        // Check if current element is larger than largest
+        // Say: "For each element, I check if it's greater than the current largest"
         if (arr[i] > largest) {
             // New largest found, old largest becomes second
+            // Say: "If yes, the old largest becomes second largest"
             second = largest;
+
+            // Update largest to current element
+            // Say: "And I update largest to the current element"
             largest = arr[i];
         } else if (arr[i] > second && arr[i] != largest) {
+            // Check if it's second largest
+            // Say: "Otherwise, if it's greater than second but not equal to largest"
+
             // New second largest (must be different from largest)
+            // Say: "I update second to this element"
             second = arr[i];
         }
+        // Say: "I continue this process for all elements"
     }
 
+    // Return the second largest element found
+    // Say: "Finally, I return the second largest element"
     return second;
 }
 

@@ -30,43 +30,68 @@
 #include <stddef.h>
 
 // strcat - Concatenate src to end of dest
+// Say: "I'll implement strcat by first finding the end of dest, then copying src there"
 char* my_strcat(char* dest, const char* src) {
+    // Validate input pointers
+    // Say: "First, I check that both pointers are valid"
     if (dest == NULL || src == NULL) return dest;
 
+    // Save original pointer to return later
+    // Say: "I save the original dest pointer to return it"
     char* ret = dest;
 
-    // Find end of dest
+    // Find the end of dest (the null terminator)
+    // Say: "Now I need to find where dest ends by looking for the null terminator"
     while (*dest != '\0') {
-        dest++;
+        dest++;     // Move forward until we find '\0'
     }
 
-    // Copy src to end of dest
+    // Now dest points to the null terminator of the original string
+    // Copy src characters to the end of dest
+    // Say: "Now I copy each character from src to the end of dest"
     while (*src != '\0') {
-        *dest++ = *src++;
+        *dest++ = *src++;   // Copy char and advance both pointers
     }
+
+    // Add the null terminator to complete the concatenated string
+    // Say: "Finally, I add the null terminator to end the combined string"
     *dest = '\0';
 
+    // Return the original destination pointer
+    // Say: "Return the original pointer to the beginning of dest"
     return ret;
 }
 
 // strncat - Concatenate at most n chars from src
+// Say: "I'll implement strncat which limits how many characters are appended"
 char* my_strncat(char* dest, const char* src, size_t n) {
+    // Validate input pointers
+    // Say: "Check for NULL pointers"
     if (dest == NULL || src == NULL) return dest;
 
+    // Save original pointer to return later
+    // Say: "Save the original dest pointer"
     char* ret = dest;
 
-    // Find end of dest
+    // Find the end of dest
+    // Say: "First, find where dest currently ends"
     while (*dest != '\0') {
-        dest++;
+        dest++;     // Move to the null terminator
     }
 
-    // Copy at most n chars from src
+    // Copy at most n characters from src
+    // Say: "Now I copy up to n characters from src, or until src ends"
     while (n > 0 && *src != '\0') {
-        *dest++ = *src++;
-        n--;
+        *dest++ = *src++;   // Copy character and advance
+        n--;                // Decrement counter
     }
-    *dest = '\0';  // Always null-terminates (unlike strncpy!)
 
+    // Always null-terminate (unlike strncpy!)
+    // Say: "Important: strncat always adds a null terminator, unlike strncpy"
+    *dest = '\0';
+
+    // Return the original pointer
+    // Say: "Return the original pointer"
     return ret;
 }
 

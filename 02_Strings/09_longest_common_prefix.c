@@ -125,62 +125,107 @@
 
 // Vertical scanning approach
 char* longest_common_prefix(char* strs[], int n) {
+    // Check for empty array or empty first string
+    // Say: "First, I check for edge cases: empty array or empty first string"
     if (n == 0 || strs[0][0] == '\0') {
         return "";
     }
 
+    // Start with length of first string as max prefix
+    // Say: "I'll start by assuming the first string could be the common prefix"
     int prefix_len = strlen(strs[0]);
 
     // Compare with each string
+    // Say: "Now I compare each string with the first one to find the common prefix"
     for (int i = 1; i < n; i++) {
+        // Initialize character position
+        // Say: "For each string, I compare characters one by one"
         int j = 0;
 
         // Compare character by character
+        // Say: "I keep comparing while characters match and I haven't exceeded either string"
         while (j < prefix_len &&
                strs[i][j] != '\0' &&
                strs[0][j] == strs[i][j]) {
+            // Say: "Characters match, so I move to the next position"
             j++;
         }
 
         // Update prefix length to minimum match
+        // Say: "I update the prefix length to be the minimum I've found so far"
         prefix_len = j;
 
         // Early exit if no common prefix
+        // Say: "If prefix length becomes zero, there's no common prefix"
         if (prefix_len == 0) {
             return "";
         }
     }
 
     // Create result string
+    // Say: "Finally, I create the result string by copying the prefix"
     static char result[100];
+
+    // Copy prefix from first string
+    // Say: "I copy the first prefix_len characters from the first string"
     strncpy(result, strs[0], prefix_len);
+
+    // Null terminate the result
+    // Say: "And add a null terminator to complete the string"
     result[prefix_len] = '\0';
 
+    // Return the common prefix
+    // Say: "I return the longest common prefix"
     return result;
 }
 
 // Alternative: Find prefix between two strings first
 int common_prefix_len(char* s1, char* s2) {
+    // Initialize index
+    // Say: "This helper finds the common prefix length between two strings"
     int i = 0;
+
+    // Compare characters while they match
+    // Say: "I compare characters until they differ or a string ends"
     while (s1[i] && s2[i] && s1[i] == s2[i]) {
+        // Say: "Characters match, increment index"
         i++;
     }
+
+    // Return length of common prefix
+    // Say: "Return the length of matching prefix"
     return i;
 }
 
 char* lcp_horizontal(char* strs[], int n) {
+    // Check for empty array
+    // Say: "This is the horizontal scanning approach"
     if (n == 0) return "";
 
+    // Start with first string length
+    // Say: "I start with the full length of the first string as potential prefix"
     int prefix_len = strlen(strs[0]);
 
+    // Compare with each subsequent string
+    // Say: "I compare with each string and reduce the prefix length as needed"
     for (int i = 1; i < n; i++) {
+        // Find common prefix with this string
+        // Say: "Find how much of the prefix matches this string"
         int len = common_prefix_len(strs[0], strs[i]);
+
+        // Update to shorter prefix
+        // Say: "Take the minimum prefix length"
         if (len < prefix_len) {
             prefix_len = len;
         }
+
+        // Early exit if no prefix
+        // Say: "If no common prefix exists, return empty string"
         if (prefix_len == 0) return "";
     }
 
+    // Build result string
+    // Say: "Build the result by copying the common prefix"
     static char result[100];
     strncpy(result, strs[0], prefix_len);
     result[prefix_len] = '\0';

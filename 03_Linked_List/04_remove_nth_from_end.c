@@ -145,33 +145,65 @@ Node* createNode(int data) {
 }
 
 Node* removeNthFromEnd(Node* head, int n) {
-    // Create dummy node
+    // Create dummy node to handle edge cases
+    // Say: "I'll create a dummy node before head to handle removing the first node"
     Node* dummy = createNode(0);
+
+    // Link dummy to head
+    // Say: "Link the dummy node to the head of the list"
     dummy->next = head;
 
+    // Initialize first pointer at dummy
+    // Say: "I'll use two pointers with a gap of n+1 nodes between them"
     Node* first = dummy;
+
+    // Initialize second pointer at dummy
+    // Say: "Both pointers start at the dummy node"
     Node* second = dummy;
 
-    // Advance first by n+1 steps
+    // Advance first by n+1 steps to create gap
+    // Say: "First, move the first pointer n+1 steps ahead"
     for (int i = 0; i <= n; i++) {
         first = first->next;
     }
 
-    // Move both until first reaches NULL
+    // Move both pointers until first reaches NULL
+    // Say: "Now move both pointers together until first reaches the end"
     while (first != NULL) {
+        // Move first pointer forward
+        // Say: "Move first forward one step"
         first = first->next;
+
+        // Move second pointer forward
+        // Say: "Move second forward one step"
         second = second->next;
     }
 
-    // Remove the node after second
+    // Now second is just before the node to delete
+    // Say: "Now second is pointing to the node just before the target"
+
+    // Save node to delete for cleanup
+    // Say: "Save the node we're about to remove so we can free it"
     Node* toDelete = second->next;
+
+    // Remove the node by skipping it
+    // Say: "Remove the node by pointing second's next to the node after target"
     second->next = second->next->next;
+
+    // Free the removed node
+    // Say: "Free the memory of the removed node"
     free(toDelete);
 
-    // Get new head and free dummy
+    // Get new head from dummy
+    // Say: "The new head is dummy's next"
     Node* newHead = dummy->next;
+
+    // Free dummy node
+    // Say: "Free the dummy node we created"
     free(dummy);
 
+    // Return new head
+    // Say: "Return the new head of the list"
     return newHead;
 }
 

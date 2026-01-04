@@ -129,19 +129,37 @@
 #include <string.h>
 
 void reverse_string(char str[]) {
+    // Initialize left pointer at the start
+    // Say: "I'll use two pointers to reverse the string in place"
     int left = 0;
+
+    // Initialize right pointer at the end
+    // Say: "Left starts at index 0, right starts at the last character"
     int right = strlen(str) - 1;
 
+    // Keep swapping until pointers meet in the middle
+    // Say: "I'll swap characters from both ends and move the pointers inward"
     while (left < right) {
-        // Swap characters
+        // Save the left character in a temporary variable
+        // Say: "First, I save the left character in temp to avoid losing it"
         char temp = str[left];
+
+        // Copy right character to left position
+        // Say: "Then I copy the right character to the left position"
         str[left] = str[right];
+
+        // Copy saved character to right position
+        // Say: "Finally, I copy the saved character to the right position"
         str[right] = temp;
 
-        // Move pointers
+        // Move left pointer one step to the right
+        // Say: "Now I move both pointers toward the center"
         left++;
+
+        // Move right pointer one step to the left
         right--;
     }
+    // Say: "Once the pointers cross, the string is fully reversed"
 }
 
 int main() {

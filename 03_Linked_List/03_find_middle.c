@@ -141,31 +141,61 @@ Node* createNode(int data) {
 
 // Find middle (returns second middle for even length)
 Node* findMiddle(Node* head) {
+    // Edge case: empty list
+    // Say: "First check if the list is empty"
     if (head == NULL) return NULL;
 
+    // Initialize slow pointer at head
+    // Say: "I'll use the tortoise and hare technique with two pointers"
     Node* slow = head;
+
+    // Initialize fast pointer at head
+    // Say: "Both pointers start at the head"
     Node* fast = head;
 
+    // Traverse until fast reaches end
+    // Say: "Move slow by 1 and fast by 2 until fast reaches the end"
     while (fast != NULL && fast->next != NULL) {
+        // Move slow one step
+        // Say: "Slow moves one step forward"
         slow = slow->next;
+
+        // Move fast two steps
+        // Say: "Fast moves two steps forward"
         fast = fast->next->next;
     }
 
+    // When fast reaches end, slow is at middle
+    // Say: "When fast reaches the end, slow is at the middle"
     return slow;
 }
 
 // Find first middle for even length
 Node* findFirstMiddle(Node* head) {
+    // Edge case: empty list
+    // Say: "Handle the edge case of an empty list"
     if (head == NULL) return NULL;
 
+    // Initialize slow at head
+    // Say: "For the first middle, I'll start slow at head"
     Node* slow = head;
-    Node* fast = head->next;  // Start fast one ahead
 
+    // Initialize fast one step ahead
+    // Say: "And start fast one step ahead at head->next"
+    Node* fast = head->next;
+
+    // Traverse with adjusted starting position
+    // Say: "This adjustment makes slow land on the first middle for even-length lists"
     while (fast != NULL && fast->next != NULL) {
+        // Move slow one step
         slow = slow->next;
+
+        // Move fast two steps
         fast = fast->next->next;
     }
 
+    // Return first middle
+    // Say: "Return slow which points to the first middle"
     return slow;
 }
 

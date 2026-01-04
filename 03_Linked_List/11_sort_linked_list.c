@@ -61,66 +61,119 @@ Node* createNode(int data) {
 
 // Find middle node (slow/fast pointer)
 Node* getMiddle(Node* head) {
+    // Edge case: empty or single node
+    // Say: "Handle the base case of empty or single node"
     if (head == NULL || head->next == NULL) {
         return head;
     }
 
+    // Initialize slow pointer
+    // Say: "I'll use slow and fast pointers to find the middle"
     Node* slow = head;
+
+    // Initialize fast pointer one ahead for first middle
+    // Say: "Fast starts one ahead to get the first middle for even-length lists"
     Node* fast = head->next;
 
+    // Traverse to find middle
+    // Say: "Move slow by 1 and fast by 2 until fast reaches the end"
     while (fast != NULL && fast->next != NULL) {
+        // Move slow one step
+        // Say: "Move slow forward one step"
         slow = slow->next;
+
+        // Move fast two steps
+        // Say: "Move fast forward two steps"
         fast = fast->next->next;
     }
 
+    // Return middle node
+    // Say: "Return the middle node"
     return slow;
 }
 
 // Merge two sorted lists
 Node* merge(Node* left, Node* right) {
-    // Dummy node to simplify code
+    // Create dummy node to simplify code
+    // Say: "I'll use a dummy node to build the merged list"
     Node dummy;
     dummy.next = NULL;
+
+    // Tail tracks end of merged list
+    // Say: "Tail pointer will track the end of our merged list"
     Node* tail = &dummy;
 
+    // Merge while both lists have nodes
+    // Say: "Compare nodes from both lists and attach the smaller one"
     while (left != NULL && right != NULL) {
+        // Compare current nodes
+        // Say: "Compare the current values from both lists"
         if (left->data <= right->data) {
+            // Left is smaller
+            // Say: "Left's value is smaller, so attach it"
             tail->next = left;
+
+            // Move left forward
+            // Say: "Move left forward"
             left = left->next;
         } else {
+            // Right is smaller
+            // Say: "Right's value is smaller, so attach it"
             tail->next = right;
+
+            // Move right forward
+            // Say: "Move right forward"
             right = right->next;
         }
+
+        // Move tail forward
+        // Say: "Move tail to the node we just added"
         tail = tail->next;
     }
 
     // Attach remaining nodes
+    // Say: "Attach whichever list still has remaining nodes"
     if (left != NULL) {
         tail->next = left;
     } else {
         tail->next = right;
     }
 
+    // Return merged list
+    // Say: "Return the merged list starting from dummy's next"
     return dummy.next;
 }
 
 // Merge sort for linked list
 Node* mergeSort(Node* head) {
-    // Base case: empty or single node
+    // Base case: empty or single node is already sorted
+    // Say: "Base case: if empty or single node, it's already sorted"
     if (head == NULL || head->next == NULL) {
         return head;
     }
 
-    // Find middle
+    // Find middle of list
+    // Say: "Step 1: Find the middle of the list using slow/fast pointers"
     Node* middle = getMiddle(head);
-    Node* rightHalf = middle->next;
-    middle->next = NULL;  // Split the list
 
-    // Recursively sort both halves
+    // Split into right half
+    // Say: "Step 2: Split the list into two halves at the middle"
+    Node* rightHalf = middle->next;
+
+    // Split the list
+    // Say: "Break the link to split the list"
+    middle->next = NULL;
+
+    // Recursively sort left half
+    // Say: "Step 3: Recursively sort the left half"
     Node* left = mergeSort(head);
+
+    // Recursively sort right half
+    // Say: "Recursively sort the right half"
     Node* right = mergeSort(rightHalf);
 
     // Merge sorted halves
+    // Say: "Step 4: Merge the two sorted halves"
     return merge(left, right);
 }
 

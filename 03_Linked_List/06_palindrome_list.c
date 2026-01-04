@@ -65,40 +65,85 @@ Node* createNode(int data) {
 }
 
 Node* reverseList(Node* head) {
+    // Initialize previous pointer to NULL
+    // Say: "I'll reverse the list using three pointers"
     Node* prev = NULL;
+
+    // Traverse and reverse
+    // Say: "Iterate through and reverse each link"
     while (head) {
+        // Save next node
+        // Say: "Save the next node before changing pointers"
         Node* next = head->next;
+
+        // Reverse the link
+        // Say: "Reverse the current node's pointer"
         head->next = prev;
+
+        // Move prev forward
+        // Say: "Move prev to current"
         prev = head;
+
+        // Move head forward
+        // Say: "Move to next node"
         head = next;
     }
+
+    // Return new head
+    // Say: "Return the new head of reversed list"
     return prev;
 }
 
 bool isPalindrome(Node* head) {
+    // Edge case: empty or single node is palindrome
+    // Say: "First handle edge cases - empty or single node is a palindrome"
     if (head == NULL || head->next == NULL) return true;
 
-    // Find middle
+    // Find middle of list
+    // Say: "Step 1: Find the middle using slow and fast pointers"
     Node* slow = head;
     Node* fast = head;
+
+    // Use fast->next->next to find first middle for even length
+    // Say: "Move slow by 1 and fast by 2 to find the middle"
     while (fast->next && fast->next->next) {
+        // Move slow one step
         slow = slow->next;
+
+        // Move fast two steps
         fast = fast->next->next;
     }
 
-    // Reverse second half
+    // Reverse second half starting from slow->next
+    // Say: "Step 2: Reverse the second half of the list"
     Node* secondHalf = reverseList(slow->next);
+
+    // Keep pointer to first half
+    // Say: "Keep a pointer to the first half starting from head"
     Node* firstHalf = head;
 
-    // Compare
+    // Compare both halves
+    // Say: "Step 3: Compare the first half with the reversed second half"
     while (secondHalf) {
+        // Check if values match
+        // Say: "Compare corresponding values from both halves"
         if (firstHalf->data != secondHalf->data) {
+            // Mismatch found
+            // Say: "Found a mismatch, so it's not a palindrome"
             return false;
         }
+
+        // Move to next node in first half
+        // Say: "Move to next node in first half"
         firstHalf = firstHalf->next;
+
+        // Move to next node in second half
+        // Say: "Move to next node in second half"
         secondHalf = secondHalf->next;
     }
 
+    // All values matched
+    // Say: "All values matched, so it's a palindrome"
     return true;
 }
 

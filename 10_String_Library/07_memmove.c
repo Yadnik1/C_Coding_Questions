@@ -40,31 +40,51 @@
 #include <stdio.h>
 #include <stddef.h>
 
+// memmove - Copy n bytes, handling overlap correctly
+// Say: "I'll implement memmove which handles overlapping memory by choosing copy direction"
 void* my_memmove(void* dest, const void* src, size_t n) {
+    // Handle edge cases: NULL pointers or zero bytes
+    // Say: "First, I check for NULL pointers or zero bytes to copy"
     if (dest == NULL || src == NULL || n == 0) return dest;
 
+    // Cast to byte pointers for byte-level access
+    // Say: "I cast both pointers to unsigned char for byte operations"
     unsigned char* d = (unsigned char*)dest;
     const unsigned char* s = (const unsigned char*)src;
 
+    // Check if dest is before src in memory
+    // Say: "If dest is before src, I can safely copy forward"
     if (d < s) {
         // No overlap risk OR dest before src
-        // Copy forward (beginning to end)
+        // Copy forward (beginning to end) is safe
+        // Say: "I copy from the beginning to the end"
         while (n > 0) {
-            *d++ = *s++;
-            n--;
-        }
-    } else if (d > s) {
-        // Potential overlap with dest after src
-        // Copy backward (end to beginning)
-        d += n;
-        s += n;
-        while (n > 0) {
-            *--d = *--s;
-            n--;
+            *d++ = *s++;    // Copy byte and advance
+            n--;            // Decrement count
         }
     }
-    // If d == s, nothing to do
+    // Check if dest is after src in memory
+    // Say: "If dest is after src, there might be overlap, so I copy backward"
+    else if (d > s) {
+        // Potential overlap with dest after src
+        // Copy backward (end to beginning) to avoid overwriting source
+        // Say: "I start from the end and copy backward to avoid overwriting source data"
 
+        // Move pointers to end of regions
+        d += n;     // Point past the end
+        s += n;     // Point past the end
+
+        // Copy from end to beginning
+        while (n > 0) {
+            *--d = *--s;    // Pre-decrement then copy
+            n--;            // Decrement count
+        }
+    }
+    // If d == s, nothing to do (source and dest are the same)
+    // Say: "If pointers are equal, no copy is needed"
+
+    // Return the original destination pointer
+    // Say: "Return the original dest pointer"
     return dest;
 }
 

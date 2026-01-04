@@ -45,54 +45,83 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// memset - Fill memory with a byte value
+// Say: "I'll implement memset by filling each byte of memory with the specified value"
 void* my_memset(void* ptr, int value, size_t n) {
+    // Check for NULL pointer
+    // Say: "First, I check if the pointer is NULL"
     if (ptr == NULL) return NULL;
 
+    // Cast to unsigned char pointer to work with individual bytes
+    // Say: "I cast the void pointer to unsigned char pointer so I can write byte by byte"
     unsigned char* p = (unsigned char*)ptr;
+
+    // Convert value to unsigned char (only lowest byte is used)
+    // Say: "I cast the value to unsigned char because memset works on bytes"
     unsigned char v = (unsigned char)value;
 
+    // Fill n bytes with the value
+    // Say: "Now I write the byte value to each of the n bytes in memory"
     while (n > 0) {
-        *p++ = v;
-        n--;
+        *p++ = v;   // Write value and advance pointer
+        n--;        // Decrement remaining count
     }
 
+    // Return the original pointer
+    // Say: "Finally, I return the original pointer"
     return ptr;
 }
 
 // Optimized version (word-at-a-time for large blocks)
+// Say: "Here's an optimized version that fills 8 bytes at a time for better performance"
 void* my_memset_fast(void* ptr, int value, size_t n) {
+    // Check for NULL pointer
+    // Say: "Check for NULL first"
     if (ptr == NULL) return NULL;
 
+    // Set up byte pointer and value
     unsigned char* p = (unsigned char*)ptr;
     unsigned char v = (unsigned char)value;
 
-    // Fill byte-by-byte for small sizes or alignment
-    while (n > 0 && ((uintptr_t)p & 7)) {  // Align to 8 bytes
-        *p++ = v;
-        n--;
+    // Fill byte-by-byte until we reach 8-byte alignment
+    // Say: "First, I fill bytes one at a time until the pointer is 8-byte aligned"
+    while (n > 0 && ((uintptr_t)p & 7)) {  // Check if lowest 3 bits are non-zero
+        *p++ = v;   // Write one byte
+        n--;        // Decrement count
     }
 
-    // Fill 8 bytes at a time
+    // Fill 8 bytes at a time for better performance
+    // Say: "Now that we're aligned, I can fill 8 bytes at a time"
     if (n >= 8) {
+        // Create a 64-bit pattern by repeating the byte value
+        // Say: "I create a 64-bit value with the byte repeated 8 times"
         uint64_t pattern = v;
-        pattern |= pattern << 8;
-        pattern |= pattern << 16;
-        pattern |= pattern << 32;
+        pattern |= pattern << 8;    // Repeat to 2 bytes
+        pattern |= pattern << 16;   // Repeat to 4 bytes
+        pattern |= pattern << 32;   // Repeat to 8 bytes
 
+        // Cast to 64-bit pointer for word-sized writes
         uint64_t* p64 = (uint64_t*)p;
+
+        // Write 8 bytes at a time
+        // Say: "I write 64 bits at a time while we have at least 8 bytes left"
         while (n >= 8) {
-            *p64++ = pattern;
-            n -= 8;
+            *p64++ = pattern;   // Write 8 bytes
+            n -= 8;             // Decrement by 8
         }
+
+        // Update byte pointer to where we left off
         p = (unsigned char*)p64;
     }
 
-    // Fill remaining bytes
+    // Fill remaining bytes (less than 8)
+    // Say: "Finally, I fill any remaining bytes one at a time"
     while (n > 0) {
-        *p++ = v;
+        *p++ = v;   // Write remaining bytes
         n--;
     }
 
+    // Return the original pointer
     return ptr;
 }
 

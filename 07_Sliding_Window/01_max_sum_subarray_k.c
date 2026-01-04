@@ -54,24 +54,44 @@
 #include <stdio.h>
 
 int maxSumSubarray(int arr[], int n, int k) {
+    // Edge case: check if we have enough elements
+    // Say: "First, I'll check if the array has at least k elements"
     if (n < k) return -1;
 
-    // Build first window
+    // Build first window of size k
+    // Say: "I'll initialize a variable to track the window sum"
     int windowSum = 0;
+
+    // Loop to sum first k elements
+    // Say: "Now I'll build the first window by summing the first k elements"
     for (int i = 0; i < k; i++) {
+        // Add element to window sum
+        // Say: "I add the element at index i to the window sum"
         windowSum += arr[i];
     }
 
+    // Initialize max sum with first window's sum
+    // Say: "I'll initialize the maximum sum with the first window's sum"
     int maxSum = windowSum;
 
-    // Slide the window
+    // Slide the window from position k to end
+    // Say: "Now I'll slide the window across the rest of the array"
     for (int i = k; i < n; i++) {
+        // Add new element (at right), remove old element (at left)
+        // Say: "I slide the window by adding the new element at index i and removing the element at index i minus k"
         windowSum += arr[i] - arr[i - k];  // Add new element, remove old
+
+        // Check if current window sum is greater
+        // Say: "I check if the current window sum is greater than the maximum"
         if (windowSum > maxSum) {
+            // Update maximum sum
+            // Say: "Yes, so I update the maximum sum"
             maxSum = windowSum;
         }
     }
 
+    // Return the maximum sum found
+    // Say: "Finally, I return the maximum sum"
     return maxSum;
 }
 

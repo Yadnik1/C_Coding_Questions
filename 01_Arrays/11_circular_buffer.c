@@ -144,51 +144,95 @@ typedef struct {
 } CircularBuffer;
 
 void buffer_init(CircularBuffer* cb) {
+    // Initialize head pointer to zero
+    // Say: "I initialize the circular buffer with head at position zero"
     cb->head = 0;
+
+    // Initialize tail pointer to zero
+    // Say: "And tail also at position zero, indicating empty buffer"
     cb->tail = 0;
+
+    // Clear all buffer data
+    // Say: "I clear all the data in the buffer to zero"
     memset(cb->data, 0, BUFFER_SIZE);
 }
 
 bool buffer_is_empty(CircularBuffer* cb) {
+    // Check if head equals tail
+    // Say: "The buffer is empty when head equals tail"
     return cb->head == cb->tail;
 }
 
 bool buffer_is_full(CircularBuffer* cb) {
+    // Check if next position after head equals tail
+    // Say: "The buffer is full when head plus 1 modulo size equals tail"
+    // Say: "We keep one slot empty to distinguish full from empty"
     return ((cb->head + 1) % BUFFER_SIZE) == cb->tail;
 }
 
 int buffer_count(CircularBuffer* cb) {
+    // Calculate number of elements using circular arithmetic
+    // Say: "To count elements, I use head minus tail plus buffer size, modulo buffer size"
+    // Say: "This handles the wrap-around case correctly"
     return (cb->head - cb->tail + BUFFER_SIZE) % BUFFER_SIZE;
 }
 
 // Returns true on success, false if buffer full
 bool buffer_write(CircularBuffer* cb, unsigned char byte) {
+    // Check if buffer is full
+    // Say: "First, I check if the buffer is full"
     if (buffer_is_full(cb)) {
+        // Say: "If full, I return false to indicate buffer overflow"
         return false;  // Buffer overflow!
     }
 
+    // Write byte at head position
+    // Say: "I write the byte at the head position"
     cb->data[cb->head] = byte;
+
+    // Advance head with wrap-around
+    // Say: "Then I advance head using modulo to wrap around if needed"
     cb->head = (cb->head + 1) % BUFFER_SIZE;
+
+    // Say: "Return true to indicate successful write"
     return true;
 }
 
 // Returns true on success, false if buffer empty
 bool buffer_read(CircularBuffer* cb, unsigned char* byte) {
+    // Check if buffer is empty
+    // Say: "First, I check if the buffer is empty"
     if (buffer_is_empty(cb)) {
+        // Say: "If empty, I return false to indicate buffer underflow"
         return false;  // Buffer underflow!
     }
 
+    // Read byte from tail position
+    // Say: "I read the byte from the tail position"
     *byte = cb->data[cb->tail];
+
+    // Advance tail with wrap-around
+    // Say: "Then I advance tail using modulo to wrap around"
     cb->tail = (cb->tail + 1) % BUFFER_SIZE;
+
+    // Say: "Return true to indicate successful read"
     return true;
 }
 
 // Peek without removing
 bool buffer_peek(CircularBuffer* cb, unsigned char* byte) {
+    // Check if buffer is empty
+    // Say: "To peek, I first check if buffer is empty"
     if (buffer_is_empty(cb)) {
+        // Say: "If empty, return false"
         return false;
     }
+
+    // Read without advancing tail
+    // Say: "I read the byte at tail but don't advance the pointer"
     *byte = cb->data[cb->tail];
+
+    // Say: "This allows peeking without consuming the data"
     return true;
 }
 

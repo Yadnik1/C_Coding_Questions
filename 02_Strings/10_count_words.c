@@ -137,53 +137,103 @@
 
 // Method 1: State machine approach
 int count_words_v1(char str[]) {
+    // Initialize word counter
+    // Say: "I'll count words using a state machine approach with an in_word flag"
     int count = 0;
+
+    // Track whether we're currently inside a word
+    // Say: "I start outside any word"
     bool in_word = false;
 
+    // Process each character
+    // Say: "I'll scan through each character in the string"
     for (int i = 0; str[i] != '\0'; i++) {
+        // Check if current character is a space
+        // Say: "If I encounter a space, I mark that I'm outside a word"
         if (isspace(str[i])) {
+            // Say: "This is whitespace, so I'm outside a word"
             in_word = false;
         } else {
+            // Non-space character
+            // Say: "This is a non-space character"
             if (!in_word) {
-                count++;  // Starting a new word
+                // Starting a new word
+                // Say: "If I wasn't in a word before, this starts a new word, so I increment count"
+                count++;
             }
+
+            // Now we're inside a word
+            // Say: "Now I'm inside a word"
             in_word = true;
         }
     }
 
+    // Return total word count
+    // Say: "Finally, I return the total word count"
     return count;
 }
 
 // Method 2: Check previous character
 int count_words_v2(char str[]) {
+    // Initialize word counter
+    // Say: "This alternative checks if each character starts a new word"
     int count = 0;
+
+    // Get string length
+    // Say: "I get the string length for the loop"
     int len = strlen(str);
 
+    // Process each character
+    // Say: "I scan through each character"
     for (int i = 0; i < len; i++) {
         // Non-space that starts a word
+        // Say: "If this is a non-space character"
         if (!isspace(str[i])) {
+            // Check if it's the start of a word
+            // Say: "And it's either at the beginning or follows a space, it starts a new word"
             if (i == 0 || isspace(str[i - 1])) {
+                // Say: "This is the start of a word, increment count"
                 count++;
             }
         }
     }
 
+    // Return total word count
+    // Say: "Return the total number of words found"
     return count;
 }
 
 // Method 3: Using strtok (modifies string!)
 int count_words_strtok(char str[]) {
+    // Make a copy since strtok modifies the string
+    // Say: "For strtok method, I need to copy the string since strtok modifies it"
     char copy[1000];
+
+    // Copy the string
+    // Say: "I create a copy of the original string"
     strcpy(copy, str);
 
+    // Initialize counter
+    // Say: "Initialize word counter to zero"
     int count = 0;
+
+    // Get first token
+    // Say: "I use strtok to split by spaces, tabs, and newlines"
     char *token = strtok(copy, " \t\n");
 
+    // Count tokens
+    // Say: "I count each token returned by strtok"
     while (token != NULL) {
+        // Say: "Found a word, increment count"
         count++;
+
+        // Get next token
+        // Say: "Get the next token"
         token = strtok(NULL, " \t\n");
     }
 
+    // Return count
+    // Say: "Return the total word count"
     return count;
 }
 

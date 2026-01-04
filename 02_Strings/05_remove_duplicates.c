@@ -152,35 +152,73 @@
 #include <stdbool.h>
 
 void remove_duplicates(char str[]) {
+    // Create boolean array to track seen characters
+    // Say: "I'll use a boolean array to track which characters I've already seen"
     bool seen[26] = {false};
+
+    // Initialize write pointer at start
+    // Say: "I'll use a write pointer to track where to place unique characters"
     int write = 0;
 
+    // Iterate through string with read pointer
+    // Say: "I'll scan through the string with a read pointer"
     for (int read = 0; str[read] != '\0'; read++) {
+        // Calculate array index for this character
+        // Say: "I convert the character to an index by subtracting 'a'"
         int index = str[read] - 'a';
 
+        // Check if character has been seen before
+        // Say: "I check if this character has been seen before"
         if (!seen[index]) {
+            // Mark character as seen
+            // Say: "It's new, so I mark it as seen"
             seen[index] = true;
+
+            // Write character to write position
+            // Say: "And I write it to the write position"
             str[write++] = str[read];
         }
+        // Say: "If character was already seen, I just skip it"
     }
 
+    // Add null terminator at write position
+    // Say: "Finally, I add a null terminator to end the string"
     str[write] = '\0';
 }
 
 // Version that handles all ASCII
 void remove_duplicates_ascii(char str[]) {
+    // Create boolean array for all ASCII characters
+    // Say: "For all ASCII characters, I use an array of size 128"
     bool seen[128] = {false};
+
+    // Initialize write pointer
+    // Say: "I start with write pointer at position 0"
     int write = 0;
 
+    // Iterate through string
+    // Say: "I'll scan through each character in the string"
     for (int read = 0; str[read] != '\0'; read++) {
+        // Get ASCII value as index
+        // Say: "I use the ASCII value directly as the index"
         int index = (int)str[read];
 
+        // Check if character is new
+        // Say: "I check if this ASCII character is new"
         if (!seen[index]) {
+            // Mark as seen
+            // Say: "It's new, so I mark it as seen"
             seen[index] = true;
+
+            // Copy to write position
+            // Say: "And write it to the output position"
             str[write++] = str[read];
         }
+        // Say: "Duplicate characters are simply skipped"
     }
 
+    // Terminate string
+    // Say: "I add the null terminator to complete the string"
     str[write] = '\0';
 }
 

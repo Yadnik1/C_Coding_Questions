@@ -67,57 +67,95 @@
 
 // XOR method (preferred)
 void swapXOR(int *a, int *b) {
+    // Say: "First, I'll check if a and b point to the same location"
+    // Avoid self-swap issue (would result in zero)
     if (a != b) {  // Avoid self-swap issue
+        // Say: "Step 1: I'll XOR a with b and store in a"
+        // a now contains a ^ b
         *a = *a ^ *b;
+
+        // Say: "Step 2: I'll XOR the new a with b to recover original a, storing in b"
+        // b now contains original a
         *b = *a ^ *b;
+
+        // Say: "Step 3: I'll XOR the new a with new b to recover original b, storing in a"
+        // a now contains original b
         *a = *a ^ *b;
     }
 }
 
 // Arithmetic method (risk of overflow)
 void swapArithmetic(int *a, int *b) {
+    // Say: "Step 1: I'll add a and b, storing the sum in a"
+    // a now contains sum of both
     *a = *a + *b;
+
+    // Say: "Step 2: I'll subtract b from the sum to get original a, storing in b"
+    // b now contains original a
     *b = *a - *b;
+
+    // Say: "Step 3: I'll subtract new b from the sum to get original b, storing in a"
+    // a now contains original b
     *a = *a - *b;
 }
 
 // Traditional with temp (for comparison)
 void swapTemp(int *a, int *b) {
+    // Say: "I'll use a temporary variable to hold a"
+    // Store original a in temp
     int temp = *a;
+
+    // Say: "Then I'll copy b to a"
+    // Copy b to a
     *a = *b;
+
+    // Say: "Finally, I'll copy the saved value to b"
+    // Copy saved a to b
     *b = temp;
 }
 
 int main() {
     printf("=== Swap Without Temp ===\n\n");
 
+    // Declare variables for testing
     int x, y;
 
     // XOR method
+    // Initialize test values
     x = 5; y = 3;
     printf("XOR Method:\n");
     printf("Before: x = %d, y = %d\n", x, y);
+    // Perform XOR swap
     swapXOR(&x, &y);
     printf("After:  x = %d, y = %d\n\n", x, y);
 
     // Arithmetic method
+    // Initialize test values
     x = 10; y = 20;
     printf("Arithmetic Method:\n");
     printf("Before: x = %d, y = %d\n", x, y);
+    // Perform arithmetic swap
     swapArithmetic(&x, &y);
     printf("After:  x = %d, y = %d\n\n", x, y);
 
     // Step by step XOR
     printf("XOR Step-by-Step (a=5, b=3):\n");
+    // Initialize variables
     int a = 5, b = 3;
     printf("Initial: a=%d, b=%d\n", a, b);
 
+    // Say: "Step 1: a = a ^ b"
+    // XOR a and b, store in a
     a = a ^ b;
     printf("a = a^b: a=%d, b=%d\n", a, b);
 
+    // Say: "Step 2: b = a ^ b"
+    // XOR a and b, store in b (b now has original a)
     b = a ^ b;
     printf("b = a^b: a=%d, b=%d\n", a, b);
 
+    // Say: "Step 3: a = a ^ b"
+    // XOR a and b, store in a (a now has original b)
     a = a ^ b;
     printf("a = a^b: a=%d, b=%d\n", a, b);
 

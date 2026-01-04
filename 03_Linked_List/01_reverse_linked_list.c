@@ -164,34 +164,65 @@ Node* createNode(int data) {
 
 // Iterative reversal (PREFERRED)
 Node* reverseIterative(Node* head) {
+    // Initialize previous pointer to NULL
+    // Say: "I'll use three pointers: prev, curr, and next"
     Node* prev = NULL;
+
+    // Current pointer starts at head
+    // Say: "Current starts at the head of the list"
     Node* curr = head;
+
+    // Next pointer for temporary storage
+    // Say: "Next will temporarily store the node ahead"
     Node* next = NULL;
 
+    // Traverse until we reach the end
+    // Say: "I'll iterate through the list until curr becomes NULL"
     while (curr != NULL) {
-        next = curr->next;    // Save next
-        curr->next = prev;    // Reverse link
-        prev = curr;          // Move prev forward
-        curr = next;          // Move curr forward
+        // Save the next node before we change pointers
+        // Say: "First, save the next node so we don't lose the rest of the list"
+        next = curr->next;
+
+        // Reverse the current node's pointer
+        // Say: "Now reverse the link by pointing current's next to prev"
+        curr->next = prev;
+
+        // Move prev forward one step
+        // Say: "Move prev forward to current node"
+        prev = curr;
+
+        // Move curr forward one step
+        // Say: "Move curr forward to the next node we saved earlier"
+        curr = next;
     }
 
-    return prev;  // New head
+    // When loop ends, prev points to new head
+    // Say: "When we exit the loop, prev is pointing to the new head"
+    return prev;
 }
 
 // Recursive reversal
 Node* reverseRecursive(Node* head) {
-    // Base case
+    // Base case: empty list or single node
+    // Say: "Base case: if empty or single node, just return it"
     if (head == NULL || head->next == NULL) {
         return head;
     }
 
-    // Reverse rest of list
+    // Recursively reverse rest of list
+    // Say: "Recursively reverse everything after the current node"
     Node* newHead = reverseRecursive(head->next);
 
     // Make next node point back to current
+    // Say: "Make the next node point back to me"
     head->next->next = head;
+
+    // Current node becomes tail, points to NULL
+    // Say: "Current node is now at the end, so point to NULL"
     head->next = NULL;
 
+    // Return the new head
+    // Say: "Return the new head which came from recursion"
     return newHead;
 }
 

@@ -90,52 +90,6 @@
  *       arr[write++] = 0
  *
  * ============================================================================
- * ALTERNATIVE: SWAP METHOD
- * ============================================================================
- *
- * Instead of overwriting and filling zeros:
- *
- *   write = 0
- *   for read = 0 to n-1:
- *       if arr[read] != 0:
- *           swap(arr[write], arr[read])
- *           write++
- *
- * This naturally moves zeros to end through swaps!
- *
- * ============================================================================
- * SWAP METHOD VISUALIZATION:
- * ============================================================================
- *
- * Array: [0, 1, 0, 3, 12]
- *         ^
- *      write=0, read=0
- *
- * read=0: arr[0]=0, skip
- *
- * read=1: arr[1]=1 != 0
- *   swap(arr[0], arr[1])
- *   [1, 0, 0, 3, 12]
- *      ^
- *   write=1
- *
- * read=2: arr[2]=0, skip
- *
- * read=3: arr[3]=3 != 0
- *   swap(arr[1], arr[3])
- *   [1, 3, 0, 0, 12]
- *         ^
- *   write=2
- *
- * read=4: arr[4]=12 != 0
- *   swap(arr[2], arr[4])
- *   [1, 3, 12, 0, 0]
- *             ^
- *   write=3
- *
- * Done! [1, 3, 12, 0, 0] ✓
- *
- * ============================================================================
  * TIME COMPLEXITY: O(n)
  * ============================================================================
  * - Single pass through array
@@ -162,36 +116,59 @@
 
 // Method 1: Overwrite and fill
 void move_zeros_v1(int arr[], int n) {
+    // Initialize write pointer to track position for non-zero elements
+    // Say: "I'll use a write pointer to track where to place the next non-zero element"
     int write = 0;
 
     // Move all non-zeros to front
+    // Say: "First, I scan through the array and move all non-zero elements to the front"
     for (int read = 0; read < n; read++) {
+        // Check if current element is non-zero
+        // Say: "For each element, I check if it's not zero"
         if (arr[read] != 0) {
+            // Copy non-zero element to write position
+            // Say: "If it's non-zero, I write it at the write position and increment write"
             arr[write++] = arr[read];
         }
     }
 
     // Fill remaining with zeros
+    // Say: "After moving all non-zeros, I fill the rest of the array with zeros"
     while (write < n) {
+        // Set current position to zero
+        // Say: "I set each remaining position to zero"
         arr[write++] = 0;
     }
+    // Say: "Now all zeros are at the end while maintaining the order of non-zeros"
 }
 
 // Method 2: Swap method (single pass)
 void move_zeros_v2(int arr[], int n) {
+    // Initialize write pointer
+    // Say: "For the swap method, I also use a write pointer"
     int write = 0;
 
+    // Scan through array and swap non-zeros to front
+    // Say: "I scan through and swap non-zero elements to their correct position"
     for (int read = 0; read < n; read++) {
+        // Check if current element is non-zero
+        // Say: "Whenever I find a non-zero element"
         if (arr[read] != 0) {
             // Swap only if positions are different
+            // Say: "I swap it with the element at write position, but only if they're different"
             if (write != read) {
+                // Perform swap using temp variable
+                // Say: "I use a temp variable to swap the two elements"
                 int temp = arr[write];
                 arr[write] = arr[read];
                 arr[read] = temp;
             }
+            // Move write pointer forward
+            // Say: "Then I move the write pointer forward"
             write++;
         }
     }
+    // Say: "This naturally moves all zeros to the end through swapping"
 }
 
 void print_array(int arr[], int n) {

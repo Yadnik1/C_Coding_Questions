@@ -26,26 +26,48 @@
 #include <stdio.h>
 #include <stddef.h>
 
-// Array indexing version
+// Array indexing version - simpler to explain
+// Say: "I'll implement strlen by counting characters until the null terminator"
 size_t my_strlen(const char* str) {
+    // Check for NULL pointer to avoid dereferencing invalid memory
+    // Say: "First, I check if the pointer is NULL and return 0 if it is"
     if (str == NULL) return 0;
 
+    // Initialize length counter to zero
+    // Say: "I start with a counter at zero to track the string length"
     size_t len = 0;
+
+    // Traverse the string until we hit the null terminator
+    // Say: "Now I loop through the string, incrementing the counter for each character"
     while (str[len] != '\0') {
-        len++;
+        len++;      // Found a character, increment count
     }
+
+    // Return the total count (excludes null terminator)
+    // Say: "Finally, I return the length which doesn't include the null terminator"
     return len;
 }
 
 // Pointer version (more common in interviews)
+// Say: "I can also implement this using pointer arithmetic instead of array indexing"
 size_t my_strlen_ptr(const char* str) {
+    // Check for NULL pointer
+    // Say: "Again, I check for NULL first"
     if (str == NULL) return 0;
 
+    // Save the starting address so we can calculate the difference later
+    // Say: "I save the original pointer so I can compute the length using pointer arithmetic"
     const char* p = str;
+
+    // Walk the pointer forward until we find null terminator
+    // Say: "I advance the pointer through each character until I hit the null"
     while (*p != '\0') {
-        p++;
+        p++;        // Move to next character
     }
-    return p - str;  // Pointer arithmetic
+
+    // Calculate length by subtracting start address from end address
+    // Say: "The length is the difference between the final and initial pointer positions"
+    return p - str;  // Pointer arithmetic gives us the length
 }
 
 int main() {

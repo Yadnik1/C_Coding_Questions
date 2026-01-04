@@ -111,30 +111,51 @@
 
 // Method 1: Using Sum Formula
 int find_missing_sum(int arr[], int n) {
+    // Calculate expected sum using Gauss formula
+    // Say: "First, I calculate the expected sum using the formula n times n plus 1 divided by 2"
     int expected_sum = n * (n + 1) / 2;
+
+    // Initialize actual sum to zero
+    // Say: "I'll initialize actual sum to zero"
     int actual_sum = 0;
 
+    // Iterate through all elements in the array
+    // Say: "Now I loop through the array to calculate the actual sum"
     for (int i = 0; i < n - 1; i++) {
+        // Add current element to actual sum
+        // Say: "I add each element to the actual sum"
         actual_sum += arr[i];
     }
 
+    // Return the difference which is the missing number
+    // Say: "The missing number is expected sum minus actual sum"
     return expected_sum - actual_sum;
 }
 
 // Method 2: Using XOR (Preferred - No Overflow)
 int find_missing_xor(int arr[], int n) {
+    // Initialize XOR result to zero
+    // Say: "I'll use XOR to find the missing number, starting with zero"
     int xor_result = 0;
 
     // XOR all array elements
+    // Say: "First, I XOR all the elements in the array"
     for (int i = 0; i < n - 1; i++) {
+        // XOR current array element with result
+        // Say: "I XOR each array element with the running result"
         xor_result ^= arr[i];
     }
 
     // XOR all numbers from 1 to n
+    // Say: "Then I XOR all numbers from 1 to n"
     for (int i = 1; i <= n; i++) {
+        // XOR current number with result
+        // Say: "I XOR each number from 1 to n with the result"
         xor_result ^= i;
     }
 
+    // Return the XOR result which is the missing number
+    // Say: "The result is the missing number because all others cancel out"
     return xor_result;
 }
 

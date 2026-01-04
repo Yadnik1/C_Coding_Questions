@@ -111,50 +111,83 @@
 
 // Check if sorted in ascending order
 bool is_sorted_ascending(int arr[], int n) {
+    // Handle arrays with 0 or 1 elements
+    // Say: "First, I check if the array has zero or one element, which is always sorted"
     if (n <= 1) return true;
 
+    // Loop through array comparing adjacent elements
+    // Say: "I'll iterate through the array comparing each element with the next"
     for (int i = 0; i < n - 1; i++) {
+        // Check if current element is greater than next
+        // Say: "If I find any element greater than its next neighbor"
         if (arr[i] > arr[i + 1]) {
+            // Say: "The array is not sorted ascending, so I return false"
             return false;
         }
     }
+    // Say: "If all adjacent pairs are in order, the array is sorted"
     return true;
 }
 
 // Check if sorted in descending order
 bool is_sorted_descending(int arr[], int n) {
+    // Handle arrays with 0 or 1 elements
+    // Say: "For descending, I also handle the base case of arrays with one or zero elements"
     if (n <= 1) return true;
 
+    // Loop through array comparing adjacent elements
+    // Say: "I compare each element to see if it's greater than or equal to the next"
     for (int i = 0; i < n - 1; i++) {
+        // Check if current element is less than next
+        // Say: "If any element is less than its next neighbor"
         if (arr[i] < arr[i + 1]) {
+            // Say: "Then it's not sorted descending, so I return false"
             return false;
         }
     }
+    // Say: "All elements are in descending order, so I return true"
     return true;
 }
 
 // Check if sorted (either order)
 bool is_sorted(int arr[], int n) {
+    // Say: "To check if sorted in either direction, I check both ascending and descending"
     return is_sorted_ascending(arr, n) || is_sorted_descending(arr, n);
 }
 
 // Check if sorted and rotated
 bool is_sorted_rotated(int arr[], int n) {
+    // Handle base case
+    // Say: "For sorted and rotated, I first handle the base case"
     if (n <= 1) return true;
 
+    // Initialize violation counter
+    // Say: "I'll count how many times the order is violated"
     int violations = 0;
+
+    // Track where violation occurs
+    // Say: "And track the index where violation happens"
     int violation_index = -1;
 
+    // Count violations in the array
+    // Say: "I scan through looking for places where a larger element comes before a smaller one"
     for (int i = 0; i < n - 1; i++) {
+        // Check if current is greater than next
+        // Say: "Each time I find element greater than its neighbor, I count it as a violation"
         if (arr[i] > arr[i + 1]) {
+            // Increment violation count
             violations++;
+            // Save the violation index
             violation_index = i;
         }
     }
 
     // Check wrap-around
+    // Say: "Now I check the results"
     if (violations == 0) return true;  // Already sorted
+    // Say: "If there's exactly one violation and last element is less than or equal to first"
     if (violations == 1 && arr[n - 1] <= arr[0]) return true;
+    // Say: "Then it's a rotated sorted array, otherwise it's not sorted"
 
     return false;
 }

@@ -36,25 +36,39 @@
 #include <stdio.h>
 #include <stddef.h>
 
+// memcmp - Compare n bytes of two memory regions
+// Say: "I'll implement memcmp by comparing exactly n bytes, regardless of null terminators"
 int my_memcmp(const void* ptr1, const void* ptr2, size_t n) {
+    // Handle NULL pointers to avoid crashes
+    // Say: "First, I check for NULL pointers"
     if (ptr1 == NULL || ptr2 == NULL) {
-        if (ptr1 == ptr2) return 0;
-        return ptr1 == NULL ? -1 : 1;
+        if (ptr1 == ptr2) return 0;         // Both NULL, consider equal
+        return ptr1 == NULL ? -1 : 1;       // One NULL
     }
 
+    // Cast void pointers to unsigned char for byte-level comparison
+    // Say: "I cast both pointers to unsigned char to compare byte by byte"
     const unsigned char* p1 = (const unsigned char*)ptr1;
     const unsigned char* p2 = (const unsigned char*)ptr2;
 
+    // Compare exactly n bytes
+    // Say: "I compare each byte until I find a difference or reach n bytes"
     while (n > 0) {
+        // Check if current bytes differ
+        // Say: "If the bytes differ, I return their difference"
         if (*p1 != *p2) {
-            return *p1 - *p2;
+            return *p1 - *p2;   // Return difference of first non-matching bytes
         }
-        p1++;
-        p2++;
-        n--;
+
+        // Move to next byte in both regions
+        p1++;       // Advance first pointer
+        p2++;       // Advance second pointer
+        n--;        // Decrement remaining count
     }
 
-    return 0;  // All n bytes matched
+    // All n bytes matched
+    // Say: "If all n bytes matched, I return zero"
+    return 0;
 }
 
 int main() {

@@ -200,118 +200,7 @@
  *   7 & 1  = 0b0111 & 0b0001 = 1 → ODD
  *
  * ============================================================================
- * EMBEDDED SYSTEMS EXAMPLE: GPIO REGISTER
- * ============================================================================
- *
- * Suppose GPIO register at 0x40020014 controls 8 LEDs (one bit each):
- *
- *   volatile uint8_t *GPIO = (volatile uint8_t *)0x40020014;
- *
- *   // Turn ON LED 3
- *   *GPIO |= (1 << 3);
- *
- *   // Turn OFF LED 5
- *   *GPIO &= ~(1 << 5);
- *
- *   // Toggle LED 7
- *   *GPIO ^= (1 << 7);
- *
- *   // Check if LED 2 is ON
- *   if (*GPIO & (1 << 2)) {
- *       // LED 2 is ON
- *   }
- *
- * ============================================================================
- * IMPORTANT: USE 1U FOR UNSIGNED OPERATIONS
- * ============================================================================
- *
- * Always use 1U (unsigned) instead of 1 to avoid signed overflow:
- *
- *   BAD:  (1 << 31)   // Undefined behavior! (signed overflow)
- *   GOOD: (1U << 31)  // Safe, unsigned shift
- *
- * For 64-bit operations:
- *   GOOD: (1ULL << 63)
- *
- * ============================================================================
- * TIME COMPLEXITY: O(1)
- * ============================================================================
- * - All bit operations are single CPU instructions
- * - Constant time regardless of value
- *
- * ============================================================================
- * SPACE COMPLEXITY: O(1)
- * ============================================================================
- * - No extra memory needed
- * - Operations modify value in place
- *
- * ============================================================================
- * COMMON INTERVIEW QUESTIONS & ANSWERS:
- * ============================================================================
- *
- * Q1: "Why use (1U << n) instead of (1 << n)?"
- * A1: 1 is a signed int (typically 32 bits). Shifting a signed value left
- *     into the sign bit is UNDEFINED BEHAVIOR.
- *
- *     Example: 1 << 31 is UB on 32-bit int!
- *     But: 1U << 31 is safe (unsigned shift).
- *
- *     For 64-bit: use 1ULL << n
- *
- * -------------------------------------------------------------------------
- * Q2: "Why do we use ~(1 << n) for clearing? Why not just (0 << n)?"
- * A2: (0 << n) is always 0! It doesn't create a useful mask.
- *
- *     We need: all 1s except position n
- *     ~(1 << n) does this:
- *       1 << 3   = 0b00001000
- *       ~(1 << 3) = 0b11110111  ← AND with this clears bit 3
- *
- * -------------------------------------------------------------------------
- * Q3: "What's the difference between (num >> n) & 1 and num & (1 << n)?"
- * A3: Both check if bit n is set, but return different values:
- *
- *     (num >> n) & 1    → Returns 0 or 1 (clean boolean)
- *     num & (1 << n)    → Returns 0 or (1 << n) (non-zero is true)
- *
- *     Example: num = 0b1010, n = 3
- *     (0b1010 >> 3) & 1  = 0b1 & 1 = 1
- *     0b1010 & (1 << 3)  = 0b1010 & 0b1000 = 0b1000 = 8
- *
- *     Both are "true" in if statements, but first is cleaner for storage.
- *
- * -------------------------------------------------------------------------
- * Q4: "How would you set multiple bits at once, say bits 2, 4, and 6?"
- * A4: Create a combined mask and OR it:
- *
- *     mask = (1 << 2) | (1 << 4) | (1 << 6)
- *          = 0b01010100 = 0x54
- *
- *     num |= mask;  // Sets bits 2, 4, and 6
- *
- *     Or using hex directly: num |= 0x54;
- *
- * -------------------------------------------------------------------------
- * Q5: "In embedded systems, how do you atomically set a bit in a register?"
- * A5: In multi-threaded or interrupt contexts, read-modify-write operations
- *     are NOT atomic and can cause race conditions.
- *
- *     Solutions:
- *     1. Disable interrupts around the operation
- *        __disable_irq();
- *        REG |= (1 << 5);
- *        __enable_irq();
- *
- *     2. Use hardware bit-banding (ARM Cortex-M)
- *        *BIT_BAND_ADDR = 1;  // Atomic bit write
- *
- *     3. Use atomic builtins
- *        __atomic_or_fetch(&reg, (1 << 5), __ATOMIC_SEQ_CST);
- *
- *     4. Some hardware has SET/CLEAR registers
- *        GPIO_BSRR = (1 << 5);  // Atomic set
- *        GPIO_BRR = (1 << 5);   // Atomic clear
- *
+ * TIME: O(1) | SPACE: O(1)
  * ============================================================================
  */
 
@@ -321,44 +210,74 @@
 
 // Set bit at position n
 uint32_t setBit(uint32_t num, int n) {
+    // Say: "To set bit n, I'll OR num with a mask that has only bit n set"
+    // Say: "I'll create the mask using 1U shifted left by n positions"
+    // Create mask (1U << n) and OR with num
     return num | (1U << n);
 }
 
 // Clear bit at position n
 uint32_t clearBit(uint32_t num, int n) {
+    // Say: "To clear bit n, I'll AND num with a mask that has all 1s except bit n"
+    // Say: "First I'll create a mask with bit n set using 1U << n"
+    // Say: "Then I'll invert it with NOT operator to get all 1s except bit n"
+    // Create mask ~(1U << n) and AND with num
     return num & ~(1U << n);
 }
 
 // Toggle bit at position n
 uint32_t toggleBit(uint32_t num, int n) {
+    // Say: "To toggle bit n, I'll XOR num with a mask that has only bit n set"
+    // Say: "XOR flips the bit: 0 becomes 1, and 1 becomes 0"
+    // Create mask (1U << n) and XOR with num
     return num ^ (1U << n);
 }
 
 // Check if bit at position n is set
 bool checkBit(uint32_t num, int n) {
+    // Say: "To check bit n, I'll shift num right by n positions"
+    // Say: "Then AND with 1 to isolate the least significant bit"
+    // Shift right by n, then AND with 1
     return (num >> n) & 1;
 }
 
 // Alternative check
 bool checkBitAlt(uint32_t num, int n) {
+    // Say: "Alternatively, I can AND num with a mask that has only bit n set"
+    // Say: "If the result is non-zero, the bit is set"
+    // Create mask and AND, check if non-zero
     return (num & (1U << n)) != 0;
 }
 
 // Check if number is even
 bool isEven(int num) {
+    // Say: "To check if a number is even, I'll AND it with 1"
+    // Say: "If bit 0 is 0, the number is even"
+    // Check if LSB is 0
     return (num & 1) == 0;
 }
 
 // Check if number is odd
 bool isOdd(int num) {
+    // Say: "To check if a number is odd, I'll AND it with 1"
+    // Say: "If bit 0 is 1, the number is odd"
+    // Check if LSB is 1
     return (num & 1) == 1;
 }
 
 // Print binary representation
 void printBinary(uint32_t num, int bits) {
+    // Print binary prefix
     printf("0b");
+
+    // Say: "I'll loop from the highest bit down to bit 0"
+    // Loop from most significant to least significant bit
     for (int i = bits - 1; i >= 0; i--) {
+        // Say: "Extract bit i by shifting right and ANDing with 1"
+        // Extract and print bit at position i
         printf("%d", (num >> i) & 1);
+
+        // Add underscore separator every 4 bits for readability
         if (i > 0 && i % 4 == 0) printf("_");
     }
 }
@@ -366,39 +285,44 @@ void printBinary(uint32_t num, int bits) {
 int main() {
     printf("=== Basic Bit Operations ===\n\n");
 
+    // Initialize test number
     uint32_t num = 0b00001010;  // 10 in decimal
     printf("Original number: ");
     printBinary(num, 8);
     printf(" (%u)\n\n", num);
 
-    // SET bit
+    // SET bit demonstration
     printf("1. SET bit 2:\n");
     printf("   Before: "); printBinary(num, 8); printf("\n");
     printf("   After:  "); printBinary(setBit(num, 2), 8);
     printf(" (%u)\n\n", setBit(num, 2));
 
-    // CLEAR bit
+    // CLEAR bit demonstration
     printf("2. CLEAR bit 1:\n");
     printf("   Before: "); printBinary(num, 8); printf("\n");
     printf("   After:  "); printBinary(clearBit(num, 1), 8);
     printf(" (%u)\n\n", clearBit(num, 1));
 
-    // TOGGLE bit
+    // TOGGLE bit demonstration
     printf("3. TOGGLE bit 3:\n");
     printf("   Before: "); printBinary(num, 8); printf("\n");
     printf("   After:  "); printBinary(toggleBit(num, 3), 8);
     printf(" (%u)\n\n", toggleBit(num, 3));
 
-    // CHECK bit
+    // CHECK bit demonstration
     printf("4. CHECK bits:\n");
+    // Loop through first 4 bits
     for (int i = 0; i < 4; i++) {
+        // Check and print status of bit i
         printf("   Bit %d: %s\n", i, checkBit(num, i) ? "SET" : "CLEAR");
     }
     printf("\n");
 
-    // Even/Odd
+    // Even/Odd demonstration
     printf("5. Even/Odd check:\n");
+    // Test numbers 1 through 6
     for (int i = 1; i <= 6; i++) {
+        // Check and print even/odd status
         printf("   %d is %s\n", i, isEven(i) ? "EVEN" : "ODD");
     }
 

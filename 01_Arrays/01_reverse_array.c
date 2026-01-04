@@ -85,19 +85,38 @@
 #include <stdio.h>
 
 void reverse_array(int arr[], int n) {
+    // Initialize left pointer at the beginning of array
+    // Say: "I'll start with left pointer at index 0"
     int left = 0;
+
+    // Initialize right pointer at the end of array
+    // Say: "And right pointer at the last index, which is n minus 1"
     int right = n - 1;
 
+    // Keep swapping until pointers meet or cross
+    // Say: "I'll keep looping while left is less than right"
     while (left < right) {
-        // Swap elements
+        // Store the left element in temporary variable
+        // Say: "First, I save the left element in a temp variable"
         int temp = arr[left];
+
+        // Copy right element to left position
+        // Say: "Then I copy the right element to the left position"
         arr[left] = arr[right];
+
+        // Copy temp (original left) to right position
+        // Say: "And copy the saved left element to the right position"
         arr[right] = temp;
 
-        // Move pointers toward center
+        // Move left pointer one step right
+        // Say: "Now I move left pointer forward"
         left++;
+
+        // Move right pointer one step left
+        // Say: "And move right pointer backward"
         right--;
     }
+    // Say: "When pointers meet or cross, we're done - array is reversed"
 }
 
 void print_array(int arr[], int n) {

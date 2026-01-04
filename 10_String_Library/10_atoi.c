@@ -48,67 +48,95 @@
 #include <limits.h>
 
 // Full implementation with overflow handling
+// Say: "I'll implement atoi to convert a string to an integer, handling edge cases"
 int my_atoi(const char* str) {
+    // Check for NULL pointer
+    // Say: "First, I check if the string is NULL"
     if (str == NULL) return 0;
 
-    int i = 0;
-    int sign = 1;
-    int result = 0;
+    // Initialize variables for parsing
+    // Say: "I initialize an index, sign flag, and result accumulator"
+    int i = 0;          // Current position in string
+    int sign = 1;       // 1 for positive, -1 for negative
+    int result = 0;     // Accumulated result
 
     // Step 1: Skip leading whitespace
+    // Say: "I skip any leading whitespace characters like spaces, tabs, or newlines"
     while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n') {
-        i++;
+        i++;    // Move past whitespace
     }
 
     // Step 2: Handle optional sign
+    // Say: "I check for an optional plus or minus sign"
     if (str[i] == '-') {
-        sign = -1;
-        i++;
+        sign = -1;  // Negative number
+        i++;        // Move past the sign
     } else if (str[i] == '+') {
-        i++;
+        // sign stays 1 (positive)
+        i++;        // Move past the sign
     }
 
-    // Step 3: Convert digits
+    // Step 3: Convert digits to integer
+    // Say: "Now I process each digit, converting it to an integer"
     while (str[i] >= '0' && str[i] <= '9') {
+        // Extract the numeric value of the current digit
+        // Say: "I extract the digit by subtracting the ASCII value of zero"
         int digit = str[i] - '0';
 
         // Check for overflow BEFORE it happens
-        // INT_MAX = 2147483647
+        // Say: "Before adding the digit, I check if it would cause overflow"
+        // INT_MAX = 2147483647, so INT_MAX / 10 = 214748364
         if (result > INT_MAX / 10 ||
             (result == INT_MAX / 10 && digit > 7)) {
+            // Would overflow - return appropriate limit
+            // Say: "If it would overflow, I return INT_MAX or INT_MIN based on the sign"
             return (sign == 1) ? INT_MAX : INT_MIN;
         }
 
+        // Safe to add digit: multiply result by 10 and add new digit
+        // Say: "I multiply the current result by 10 and add the new digit"
         result = result * 10 + digit;
+
+        // Move to next character
         i++;
     }
 
+    // Apply sign and return
+    // Say: "Finally, I apply the sign and return the result"
     return sign * result;
 }
 
 // Simple version (no overflow check)
+// Say: "Here's a simpler version without overflow checking for basic cases"
 int my_atoi_simple(const char* str) {
+    // Check for NULL
+    // Say: "Check for NULL pointer"
     if (str == NULL) return 0;
 
+    // Initialize parsing variables
     int result = 0;
     int sign = 1;
     int i = 0;
 
     // Skip whitespace
+    // Say: "Skip leading spaces"
     while (str[i] == ' ') i++;
 
     // Handle sign
+    // Say: "Check for a sign character"
     if (str[i] == '-' || str[i] == '+') {
-        sign = (str[i] == '-') ? -1 : 1;
-        i++;
+        sign = (str[i] == '-') ? -1 : 1;    // Set sign based on character
+        i++;                                 // Move past sign
     }
 
     // Convert digits
+    // Say: "Convert each digit by multiplying result by 10 and adding the digit"
     while (str[i] >= '0' && str[i] <= '9') {
-        result = result * 10 + (str[i] - '0');
-        i++;
+        result = result * 10 + (str[i] - '0');  // Accumulate digit
+        i++;                                     // Move to next
     }
 
+    // Apply sign and return
     return sign * result;
 }
 

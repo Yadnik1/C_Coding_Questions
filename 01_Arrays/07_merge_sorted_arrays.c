@@ -112,153 +112,7 @@
  * arr1 = [1, 3, 5, _, _, _]  (size = n1 + n2)
  * arr2 = [2, 4, 6]
  *
- * ============================================================================
- * WHY START FROM THE END? (THE KEY INSIGHT!)
- * ============================================================================
- *
- * PROBLEM WITH STARTING FROM BEGINNING:
- *
- *   arr1 = [1, 3, 5, _, _, _]    arr2 = [2, 4, 6]
- *           ^                            ^
- *           p1                           p2
- *           ^
- *           p (write position)
- *
- *   Step 1: arr1[0]=1 < arr2[0]=2, so write 1 at position 0
- *           arr1[0] = 1  (OK, same value)
- *           Move p1 to 1, p to 1
- *
- *   Step 2: arr1[1]=3 > arr2[0]=2, so write 2 at position 1
- *           arr1[1] = 2  *** OVERWRITES 3! DATA LOST! ***
- *
- * SOLUTION: START FROM THE END!
- *
- *   The "extra space" is at the END of arr1.
- *   If we fill from the END, we write into empty space first.
- *   By the time we reach the original data, we've already read it!
- *
- * ============================================================================
- * STEP-BY-STEP IN-PLACE MERGE VISUALIZATION:
- * ============================================================================
- *
- * INITIAL STATE:
- *   arr1 = [1, 3, 5, _, _, _]    arr2 = [2, 4, 6]
- *           0  1  2  3  4  5            0  1  2
- *
- *   p1 = 2 (points to 5, last real element in arr1)
- *   p2 = 2 (points to 6, last element in arr2)
- *   p  = 5 (points to last position in arr1, where we'll write)
- *
- *   [1, 3, 5, _, _, _]    [2, 4, 6]
- *          ^p1       ^p         ^p2
- *
- * -------------------------------------------------------------------------
- * STEP 1: Compare arr1[p1]=5 vs arr2[p2]=6
- *         6 > 5, so copy 6 to arr1[p]
- *
- *   arr1[5] = arr2[2] = 6
- *   p2-- (now 1), p-- (now 4)
- *
- *   [1, 3, 5, _, _, 6]    [2, 4, 6]
- *          ^p1    ^p          ^p2
- *
- * -------------------------------------------------------------------------
- * STEP 2: Compare arr1[p1]=5 vs arr2[p2]=4
- *         5 > 4, so copy 5 to arr1[p]
- *
- *   arr1[4] = arr1[2] = 5
- *   p1-- (now 1), p-- (now 3)
- *
- *   [1, 3, 5, _, 5, 6]    [2, 4, 6]
- *       ^p1   ^p              ^p2
- *
- *   Note: arr1[2] still has 5, but p1 moved past it. It's "logically consumed"
- *
- * -------------------------------------------------------------------------
- * STEP 3: Compare arr1[p1]=3 vs arr2[p2]=4
- *         4 > 3, so copy 4 to arr1[p]
- *
- *   arr1[3] = arr2[1] = 4
- *   p2-- (now 0), p-- (now 2)
- *
- *   [1, 3, 5, 4, 5, 6]    [2, 4, 6]
- *       ^p1^p              ^p2
- *
- * -------------------------------------------------------------------------
- * STEP 4: Compare arr1[p1]=3 vs arr2[p2]=2
- *         3 > 2, so copy 3 to arr1[p]
- *
- *   arr1[2] = arr1[1] = 3
- *   p1-- (now 0), p-- (now 1)
- *
- *   [1, 3, 3, 4, 5, 6]    [2, 4, 6]
- *    ^p1^p                 ^p2
- *
- * -------------------------------------------------------------------------
- * STEP 5: Compare arr1[p1]=1 vs arr2[p2]=2
- *         2 > 1, so copy 2 to arr1[p]
- *
- *   arr1[1] = arr2[0] = 2
- *   p2-- (now -1), p-- (now 0)
- *
- *   [1, 2, 3, 4, 5, 6]    [2, 4, 6]
- *    ^p1                   (p2 done)
- *    ^p
- *
- * -------------------------------------------------------------------------
- * STEP 6: p2 < 0, so arr2 is exhausted
- *         arr1 elements are already in place!
- *         (No need to copy remaining arr1 elements)
- *
- * FINAL RESULT:
- *   [1, 2, 3, 4, 5, 6]
- *
- * ============================================================================
- * WHY THIS WORKS - THE MATHEMATICAL GUARANTEE:
- * ============================================================================
- *
- * Key observation: When we write to position p, we have p1 + p2 + 2 elements
- * left to place (p1+1 from arr1, p2+1 from arr2).
- *
- * Since p = p1 + p2 + 1 (initially, and maintained throughout):
- *   - Position p is ALWAYS >= p1
- *   - We NEVER overwrite an unread element from arr1!
- *
- * Proof by example:
- *   - Initially: p=5, p1=2, p2=2 → p > p1 ✓
- *   - After step 1: p=4, p1=2, p2=1 → p > p1 ✓
- *   - After step 2: p=3, p1=1, p2=1 → p > p1 ✓
- *   - After step 3: p=2, p1=1, p2=0 → p > p1 ✓
- *   - After step 4: p=1, p1=0, p2=0 → p > p1 ✓
- *   - After step 5: p=0, p1=0, p2=-1 → p >= p1 ✓
- *
- * ============================================================================
- * ALGORITHM PSEUDOCODE:
- * ============================================================================
- *
- *   p1 = n1-1, p2 = n2-1, p = n1+n2-1
- *
- *   while (p1 >= 0 AND p2 >= 0):
- *       if arr1[p1] > arr2[p2]:
- *           arr1[p--] = arr1[p1--]
- *       else:
- *           arr1[p--] = arr2[p2--]
- *
- *   // Only need to copy remaining arr2 elements
- *   // (arr1 elements are already in correct position)
- *   while (p2 >= 0):
- *       arr1[p--] = arr2[p2--]
- *
- * This is O(1) extra space!
- *
- * ============================================================================
- * EDGE CASES:
- * ============================================================================
- * 1. Empty arr1: Result = arr2
- * 2. Empty arr2: Result = arr1
- * 3. All arr1 < all arr2: Simple concatenation
- * 4. All arr2 < all arr1: Reversed concatenation
- * 5. Duplicate elements: Handle normally
+ * Start from the end, fill largest elements first!
  *
  * ============================================================================
  */
@@ -268,51 +122,92 @@
 
 // Standard merge with extra space
 int* merge_arrays(int arr1[], int n1, int arr2[], int n2) {
+    // Allocate memory for the result array
+    // Say: "I'll create a result array of size n1 plus n2 to hold all elements"
     int *result = (int *)malloc((n1 + n2) * sizeof(int));
+
+    // Initialize three pointers: i for arr1, j for arr2, k for result
+    // Say: "I use three pointers: i for first array, j for second array, and k for result"
     int i = 0, j = 0, k = 0;
 
-    // Compare and merge
+    // Compare and merge while both arrays have elements
+    // Say: "I compare elements from both arrays and pick the smaller one each time"
     while (i < n1 && j < n2) {
+        // Check if element in arr1 is smaller or equal
+        // Say: "If the element in array 1 is smaller or equal"
         if (arr1[i] <= arr2[j]) {
+            // Take element from arr1 and advance its pointer
+            // Say: "I take it from array 1 and move that pointer forward"
             result[k++] = arr1[i++];
         } else {
+            // Take element from arr2 and advance its pointer
+            // Say: "Otherwise, I take from array 2 and move that pointer forward"
             result[k++] = arr2[j++];
         }
     }
 
-    // Copy remaining from arr1
+    // Copy remaining from arr1 if any
+    // Say: "After one array is exhausted, I copy remaining elements from array 1 if any"
     while (i < n1) {
+        // Copy remaining element from arr1
+        // Say: "I copy each remaining element from array 1"
         result[k++] = arr1[i++];
     }
 
-    // Copy remaining from arr2
+    // Copy remaining from arr2 if any
+    // Say: "Then I copy any remaining elements from array 2"
     while (j < n2) {
+        // Copy remaining element from arr2
+        // Say: "I copy each remaining element from array 2"
         result[k++] = arr2[j++];
     }
 
+    // Return the merged result array
+    // Say: "Finally, I return the merged sorted array"
     return result;
 }
 
 // In-place merge (arr1 has extra space)
 void merge_inplace(int arr1[], int n1, int arr2[], int n2) {
     // arr1 has size n1 + n2, first n1 elements are actual data
-    int p1 = n1 - 1;       // Last element of arr1
-    int p2 = n2 - 1;       // Last element of arr2
-    int p = n1 + n2 - 1;   // Last position in result
+    // Say: "For in-place merge, array 1 has extra space at the end to hold array 2"
+
+    // Initialize pointer to last element of arr1's data
+    // Say: "I start p1 at the last actual element of array 1"
+    int p1 = n1 - 1;
+
+    // Initialize pointer to last element of arr2
+    // Say: "p2 points to the last element of array 2"
+    int p2 = n2 - 1;
+
+    // Initialize pointer to last position in merged result
+    // Say: "And p points to the last position where I'll write the result"
+    int p = n1 + n2 - 1;
 
     // Start from end, fill largest elements first
+    // Say: "The key insight is to fill from the end, comparing largest elements"
     while (p1 >= 0 && p2 >= 0) {
+        // Compare elements and take the larger one
+        // Say: "I compare elements from both arrays and take the larger one"
         if (arr1[p1] > arr2[p2]) {
+            // Take larger element from arr1
+            // Say: "If array 1's element is larger, I place it at position p"
             arr1[p--] = arr1[p1--];
         } else {
+            // Take larger element from arr2
+            // Say: "Otherwise, I place array 2's element at position p"
             arr1[p--] = arr2[p2--];
         }
     }
 
     // Copy remaining from arr2 (arr1 elements already in place)
+    // Say: "Finally, I copy any remaining elements from array 2"
     while (p2 >= 0) {
+        // Copy remaining element from arr2
+        // Say: "I copy each remaining element from array 2 to its position"
         arr1[p--] = arr2[p2--];
     }
+    // Say: "Array 1 elements are already in correct position, so no need to copy them"
 }
 
 void print_array(int arr[], int n) {

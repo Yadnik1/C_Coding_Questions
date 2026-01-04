@@ -41,73 +41,106 @@
 #include <stddef.h>
 
 // strchr - Find character in string
+// Say: "I'll implement strchr by scanning through the string until I find the character"
 char* my_strchr(const char* str, int c) {
+    // Check for NULL pointer
+    // Say: "First, I check if the string pointer is NULL"
     if (str == NULL) return NULL;
 
+    // Scan through string looking for the character
+    // Say: "I scan through each character looking for a match"
     while (*str != '\0') {
+        // Check if current character matches what we're looking for
+        // Say: "If I find the character, I return a pointer to its location"
         if (*str == (char)c) {
-            return (char*)str;
+            return (char*)str;  // Found it, return pointer to this position
         }
-        str++;
+        str++;  // Move to next character
     }
 
-    // Check if searching for null terminator
+    // Special case: searching for null terminator itself
+    // Say: "I also need to check if we're searching for the null terminator"
     if ((char)c == '\0') {
-        return (char*)str;
+        return (char*)str;  // Return pointer to the null terminator
     }
 
-    return NULL;  // Not found
+    // Character not found
+    // Say: "If not found, I return NULL"
+    return NULL;
 }
 
 // strrchr - Find LAST occurrence of character
+// Say: "I'll implement strrchr which finds the last occurrence instead of the first"
 char* my_strrchr(const char* str, int c) {
+    // Check for NULL pointer
+    // Say: "Check for NULL pointer"
     if (str == NULL) return NULL;
 
+    // Track the last position where we found the character
+    // Say: "I keep track of the last position where I found the character"
     const char* last = NULL;
 
+    // Scan entire string, updating last position each time we find it
+    // Say: "I scan the entire string, updating my pointer each time I find a match"
     while (*str != '\0') {
+        // Update last position if we find the character
         if (*str == (char)c) {
-            last = str;
+            last = str;     // Update last found position
         }
-        str++;
+        str++;  // Keep scanning
     }
 
     // Check for null terminator
+    // Say: "Check if we're looking for the null terminator"
     if ((char)c == '\0') {
-        return (char*)str;
+        return (char*)str;  // Return pointer to null terminator
     }
 
+    // Return the last position found (or NULL if never found)
+    // Say: "Return the last position where we found it, or NULL if not found"
     return (char*)last;
 }
 
 // strstr - Find substring in string
+// Say: "I'll implement strstr to find a substring within a string"
 char* my_strstr(const char* haystack, const char* needle) {
+    // Check for NULL pointers
+    // Say: "First, I check that both pointers are valid"
     if (haystack == NULL || needle == NULL) return NULL;
 
-    // Empty needle matches at start
+    // Empty needle matches at the start (standard behavior)
+    // Say: "An empty needle is defined to match at the beginning"
     if (*needle == '\0') {
         return (char*)haystack;
     }
 
+    // Try to find needle starting at each position in haystack
+    // Say: "I try matching the needle at each position in the haystack"
     while (*haystack != '\0') {
-        const char* h = haystack;
-        const char* n = needle;
+        // Set up pointers to compare from this position
+        const char* h = haystack;   // Current position in haystack
+        const char* n = needle;     // Start of needle
 
         // Try to match needle at current position
+        // Say: "At each position, I try to match the entire needle"
         while (*h == *n && *n != '\0') {
-            h++;
-            n++;
+            h++;    // Advance in haystack
+            n++;    // Advance in needle
         }
 
-        // If we reached end of needle, it's a match
+        // If we reached end of needle, we found a complete match
+        // Say: "If I matched the entire needle, I return the starting position"
         if (*n == '\0') {
-            return (char*)haystack;
+            return (char*)haystack;  // Match found at this position
         }
 
+        // No match at this position, try next position in haystack
         haystack++;
     }
 
-    return NULL;  // Not found
+    // Needle not found in haystack
+    // Say: "If no match is found, I return NULL"
+    return NULL;
 }
 
 int main() {

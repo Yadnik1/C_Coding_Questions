@@ -30,53 +30,75 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// memcpy - Copy n bytes from src to dest
+// Say: "I'll implement memcpy by copying bytes one at a time from source to destination"
 void* my_memcpy(void* dest, const void* src, size_t n) {
+    // Validate input pointers
+    // Say: "First, I check that both pointers are valid"
     if (dest == NULL || src == NULL) return NULL;
 
+    // Cast void pointers to unsigned char pointers for byte-level access
+    // Say: "I cast both pointers to unsigned char so I can copy byte by byte"
     unsigned char* d = (unsigned char*)dest;
     const unsigned char* s = (const unsigned char*)src;
 
+    // Copy n bytes from source to destination
+    // Say: "Now I copy each byte from source to destination"
     while (n > 0) {
-        *d++ = *s++;
-        n--;
+        *d++ = *s++;    // Copy byte and advance both pointers
+        n--;            // Decrement remaining count
     }
 
+    // Return the original destination pointer
+    // Say: "Return the original dest pointer"
     return dest;
 }
 
 // Optimized version (copy words when aligned)
+// Say: "Here's an optimized version that copies 8 bytes at a time when pointers are aligned"
 void* my_memcpy_fast(void* dest, const void* src, size_t n) {
+    // Validate input pointers
+    // Say: "Check for NULL pointers"
     if (dest == NULL || src == NULL) return NULL;
 
+    // Set up byte pointers
     unsigned char* d = (unsigned char*)dest;
     const unsigned char* s = (const unsigned char*)src;
 
-    // Copy bytes until aligned
-    while (n > 0 && ((uintptr_t)d & 7)) {
-        *d++ = *s++;
-        n--;
+    // Copy bytes until dest is 8-byte aligned
+    // Say: "First, I copy bytes one at a time until dest is 8-byte aligned"
+    while (n > 0 && ((uintptr_t)d & 7)) {   // Check alignment
+        *d++ = *s++;    // Copy one byte
+        n--;            // Decrement count
     }
 
-    // Copy 8 bytes at a time
+    // If src is also aligned, we can copy 8 bytes at a time
+    // Say: "If source is also aligned, I can copy 8 bytes at a time for better performance"
     if (((uintptr_t)s & 7) == 0) {  // src also aligned
+        // Cast to 64-bit pointers
         uint64_t* d64 = (uint64_t*)d;
         const uint64_t* s64 = (const uint64_t*)s;
 
+        // Copy 8 bytes at a time
+        // Say: "Copy 64 bits at a time while we have at least 8 bytes left"
         while (n >= 8) {
-            *d64++ = *s64++;
-            n -= 8;
+            *d64++ = *s64++;    // Copy 8 bytes
+            n -= 8;             // Decrement by 8
         }
 
+        // Update byte pointers to where we left off
         d = (unsigned char*)d64;
         s = (const unsigned char*)s64;
     }
 
-    // Copy remaining bytes
+    // Copy remaining bytes (less than 8)
+    // Say: "Finally, I copy any remaining bytes one at a time"
     while (n > 0) {
-        *d++ = *s++;
+        *d++ = *s++;    // Copy remaining bytes
         n--;
     }
 
+    // Return the original destination pointer
     return dest;
 }
 
