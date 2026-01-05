@@ -33,6 +33,36 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why move the pointer with smaller height?"
+ * A1: The area is limited by the shorter line. Moving the taller pointer
+ *     can only decrease width while keeping the limiting height same or less.
+ *     Moving the shorter pointer might find a taller one, potentially
+ *     increasing area despite smaller width.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Prove this greedy approach doesn't miss the optimal?"
+ * A2: Suppose optimal uses indices i and j. At some point, left <= i and right >= j.
+ *     We won't move past both - we only move the smaller, and the optimal pair
+ *     has one that's >= the other. The algorithm will find optimal or better.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What if heights are equal? Which pointer to move?"
+ * A3: Either works! Moving either gives the same next step (both will likely
+ *     need to move). Some implementations move both when equal for slight
+ *     optimization, but correctness is maintained either way.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How is this different from trapping rainwater?"
+ * A4: Container: find ONE pair of lines, water between them, nothing in between.
+ *     Trapping: water fills all valleys between bars, bars block water.
+ *     Trapping needs different approach (prefix max arrays or monotonic stack).
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -33,6 +33,33 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why doesn't this work for unsorted arrays?"
+ * A1: The greedy decision (move left for bigger, right for smaller) relies on
+ *     sorted order. In unsorted array, moving a pointer might skip the answer!
+ *     For unsorted, use hash map O(n) time O(n) space.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do you extend to Three Sum?"
+ * A2: Fix one element (iterate through array), then two-pointer on remainder.
+ *     Total: O(n²). Sort first, then skip duplicates for unique triplets.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What if there are duplicates and we need all pairs?"
+ * A3: When found, don't just return - record the pair, then skip all duplicates
+ *     from both ends (left++, right--) while values are equal to avoid
+ *     duplicate pairs in the result.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can two pointers find pairs closest to target?"
+ * A4: Yes! Track minimum |sum - target| seen so far. Update best pair when
+ *     closer. Move pointers same way: if sum < target, left++; else right--.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

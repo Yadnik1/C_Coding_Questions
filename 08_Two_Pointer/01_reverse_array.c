@@ -27,6 +27,31 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use two pointers instead of extra array?"
+ * A1: Extra array needs O(n) space. Two pointers achieve O(1) space by swapping
+ *     in-place. In embedded systems with limited memory, this is crucial!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can you reverse using XOR without temp variable?"
+ * A2: Yes, but not recommended! arr[left] ^= arr[right]; arr[right] ^= arr[left];
+ *     arr[left] ^= arr[right]; - but fails if left==right (same location).
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How do you reverse only part of an array?"
+ * A3: Pass start and end indices instead of 0 and n-1. Same algorithm!
+ *     This is used in rotate array: reverse whole, reverse first k, reverse rest.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What about reversing a linked list?"
+ * A4: Can't use array indices! Use three pointers: prev, curr, next.
+ *     Iterate and reverse each link. Still O(n) time, O(1) space.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

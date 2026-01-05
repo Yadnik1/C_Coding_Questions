@@ -25,6 +25,35 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why check left < right, not left <= right?"
+ * A1: When left == right, we're at the middle character. A single character
+ *     is always a palindrome with itself - no need to compare!
+ *     Using < vs <= doesn't affect correctness but < is cleaner.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What about 'almost palindrome' - can delete one char?"
+ * A2: When mismatch found, try two possibilities: skip left char OR skip right
+ *     char. Check if either remaining substring is palindrome.
+ *     Called "Valid Palindrome II" - still O(n).
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Is there a way to check palindrome recursively?"
+ * A3: Yes: isPalindrome(s, left, right) = (s[left]==s[right]) &&
+ *     isPalindrome(s, left+1, right-1). But uses O(n) stack space vs O(1)
+ *     iterative. Iterative is preferred.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How do you handle Unicode strings?"
+ * A4: isalnum and tolower work for ASCII only. For Unicode: use proper
+ *     Unicode-aware libraries, handle multi-byte characters correctly,
+ *     and consider locale-specific case folding rules.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

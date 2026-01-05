@@ -36,6 +36,34 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Fill zeros vs swap approach - which is better?"
+ * A1: Fill zeros does fewer writes when many zeros (writes n non-zeros + zeros).
+ *     Swap does more writes but handles special values besides 0 naturally.
+ *     Fill is cleaner; swap is more general.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can we minimize total number of writes?"
+ * A2: Yes! Only swap when fast != slow. If arr is [1,2,3,0,0], swap approach
+ *     does unnecessary swaps for 1,2,3. Check if fast != slow before swapping.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How do you move zeros to the beginning instead?"
+ * A3: Same algorithm but iterate from end! Start fast from n-1, slow from n-1,
+ *     move non-zeros to the right, fill zeros on left. Or reverse, move to end,
+ *     reverse again.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What if we need to maintain relative order of zeros too?"
+ * A4: The problem asks to maintain non-zero order, zeros go to end.
+ *     If zeros had different values (say 0, -0), this approach would merge them.
+ *     For distinct zero types, you'd need a stable partition algorithm.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

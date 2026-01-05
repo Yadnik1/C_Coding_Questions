@@ -34,6 +34,34 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why compare with arr[slow-1] instead of arr[fast-1]?"
+ * A1: We need to compare with the last UNIQUE element, not the last scanned.
+ *     arr[slow-1] is the most recently placed unique element. arr[fast-1]
+ *     could be a duplicate we skipped!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What about allowing at most 2 duplicates?"
+ * A2: Same pattern! Compare with arr[slow-2] instead of arr[slow-1].
+ *     Generalize: for at most k duplicates, compare with arr[slow-k].
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why does this only work on sorted arrays?"
+ * A3: Because duplicates are adjacent in sorted arrays. For unsorted,
+ *     you'd need a hash set to track seen elements - O(n) extra space.
+ *     Or sort first (O(n log n)) then use this algorithm.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What happens to elements after new length?"
+ * A4: They're garbage - original values or overwritten duplicates.
+ *     The problem says to return new length and only consider elements
+ *     before that. Don't access or rely on elements after new length!
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
