@@ -131,6 +131,34 @@
  * 4. n = 1: Single element, no change
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use three reversals instead of shifting elements?"
+ * A1: Single-position shifting is O(n) per shift, O(n*k) total.
+ *     Three reversals is O(n) total regardless of k!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do you convert left rotation to right rotation?"
+ * A2: Left rotate by k = Right rotate by (n - k).
+ *
+ *     Example: [1,2,3,4,5], left rotate by 2 = right rotate by 3
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What's the juggling algorithm for rotation?"
+ * A3: Alternative O(n) time, O(1) space method:
+ *
+ *     Move element at i to (i+k)%n, repeat in cycles.
+ *     Number of cycles = GCD(n, k).
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Why is k = k % n important?"
+ * A4: Rotating by n positions brings array back to original!
+ *
+ *     k = 7, n = 5: k % n = 2
+ *     Rotating by 7 = rotating by 2 (5 full rotations + 2)
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

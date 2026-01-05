@@ -145,6 +145,32 @@
  * 4. No majority: Verify phase catches this
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why does Boyer-Moore work?"
+ * A1: Majority element appears > n/2 times. When we cancel different elements,
+ *     majority will always have at least one "survivor" because it has more
+ *     than half the total count.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Do we always need the verification phase?"
+ * A2: Only if majority existence isn't guaranteed!
+ *     - Problem says "guaranteed majority exists": Skip verification
+ *     - Problem says "find IF exists": Need verification
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What about finding element appearing n/3 times?"
+ * A3: Use Boyer-Moore with TWO candidates!
+ *     At most 2 elements can appear > n/3 times.
+ *     Keep count1, count2, candidate1, candidate2.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can you use hash map instead?"
+ * A4: Yes, but O(n) space vs Boyer-Moore's O(1) space.
+ *     Hash map: Count occurrences, find element with count > n/2.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

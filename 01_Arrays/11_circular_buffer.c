@@ -125,6 +125,35 @@
  * ============================================================================
  * TIME: O(1) for all operations | SPACE: O(n) where n = buffer size
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "How do you distinguish full from empty?"
+ * A1: Three approaches:
+ *     1. Waste one slot: Full when (head+1)%SIZE == tail
+ *     2. Keep count variable: Full when count == SIZE
+ *     3. Boolean flag: Set on write, clear on read
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why use power-of-2 buffer sizes?"
+ * A2: Modulo becomes bitwise AND: index % 8 = index & 7
+ *     Much faster on embedded systems without hardware divider!
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How do you make it thread-safe for ISR use?"
+ * A3: For single producer, single consumer:
+ *     - Volatile pointers
+ *     - No locks needed if only one writer, one reader
+ *     For multiple producers/consumers: Use mutex or disable interrupts.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the overwrite mode?"
+ * A4: When buffer is full, new writes overwrite oldest data.
+ *     Used for logging/streaming where latest data is more important.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

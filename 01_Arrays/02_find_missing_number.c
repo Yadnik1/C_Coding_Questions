@@ -105,6 +105,36 @@
  * 3. n = 2, array = [2]: Missing is 1
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why is XOR better than sum formula?"
+ * A1: XOR avoids integer overflow!
+ *
+ *     Sum formula risk: For n = 100,000, sum = ~5 billion (overflow!)
+ *     XOR: Each operation stays within int range - no overflow possible.
+ *
+ *     Always mention overflow awareness in embedded interviews.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What if TWO numbers are missing?"
+ * A2: XOR alone isn't enough. Two approaches:
+ *
+ *     Method 1: XOR gives a^b, then use set bit to partition
+ *     Method 2: Use both sum and sum of squares equations
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What if range is [0, n] instead of [1, n]?"
+ * A3: Same algorithms work! Just adjust the range in XOR loop.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What if the array can contain duplicates?"
+ * A4: Different problem! Then you need:
+ *     - Sorting: O(n log n) time, O(1) space
+ *     - Hash set: O(n) time, O(n) space
+ *     - Sum/XOR won't work correctly with duplicates
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

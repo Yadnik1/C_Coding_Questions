@@ -80,6 +80,47 @@
  * 4. Odd length: Middle element stays in place
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Can you reverse without using a temp variable?"
+ * A1: Yes, using XOR swap (but not recommended):
+ *
+ *     arr[left] ^= arr[right];
+ *     arr[right] ^= arr[left];
+ *     arr[left] ^= arr[right];
+ *
+ *     Problem: Fails if left == right (same memory location)!
+ *     Stick with temp variable - it's clearer and safer.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What's the difference between reversing array vs linked list?"
+ * A2: Array reversal is simpler:
+ *
+ *     - Array: O(1) random access, swap elements directly
+ *     - Linked list: O(n) access, need to change pointers
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How would you reverse only a portion of the array?"
+ * A3: Same algorithm, just change the start and end indices:
+ *
+ *     void reverse_portion(int arr[], int start, int end);
+ *
+ *     This is used in array rotation (three reversal trick).
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can you reverse recursively?"
+ * A4: Yes, but iterative is preferred (no stack overhead):
+ *
+ *     void reverse_recursive(int arr[], int left, int right) {
+ *         if (left >= right) return;
+ *         swap(arr[left], arr[right]);
+ *         reverse_recursive(arr, left + 1, right - 1);
+ *     }
+ *
+ *     O(n/2) stack space - not ideal for embedded systems.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -115,6 +115,34 @@
  * Start from the end, fill largest elements first!
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why start from the end for in-place merge?"
+ * A1: Starting from end avoids overwriting elements we haven't processed!
+ *
+ *     If we start from beginning, copying to arr1[0] overwrites
+ *     the original arr1[0] before we use it.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How is this related to merge sort?"
+ * A2: This IS the merge step of merge sort!
+ *
+ *     Merge sort: Split array → recursively sort halves → merge
+ *     The "merge" uses exactly this algorithm.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Is this merge stable?"
+ * A3: Yes! We use <= (not <), so equal elements from arr1
+ *     come before equal elements from arr2.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What if one array is empty?"
+ * A4: The while loops handle it naturally:
+ *     - If arr1 empty: Copy all of arr2
+ *     - If arr2 empty: Copy all of arr1
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

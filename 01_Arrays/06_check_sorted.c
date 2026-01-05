@@ -104,6 +104,33 @@
  *    - Find violation, try removing either element
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Strictly sorted vs non-strictly sorted?"
+ * A1: Strictly sorted: arr[i] < arr[i+1] (no equal elements)
+ *     Non-strictly: arr[i] <= arr[i+1] (equal elements allowed)
+ *
+ *     Always clarify this requirement with the interviewer!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do you check if array is sorted and rotated?"
+ * A2: Count violations where arr[i] > arr[i+1]:
+ *     - 0 violations: Already sorted
+ *     - 1 violation AND arr[n-1] <= arr[0]: Rotated sorted
+ *     - Otherwise: Not sorted
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What if array can be sorted by removing ONE element?"
+ * A3: Find violation, try removing either arr[i] or arr[i+1],
+ *     then check if remaining array is sorted.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Early termination optimization?"
+ * A4: Yes! Return false immediately when violation found.
+ *     No need to check remaining elements.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -120,6 +120,35 @@
  * 4. Length 2: [1, 1] → 1
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why does Floyd's Cycle Detection work here?"
+ * A1: We treat array as linked list where index i points to arr[i].
+ *
+ *     Because there's a duplicate, two indices point to same value,
+ *     creating a cycle! The cycle entrance is the duplicate value.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can you modify the array? What if you can't?"
+ * A2: If you CAN modify:
+ *     - Sort and find adjacent duplicates: O(n log n)
+ *     - Mark visited by negating: O(n) time, O(1) space
+ *
+ *     If you CANNOT modify: Floyd's is perfect - O(n) time, O(1) space.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why do we use do-while for phase 1?"
+ * A3: Because slow and fast start at the same position (arr[0]).
+ *     If we used while(slow != fast), the loop wouldn't execute at all!
+ *     do-while ensures at least one iteration before checking.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the constraint that makes Floyd's work?"
+ * A4: Array values must be in range [1, n] for array of size n+1.
+ *     This ensures no out-of-bounds access and guarantees a cycle exists.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

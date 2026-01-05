@@ -110,6 +110,32 @@
  * 4. Zeros at end: [1, 2, 0, 0] → [1, 2, 0, 0]
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Overwrite vs swap method - which is better?"
+ * A1: Both are O(n) time, O(1) space. Trade-offs:
+ *     - Overwrite: Two passes (move non-zeros, then fill zeros)
+ *     - Swap: One pass, fewer writes when many non-zeros
+ *
+ *     Swap is slightly better for arrays with few zeros.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What if we want to move zeros to the FRONT?"
+ * A2: Scan from right to left, or use write pointer from end.
+ *     Same concept, just reversed direction.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Does this maintain relative order of non-zeros?"
+ * A3: Yes! Both methods preserve the order of non-zero elements.
+ *     This is called a "stable" partition.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Why check write != read before swapping?"
+ * A4: Optimization to avoid unnecessary swaps when positions are same.
+ *     Swapping element with itself wastes CPU cycles.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

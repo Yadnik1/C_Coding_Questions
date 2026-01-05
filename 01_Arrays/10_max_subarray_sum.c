@@ -131,6 +131,32 @@
  * 4. Zeros: Handle normally
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "What if all elements are negative?"
+ * A1: The algorithm handles this! It will return the LARGEST (least negative)
+ *     element. We never reset to 0, we always keep the best option.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do you track the actual subarray, not just the sum?"
+ * A2: Track start index when you reset, track end index when you update max.
+ *     Use temp_start when current_sum = arr[i], set start = temp_start
+ *     when max_sum is updated.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What's the brute force approach?"
+ * A3: Check all subarrays: O(n²) or O(n³) with naive sum calculation.
+ *     Kadane's is the optimal O(n) single-pass solution.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can Kadane's handle circular arrays?"
+ * A4: Yes with modification! Max circular sum is either:
+ *     - Normal max subarray (Kadane's result)
+ *     - Total sum minus minimum subarray
+ *     Take the larger of the two.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

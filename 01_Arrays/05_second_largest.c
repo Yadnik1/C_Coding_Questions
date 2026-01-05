@@ -137,6 +137,31 @@
  *   Heap (k=2)          | O(n log 2)| O(1)  | Overkill for k=2
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why check arr[i] != largest in the second condition?"
+ * A1: To handle duplicates! If largest=5 and we see another 5,
+ *     we don't want 5 to become second largest too.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How would you find the Kth largest element?"
+ * A2: For general K:
+ *     - Sorting: O(n log n), return arr[n-k]
+ *     - Min-heap of size K: O(n log k)
+ *     - Quickselect: O(n) average, O(n²) worst
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What if all elements are the same?"
+ * A3: Return INT_MIN or indicate "no second largest exists."
+ *     The problem definition should clarify this case.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can you do this with one variable instead of two?"
+ * A4: No - you need to track both largest AND second largest.
+ *     With one variable, you lose the previous largest when you update.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
