@@ -46,6 +46,60 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why not just use a stack to compare?"
+ * A1: Stack approach works but uses O(n) space:
+ *     - Push all elements to stack
+ *     - Traverse again, compare with popped elements
+ *
+ *     Our approach: O(1) space by reversing in-place!
+ *     ALWAYS mention: "For embedded, O(1) space is preferred"
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Do you need to restore the list after checking?"
+ * A2: Depends on requirements! To restore:
+ *     - After comparison, reverse the second half again
+ *     - Reconnect to first half
+ *
+ *     In interviews, ASK: "Should I restore the original list?"
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How does this handle odd-length lists?"
+ * A3: Works perfectly! For 1 -> 2 -> 3 -> 2 -> 1:
+ *     - Middle is 3
+ *     - First half: 1 -> 2
+ *     - Second half: 2 -> 1 (reversed)
+ *     - Middle element (3) is ignored - palindromes ignore center!
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the trick to finding the correct middle?"
+ * A4: For palindrome check, we want slow to stop at:
+ *     - Odd length: exactly middle (skip it)
+ *     - Even length: end of first half
+ *
+ *     Use: while (fast->next && fast->next->next)
+ *     This makes slow stop at the END of first half.
+ *
+ * -------------------------------------------------------------------------
+ * Q5: "Can you do this recursively?"
+ * A5: Yes, but it's tricky and uses O(n) stack space:
+ *
+ *     Node* left;
+ *     bool check(Node* right) {
+ *         if (right == NULL) return true;
+ *         if (!check(right->next)) return false;
+ *         if (left->data != right->data) return false;
+ *         left = left->next;
+ *         return true;
+ *     }
+ *
+ *     Not recommended for embedded (stack overflow risk)!
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

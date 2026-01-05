@@ -127,6 +127,53 @@
  * - Only two pointers and dummy node
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use a dummy node?"
+ * A1: The dummy node handles the edge case of removing the FIRST node:
+ *     - Without dummy: if n equals list length, we need special logic
+ *     - With dummy: second pointer stops at dummy, second->next is head
+ *     - Code is cleaner and handles all cases uniformly
+ *
+ *     ALWAYS mention: "Dummy node simplifies edge cases"
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why advance first by n+1 steps instead of n?"
+ * A2: We need second to stop ONE NODE BEFORE the target:
+ *     - If we advance by n, second lands ON the node to delete
+ *     - But we can't delete a node we're pointing to (no prev reference!)
+ *     - n+1 steps means second stops at the node BEFORE target
+ *     - Then second->next = second->next->next removes the target
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can you do this in one pass without dummy node?"
+ * A3: Yes, but it's messier:
+ *     - Check if removing head (first reaches NULL after n steps)
+ *     - Return head->next in that case
+ *     - Otherwise use same gap technique
+ *
+ *     The dummy node makes code cleaner - prefer it in interviews!
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What if n is larger than list length?"
+ * A4: The problem usually guarantees valid n. But to handle it:
+ *     - Check if first becomes NULL during the initial n+1 advancement
+ *     - If so, n is invalid - return head unchanged or error
+ *
+ *     Code: if (first == NULL) return head; // n too large
+ *
+ * -------------------------------------------------------------------------
+ * Q5: "How would you remove nth from BEGINNING instead?"
+ * A5: Much simpler - just traverse n-1 nodes:
+ *     - If n == 1, return head->next (remove head)
+ *     - Otherwise, traverse to node n-1, skip node n
+ *
+ *     curr = head;
+ *     for (i = 1; i < n-1; i++) curr = curr->next;
+ *     curr->next = curr->next->next;
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

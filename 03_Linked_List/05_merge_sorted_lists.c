@@ -72,6 +72,65 @@
  * - Reuse existing nodes
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use a dummy node here?"
+ * A1: Without dummy, we'd need special handling for the first node:
+ *     - Which list has smaller first element?
+ *     - Set that as head, then continue
+ *
+ *     With dummy:
+ *     - Always append to tail->next
+ *     - Return dummy->next at end
+ *     - Cleaner, uniform code!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What if one list is empty?"
+ * A2: The algorithm handles it naturally:
+ *     - While loop condition fails immediately
+ *     - tail->next = (non-empty list)
+ *     - Works perfectly!
+ *
+ *     You can add explicit check: if (!l1) return l2; if (!l2) return l1;
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can you do this recursively?"
+ * A3: Yes! Recursive version:
+ *
+ *     Node* merge(Node* l1, Node* l2) {
+ *         if (!l1) return l2;
+ *         if (!l2) return l1;
+ *
+ *         if (l1->data <= l2->data) {
+ *             l1->next = merge(l1->next, l2);
+ *             return l1;
+ *         } else {
+ *             l2->next = merge(l1, l2->next);
+ *             return l2;
+ *         }
+ *     }
+ *
+ *     Time: O(n+m), Space: O(n+m) stack - NOT preferred for embedded!
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How would you merge K sorted lists?"
+ * A4: This is a common follow-up! Three approaches:
+ *
+ *     1. Merge pairs repeatedly: O(N log k) where N = total nodes
+ *     2. Use min-heap: O(N log k) - optimal!
+ *     3. Merge one by one: O(Nk) - slowest
+ *
+ *     For interviews, mention the heap approach as optimal.
+ *
+ * -------------------------------------------------------------------------
+ * Q5: "Is this stable? (preserves relative order of equal elements)"
+ * A5: Yes! When l1->data == l2->data:
+ *     - We take from l1 first (using <=)
+ *     - This preserves original order of equal elements
+ *     - Important for sorting algorithms!
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
