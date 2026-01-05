@@ -22,6 +22,33 @@
  * ============================================================================
  * TIME: O(1) per transition | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Switch-case vs table-driven - when to use which?"
+ * A1: Switch-case: Simple, <5 states, quick prototyping, readable.
+ *     Table-driven: Scalable, >5 states, runtime modifiable, testable.
+ *     Switch is faster to write; table is easier to maintain.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do you add entry/exit actions?"
+ * A2: Call action functions when state changes:
+ *     if (newState != oldState) { exitAction(oldState); entryAction(newState); }
+ *     Store entry/exit function pointers in state table for table-driven.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How do you handle unexpected events?"
+ * A3: Add default case that either ignores event, logs warning, or transitions
+ *     to error state. Never leave events unhandled silently in production!
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the difference between Mealy and Moore machines?"
+ * A4: Moore: Output depends only on state. Mealy: Output depends on state+input.
+ *     This example is Moore-style. Mealy would have outputs tied to transitions.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

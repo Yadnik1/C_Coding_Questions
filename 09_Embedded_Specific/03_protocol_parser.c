@@ -32,6 +32,35 @@
  *
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why not use sscanf or regex?"
+ * A1: State machine processes byte-by-byte - ideal for streaming UART data.
+ *     sscanf needs complete string. Regex is heavy for embedded.
+ *     State machine handles partial data, timeouts, interruption gracefully.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do you handle buffer overflow?"
+ * A2: Track index against buffer size. When buffer full, either:
+ *     transition to ERROR state, or stop adding (truncate data).
+ *     This code does truncation. Production code should log warning.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How do you validate checksum?"
+ * A3: XOR all characters between $ and *. Compare with parsed CS.
+ *     Calculate as you parse: cs ^= c for each byte in CMD and DATA.
+ *     Compare computed vs received after PARSE_COMPLETE.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How do you handle multiple message types?"
+ * A4: After parsing, compare cmd string to known commands.
+ *     Use strcmp or hash lookup. Each command type has its own
+ *     data parser/handler. This is a dispatcher pattern.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

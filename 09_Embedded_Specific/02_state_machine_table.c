@@ -35,6 +35,36 @@
  * ============================================================================
  * TIME: O(1) per transition | SPACE: O(states × events)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why is table-driven better for complex state machines?"
+ * A1: Transitions are data, not code - easy to modify, test, and document.
+ *     Can visualize as matrix. Can load from config file at runtime.
+ *     Adding state is one row, not scattered switch modifications.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do you handle guard conditions?"
+ * A2: Add guard function pointer to Transition struct. Before transitioning,
+ *     call guard(). If returns false, stay in current state or try alternate
+ *     transition. Guards enable conditional transitions.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What's hierarchical state machine (HSM)?"
+ * A3: States can have substates. If event not handled in substate, propagate
+ *     to parent. Reduces duplication - common handling in parent state.
+ *     Used in complex embedded systems (automotive, avionics).
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How do you test state machines?"
+ * A4: - Unit test each transition
+ *     - Test all state/event combinations (table makes this easy!)
+ *     - Test sequences that hit edge cases
+ *     - Use mock actions to verify behavior
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

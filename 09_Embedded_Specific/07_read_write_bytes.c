@@ -30,6 +30,35 @@
  * ============================================================================
  * TIME: O(1) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why not use pointer casting?"
+ * A1: Three problems: (1) Alignment - some CPUs crash on unaligned access.
+ *     (2) Endianness - don't know source data format. (3) Aliasing - compiler
+ *     may optimize incorrectly. Byte-by-byte is always safe and portable.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Is memcpy faster than byte-by-byte?"
+ * A2: For small sizes (2-4 bytes), compiler usually generates same code.
+ *     memcpy is clearer for larger structures. Both are O(1) for fixed sizes.
+ *     Byte-by-byte explicitly handles endianness; memcpy doesn't.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How do you handle unaligned data efficiently?"
+ * A3: Some architectures support unaligned access (x86), others don't (ARM).
+ *     On ARM, use __packed attribute or byte-by-byte. On x86, casting may work
+ *     but byte-by-byte is more portable. Let compiler optimize.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What about reading signed values?"
+ * A4: Read as unsigned, then cast: (int16_t)readBE16(bytes).
+ *     Sign extension happens automatically. Or read into union with
+ *     signed/unsigned members sharing storage.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -34,6 +34,33 @@
  * ============================================================================
  * TIME: O(1) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why is htons and ntohs the same function?"
+ * A1: Byte swapping is symmetric! Swapping twice returns original.
+ *     If host is little-endian, both swap. If big-endian, both are no-op.
+ *     Same code works both directions.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What happens on a big-endian system?"
+ * A2: Network order IS big-endian, so hton*/ntoh* are no-ops (just return value).
+ *     The isLittleEndian() check handles this - no swap needed on BE systems.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why not just always swap?"
+ * A3: That would break big-endian systems! On BE host, data is already in
+ *     network order. Swapping would convert TO little-endian, which is wrong.
+ *     Always check host endianness first.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the 64-bit version called?"
+ * A4: No standard name. Some use htonll/ntohll. POSIX doesn't define them.
+ *     Implement yourself or use htobe64/be64toh from <endian.h> (Linux).
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

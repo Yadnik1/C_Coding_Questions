@@ -22,6 +22,35 @@
  * ============================================================================
  * TIME: O(1) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Are there built-in functions for byte swapping?"
+ * A1: Yes! GCC has __builtin_bswap16/32/64. x86 has BSWAP instruction.
+ *     In production, use built-ins - they compile to single instruction.
+ *     Know manual method for interviews and platforms without built-ins.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why use masks in 32-bit swap?"
+ * A2: To isolate each byte before OR-ing. Without masks, bits from high bytes
+ *     could bleed into low positions after shift. Masks ensure clean isolation.
+ *     Some compilers optimize this, but explicit masks are safer.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What about signed integers?"
+ * A3: Byte swap doesn't care about signedness - it's pure bit manipulation.
+ *     Cast to unsigned, swap, cast back if needed. Result is correct because
+ *     we're not interpreting values, just rearranging bytes.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How do you swap array of values efficiently?"
+ * A4: Loop and swap each element. For large arrays, SIMD can swap multiple
+ *     values in parallel. Some processors have vector byte swap instructions.
+ *     For network buffers, consider leaving in network order until needed.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

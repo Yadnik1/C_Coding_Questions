@@ -35,6 +35,35 @@
  * ============================================================================
  * TIME: O(1) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Is the union method portable?"
+ * A1: In C, yes - type punning via union is well-defined. In C++, technically
+ *     undefined but works everywhere. Char pointer method is most portable
+ *     and explicitly allowed by C standard.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can endianness be detected at compile time?"
+ * A2: Yes! Many compilers define macros: __BYTE_ORDER__, __BIG_ENDIAN__.
+ *     Or check platform: defined(__x86_64__) implies little-endian.
+ *     Compile-time detection enables #if optimizations.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What's middle-endian/PDP-endian?"
+ * A3: Historical oddity from PDP-11: bytes swapped within 16-bit words but
+ *     words in big-endian order. 0x12345678 stored as [34][12][78][56].
+ *     Virtually extinct today - ignore unless working with legacy systems.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Does endianness affect bitfields?"
+ * A4: Yes! Bit order within bytes is also endian-dependent. Bitfield layout
+ *     is compiler and platform dependent. Never use bitfields for portable
+ *     binary protocols - use explicit shifts and masks instead.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
