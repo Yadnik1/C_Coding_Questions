@@ -617,6 +617,90 @@ Node* createList(int arr[], int n) {
     return head;
 }
 
+/*
+ * ============================================================================
+ * FREE LIST FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * void freeList(Node* head):
+ *   - "void" = Function doesn't return anything
+ *   - "Node* head" = Takes pointer to the first node
+ *   - Purpose: Deallocate ALL memory used by the linked list
+ *
+ * WHY WE NEED THIS FUNCTION:
+ *   - Every malloc() MUST have a corresponding free()
+ *   - Without freeing, we get MEMORY LEAKS
+ *   - Memory leaks can crash long-running programs (servers, embedded systems)
+ *   - In interviews, mentioning memory cleanup shows professionalism
+ *
+ * Node* temp:
+ *   - We need a temporary pointer to save the next node
+ *   - WHY? After free(head), we can't access head->next anymore!
+ *   - The memory is gone, accessing it is UNDEFINED BEHAVIOR
+ *
+ * while (head != NULL):
+ *   - Loop through all nodes until we reach the end
+ *   - Each iteration frees one node
+ *
+ * temp = head->next:
+ *   - SAVE the next node BEFORE freeing current node
+ *   - This is CRITICAL - order matters!
+ *   - If we free first, head->next becomes invalid
+ *
+ * free(head):
+ *   - Return this node's memory to the heap
+ *   - After this, head points to FREED memory (dangling pointer)
+ *   - We must NOT use head after this point
+ *
+ * head = temp:
+ *   - Move to the next node (which we saved earlier)
+ *   - Continue until all nodes are freed
+ *
+ * MEMORY VISUALIZATION:
+ * ---------------------------------
+ *
+ *   Before freeList:
+ *   Heap: [Node1] -> [Node2] -> [Node3] -> NULL
+ *
+ *   After freeList:
+ *   Heap: (empty - all memory returned)
+ *
+ * COMMON MISTAKE:
+ * ---------------------------------
+ *   // WRONG! Don't do this:
+ *   while (head != NULL) {
+ *       free(head);           // head is now invalid!
+ *       head = head->next;    // CRASH! Accessing freed memory
+ *   }
+ *
+ * ============================================================================
+ */
+// Free all nodes in the linked list to prevent memory leaks
+// Say: "I'll free all nodes by saving next before freeing current"
+void freeList(Node* head) {
+    // Temporary pointer to save next node before freeing
+    // Say: "I need a temp pointer to save the next node before freeing"
+    Node* temp;
+
+    // Loop through all nodes
+    // Say: "I loop through each node until the end"
+    while (head != NULL) {
+        // Save the next pointer BEFORE freeing (critical!)
+        // Say: "I save the next pointer before freeing the current node"
+        // WHY: After free(), head->next is invalid memory
+        temp = head->next;
+
+        // Free the current node
+        // Say: "I free the current node, returning its memory to the heap"
+        free(head);
+
+        // Move to the next node using saved pointer
+        // Say: "I move to the next node using the saved pointer"
+        head = temp;
+    }
+    // Say: "All nodes have been freed, no memory leaks"
+}
+
 int main() {
     printf("=== Reverse Linked List ===\n\n");
 
@@ -651,6 +735,20 @@ int main() {
     list3 = reverseIterative(list3);
     printf("Reversed: ");
     printList(list3);
+
+    /*
+     * ============================================================================
+     * MEMORY CLEANUP - IMPORTANT FOR INTERVIEWS!
+     * ============================================================================
+     * Always free dynamically allocated memory when done.
+     * Say: "Finally, I free all the lists to prevent memory leaks"
+     * ============================================================================
+     */
+    freeList(list1);
+    freeList(list2);
+    freeList(list3);
+
+    printf("\n=== Memory freed successfully ===\n");
 
     return 0;
 }

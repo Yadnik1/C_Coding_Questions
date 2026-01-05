@@ -329,6 +329,53 @@ Node* createList(int arr[], int n) {
     return head;
 }
 
+/*
+ * ============================================================================
+ * FREE LIST FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * void freeList(Node* head):
+ *   - "void" = Function doesn't return anything
+ *   - "Node* head" = Takes pointer to the first node
+ *   - Purpose: Deallocate ALL memory used by the linked list
+ *
+ * WHY WE NEED THIS FUNCTION:
+ *   - Every malloc() MUST have a corresponding free()
+ *   - Without freeing, we get MEMORY LEAKS
+ *   - Memory leaks can crash long-running programs
+ *   - In interviews, mentioning memory cleanup shows professionalism
+ *
+ * NOTE FOR PALINDROME CHECK:
+ *   - isPalindrome() modifies the list (reverses second half)
+ *   - The original list structure is changed after the check
+ *   - We can still free all nodes, but they're in a different order
+ *
+ * ============================================================================
+ */
+// Free all nodes in the linked list to prevent memory leaks
+// Say: "I'll free all nodes by saving next before freeing current"
+void freeList(Node* head) {
+    // Temporary pointer to save next node before freeing
+    // Say: "I need a temp pointer to save the next node before freeing"
+    Node* temp;
+
+    // Loop through all nodes
+    // Say: "I loop through each node until the end"
+    while (head != NULL) {
+        // Save the next pointer BEFORE freeing (critical!)
+        // Say: "I save the next pointer before freeing the current node"
+        temp = head->next;
+
+        // Free the current node
+        // Say: "I free the current node, returning its memory to the heap"
+        free(head);
+
+        // Move to the next node using saved pointer
+        // Say: "I move to the next node using the saved pointer"
+        head = temp;
+    }
+}
+
 int main() {
     printf("=== Palindrome Linked List ===\n\n");
 
@@ -349,6 +396,21 @@ int main() {
     printf("List: ");
     printList(list3);
     printf("Palindrome: %s\n", isPalindrome(list3) ? "YES" : "NO");
+
+    /*
+     * ============================================================================
+     * MEMORY CLEANUP - IMPORTANT FOR INTERVIEWS!
+     * ============================================================================
+     * NOTE: isPalindrome() modifies the list structure (reverses second half).
+     * The nodes are still allocated and need to be freed.
+     * Say: "Finally, I free all the lists to prevent memory leaks"
+     * ============================================================================
+     */
+    freeList(list1);
+    freeList(list2);
+    freeList(list3);
+
+    printf("\n=== Memory freed successfully ===\n");
 
     return 0;
 }

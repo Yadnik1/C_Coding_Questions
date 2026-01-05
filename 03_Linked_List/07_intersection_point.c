@@ -186,6 +186,63 @@ Node* getIntersection(Node* headA, Node* headB) {
     return pA;
 }
 
+/*
+ * ============================================================================
+ * FREE LIST FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * void freeList(Node* head):
+ *   - "void" = Function doesn't return anything
+ *   - "Node* head" = Takes pointer to the first node
+ *   - Purpose: Deallocate ALL memory used by the linked list
+ *
+ * WHY WE NEED THIS FUNCTION:
+ *   - Every malloc() MUST have a corresponding free()
+ *   - Without freeing, we get MEMORY LEAKS
+ *
+ * SPECIAL CASE FOR INTERSECTING LISTS:
+ *   - Two lists share common nodes after intersection
+ *   - We MUST NOT free the same node twice (double-free crash!)
+ *   - Solution: Only free the unique prefix of each list
+ *   - Or: Track which nodes are already freed
+ *
+ * ============================================================================
+ */
+// Free all nodes in the linked list to prevent memory leaks
+// Say: "I'll free all nodes by saving next before freeing current"
+void freeList(Node* head) {
+    // Temporary pointer to save next node before freeing
+    // Say: "I need a temp pointer to save the next node before freeing"
+    Node* temp;
+
+    // Loop through all nodes
+    // Say: "I loop through each node until the end"
+    while (head != NULL) {
+        // Save the next pointer BEFORE freeing (critical!)
+        // Say: "I save the next pointer before freeing the current node"
+        temp = head->next;
+
+        // Free the current node
+        // Say: "I free the current node, returning its memory to the heap"
+        free(head);
+
+        // Move to the next node using saved pointer
+        // Say: "I move to the next node using the saved pointer"
+        head = temp;
+    }
+}
+
+// Free only the unique prefix of a list (before intersection point)
+// Say: "For intersecting lists, I only free the nodes before the intersection"
+void freeListUntil(Node* head, Node* stop) {
+    Node* temp;
+    while (head != NULL && head != stop) {
+        temp = head->next;
+        free(head);
+        head = temp;
+    }
+}
+
 int main() {
     printf("=== Intersection of Two Lists ===\n\n");
 
@@ -213,6 +270,21 @@ int main() {
     } else {
         printf("No intersection\n");
     }
+
+    /*
+     * ============================================================================
+     * MEMORY CLEANUP - IMPORTANT FOR INTERVIEWS!
+     * ============================================================================
+     * CAREFUL: L1 and L2 share nodes after intersection (5 -> 6)
+     * We must free unique parts separately, then the common part once.
+     * Say: "I free the unique prefix of each list, then the common part once"
+     * ============================================================================
+     */
+    freeListUntil(l1, common);   // Free 1 -> 2 (unique to L1)
+    freeListUntil(l2, common);   // Free 3 -> 4 (unique to L2)
+    freeList(common);            // Free 5 -> 6 (shared part, only once!)
+
+    printf("\n=== Memory freed successfully ===\n");
 
     return 0;
 }

@@ -404,6 +404,90 @@ int countLoopLength(Node* head) {
     return count;
 }
 
+/*
+ * ============================================================================
+ * FREE LIST FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * void freeList(Node* head):
+ *   - "void" = Function doesn't return anything
+ *   - "Node* head" = Takes pointer to the first node
+ *   - Purpose: Deallocate ALL memory used by the linked list
+ *
+ * WHY WE NEED THIS FUNCTION:
+ *   - Every malloc() MUST have a corresponding free()
+ *   - Without freeing, we get MEMORY LEAKS
+ *   - Memory leaks can crash long-running programs (servers, embedded systems)
+ *   - In interviews, mentioning memory cleanup shows professionalism
+ *
+ * IMPORTANT NOTE FOR LISTS WITH LOOPS:
+ *   - Cannot use this function on lists with loops!
+ *   - Would cause infinite loop or double-free
+ *   - Must REMOVE the loop first, then free
+ *
+ * Node* temp:
+ *   - We need a temporary pointer to save the next node
+ *   - WHY? After free(head), we can't access head->next anymore!
+ *
+ * ============================================================================
+ */
+// Free all nodes in the linked list (only for lists WITHOUT loops!)
+// Say: "I'll free all nodes by saving next before freeing current"
+void freeList(Node* head) {
+    // Temporary pointer to save next node before freeing
+    // Say: "I need a temp pointer to save the next node before freeing"
+    Node* temp;
+
+    // Loop through all nodes
+    // Say: "I loop through each node until the end"
+    while (head != NULL) {
+        // Save the next pointer BEFORE freeing (critical!)
+        // Say: "I save the next pointer before freeing the current node"
+        temp = head->next;
+
+        // Free the current node
+        // Say: "I free the current node, returning its memory to the heap"
+        free(head);
+
+        // Move to the next node using saved pointer
+        // Say: "I move to the next node using the saved pointer"
+        head = temp;
+    }
+}
+
+/*
+ * ============================================================================
+ * REMOVE LOOP FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * Purpose: Break the loop so the list can be properly freed
+ * Must be called before freeList() on lists with loops!
+ *
+ * ============================================================================
+ */
+// Remove the loop from a linked list
+// Say: "To free a list with a loop, I first need to break the loop"
+void removeLoop(Node* head) {
+    // First, find where the loop starts
+    // Say: "First, I find the loop start using the detection algorithm"
+    Node* loopStart = detectLoopStart(head);
+
+    // If no loop, nothing to do
+    // Say: "If there's no loop, nothing to remove"
+    if (loopStart == NULL) return;
+
+    // Find the node that points back to loopStart
+    // Say: "I traverse the loop to find the node pointing back to the start"
+    Node* curr = loopStart;
+    while (curr->next != loopStart) {
+        curr = curr->next;
+    }
+
+    // Break the loop by setting that node's next to NULL
+    // Say: "I break the loop by setting that node's next to NULL"
+    curr->next = NULL;
+}
+
 int main() {
     printf("=== Detect Loop in Linked List ===\n\n");
 
@@ -434,6 +518,21 @@ int main() {
 
     printf("\nList: 1 -> 2 -> 3 -> NULL\n");
     printf("Has loop: %s\n", hasLoop(head2) ? "YES" : "NO");
+
+    /*
+     * ============================================================================
+     * MEMORY CLEANUP - IMPORTANT FOR INTERVIEWS!
+     * ============================================================================
+     * For list with loop: Must remove loop FIRST, then free
+     * For normal list: Can free directly
+     * Say: "Finally, I clean up memory - removing the loop first for the looped list"
+     * ============================================================================
+     */
+    removeLoop(head);       // Break the loop first!
+    freeList(head);         // Now safe to free
+    freeList(head2);        // No loop, free directly
+
+    printf("\n=== Memory freed successfully ===\n");
 
     return 0;
 }
