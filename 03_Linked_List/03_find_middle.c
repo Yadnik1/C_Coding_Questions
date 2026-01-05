@@ -122,6 +122,69 @@
  *    - Need to track prev pointer too
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use slow/fast pointers instead of counting length first?"
+ * A1: Both work, but slow/fast is better:
+ *
+ *     Count length approach:
+ *     - Pass 1: Count nodes (n iterations)
+ *     - Pass 2: Go to n/2 (n/2 iterations)
+ *     - Total: 1.5n iterations
+ *
+ *     Slow/fast approach:
+ *     - Single pass: n/2 iterations
+ *     - Total: 0.5n iterations (3x faster!)
+ *
+ *     ALWAYS mention: "Slow/fast requires only one pass through the list"
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What if I need the FIRST middle for even-length lists?"
+ * A2: Start fast one position ahead:
+ *
+ *     Node* fast = head->next;  // Instead of head
+ *
+ *     This makes slow stop at the first middle because fast reaches
+ *     NULL one step earlier.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How would you DELETE the middle node?"
+ * A3: You need to track the previous node:
+ *
+ *     Node* slow = head;
+ *     Node* fast = head;
+ *     Node* prev = NULL;
+ *
+ *     while (fast && fast->next) {
+ *         prev = slow;
+ *         slow = slow->next;
+ *         fast = fast->next->next;
+ *     }
+ *
+ *     prev->next = slow->next;  // Skip middle
+ *     free(slow);               // Free middle node
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can this technique find the 1/3 or 1/4 point?"
+ * A4: Yes! Adjust the speed ratio:
+ *
+ *     For 1/3 point: fast moves 3 steps, slow moves 1
+ *     For 1/4 point: fast moves 4 steps, slow moves 1
+ *
+ *     General formula: For 1/k point, fast moves k steps per iteration
+ *
+ * -------------------------------------------------------------------------
+ * Q5: "What's the loop condition 'fast != NULL && fast->next != NULL'?"
+ * A5: This handles both odd and even length lists:
+ *
+ *     - fast != NULL: Handles even length (fast becomes NULL)
+ *     - fast->next != NULL: Handles odd length (fast->next becomes NULL)
+ *
+ *     If we only check fast != NULL, we'd crash on fast->next->next
+ *     when fast->next is NULL!
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

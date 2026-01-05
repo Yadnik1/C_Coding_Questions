@@ -143,6 +143,70 @@
  *   Space: O(n) due to recursion stack
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why do you need three pointers (prev, curr, next)?"
+ * A1: Each pointer has a specific job:
+ *     - prev: Tracks the node that curr should point to after reversal
+ *     - curr: The node we're currently processing
+ *     - next: Saves the next node BEFORE we break the link
+ *
+ *     Without 'next': After curr->next = prev, we lose access to rest of list!
+ *     Without 'prev': We don't know what to point curr to!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can you reverse without extra pointers?"
+ * A2: No, you need at least 3 pointers for iterative. Here's why:
+ *     - You must save the next node before modifying curr->next
+ *     - You need to track where curr should point (prev)
+ *     - You need to know current position (curr)
+ *
+ *     Recursive uses call stack instead (O(n) space).
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Iterative vs Recursive - which is better?"
+ * A3: For interviews and embedded systems, ITERATIVE is preferred:
+ *
+ *     Iterative:
+ *     - O(1) space (no stack frames)
+ *     - No risk of stack overflow for long lists
+ *     - Easier to debug
+ *
+ *     Recursive:
+ *     - O(n) space (call stack)
+ *     - Can overflow stack for long lists
+ *     - More elegant code, harder to understand
+ *
+ *     ALWAYS mention: "In embedded, I'd use iterative to avoid stack overflow"
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What happens if you reverse an empty list or single node?"
+ * A4: Both are handled correctly:
+ *     - Empty list (head = NULL): While loop never executes, return NULL
+ *     - Single node: While loop runs once, node points to NULL, return node
+ *
+ *     No special handling needed - the algorithm handles edge cases naturally!
+ *
+ * -------------------------------------------------------------------------
+ * Q5: "How would you reverse only a portion of the list (nodes m to n)?"
+ * A5: This is a follow-up question! Approach:
+ *     1. Traverse to node m-1 (connection point)
+ *     2. Reverse nodes from m to n using same technique
+ *     3. Reconnect: (m-1)->next = n, m->next = (n+1)
+ *
+ *     Key insight: Save the node before m and the node after n
+ *
+ * -------------------------------------------------------------------------
+ * Q6: "How do you reverse in groups of k?"
+ * A6: Another common follow-up:
+ *     1. Reverse first k nodes
+ *     2. Recursively reverse rest of list in groups of k
+ *     3. Connect the reversed group to the result of recursion
+ *
+ *     Time: O(n), Space: O(n/k) for recursion
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
