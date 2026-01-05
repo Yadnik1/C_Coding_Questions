@@ -31,6 +31,35 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1) positive, O(n) mixed
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why doesn't sliding window work for negative numbers?"
+ * A1: Sliding window assumes adding elements increases sum, removing decreases.
+ *     With negatives, adding can decrease and removing can increase!
+ *     We can't know which direction to shrink. Prefix sum + hash is needed.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why store only the first occurrence in prefix sum approach?"
+ * A2: We want the LONGEST subarray. If prefix sum X appears at indices i and j
+ *     where i < j, using i gives a longer subarray ending at any later index.
+ *     First occurrence = longest possible result.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What if we want the SHORTEST subarray with given sum?"
+ * A3: For positive integers: still sliding window, but update when sum >= target
+ *     and shrink as much as possible. For mixed: store last occurrence instead
+ *     of first in the hash table.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How do we handle prefix sum overflow?"
+ * A4: In interviews, usually assume it fits in int/long. In production:
+ *     use 64-bit integers, or compute prefix sum modulo a large prime
+ *     (with collision handling), or use arbitrary precision arithmetic.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

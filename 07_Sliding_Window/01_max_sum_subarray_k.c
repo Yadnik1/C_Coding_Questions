@@ -49,6 +49,34 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why is sliding window O(n) instead of O(n*k)?"
+ * A1: Each element is added once and removed once. We don't recalculate the
+ *     entire sum each time - we just subtract the leaving element and add
+ *     the entering element. Total operations = 2n = O(n).
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "When does sliding window apply?"
+ * A2: Fixed-size: When window size k is given (max sum, average, etc.).
+ *     Variable-size: When looking for a condition (longest subarray with
+ *     sum <= target, smallest subarray with sum >= target).
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What if we need the actual subarray, not just the sum?"
+ * A3: Track the starting index when you update maxSum. Keep startIndex and
+ *     update it to (i - k + 1) when finding a new maximum. Return both
+ *     the sum and the starting position.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What about minimum sum subarray of size k?"
+ * A4: Same algorithm! Just change the comparison from > to < and initialize
+ *     minSum with the first window sum. Works identically.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -38,6 +38,35 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use while loop to shrink, not just left++?"
+ * A1: If zeros becomes much larger than k, we might need to shrink multiple
+ *     times. But actually, with binary array, one shrink suffices since each
+ *     element only adds 0 or 1 to zeros count. The while is more general.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can we solve this without modifying the array?"
+ * A2: Yes, this solution doesn't modify the array at all! We just count zeros
+ *     in the window. No actual "flipping" happens - we're just allowing k
+ *     zeros in the window, treating them as if they were 1s.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What if k = 0?"
+ * A3: Then we're finding the longest contiguous sequence of 1s with no flips.
+ *     The algorithm still works - any zero triggers shrinking until that zero
+ *     is excluded from the window.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How is this different from 'longest substring with k distinct chars'?"
+ * A4: Same pattern! Here we track zeros count, there we track distinct char
+ *     count. Both expand right, shrink left when condition violated.
+ *     Variable-size sliding window template applies to both!
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
