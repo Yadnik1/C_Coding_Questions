@@ -8,6 +8,25 @@
  * atoi = ASCII TO Integer (string → int)
  *
  * ============================================================================
+ * WHAT YOU MUST KNOW BEFORE SOLVING:
+ * ============================================================================
+ *
+ * 1. PARSING STEPS (in order):
+ *    a. Skip leading whitespace
+ *    b. Handle optional +/- sign
+ *    c. Convert digits: result = result * 10 + digit
+ *    d. Stop at first non-digit character
+ *
+ * 2. DIGIT TO INTEGER:
+ *    - '0' to '9' have ASCII values 48 to 57
+ *    - digit = char - '0' (e.g., '5' - '0' = 5)
+ *
+ * 3. OVERFLOW DETECTION:
+ *    - INT_MAX = 2147483647, INT_MIN = -2147483648
+ *    - Check BEFORE multiply: result > INT_MAX / 10
+ *    - Check last digit: result == INT_MAX/10 && digit > 7
+ *
+ * ============================================================================
  * WHAT INTERVIEWERS LOOK FOR:
  * ============================================================================
  *
@@ -77,27 +96,64 @@
 #include <stdio.h>
 #include <limits.h>
 
+/*
+ * ============================================================================
+ * ATOI FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * int my_atoi(const char* str):
+ *   - Returns "int" = the parsed integer value
+ *   - "const char* str" = string to convert
+ *
+ * while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n') i++:
+ *   - Skip leading whitespace (spaces, tabs, newlines)
+ *   - Standard atoi behavior
+ *
+ * if (str[i] == '-') sign = -1; i++:
+ *   - Handle optional sign character
+ *   - '+' is also valid but sign stays positive
+ *
+ * int digit = str[i] - '0':
+ *   - Convert ASCII character to numeric value
+ *   - '5' - '0' = 53 - 48 = 5
+ *
+ * Overflow check (result > INT_MAX / 10):
+ *   - If result > 214748364, multiplying by 10 overflows
+ *   - If result == 214748364 and digit > 7, overflows
+ *   - Return INT_MAX or INT_MIN based on sign
+ *
+ * result = result * 10 + digit:
+ *   - Shift existing digits left, add new digit
+ *   - "123" → 0*10+1=1 → 1*10+2=12 → 12*10+3=123
+ *
+ * ============================================================================
+ */
 // Full implementation with overflow handling
 // Say: "I'll implement atoi to convert a string to an integer, handling edge cases"
 int my_atoi(const char* str) {
     // Check for NULL pointer
     // Say: "First, I check if the string is NULL"
+    // WHY: Dereferencing NULL causes crash
     if (str == NULL) return 0;
 
     // Initialize variables for parsing
     // Say: "I initialize an index, sign flag, and result accumulator"
     int i = 0;          // Current position in string
     int sign = 1;       // 1 for positive, -1 for negative
-    int result = 0;     // Accumulated result
+    int result = 0;     // Accumulated result (builds up digit by digit)
 
     // Step 1: Skip leading whitespace
     // Say: "I skip any leading whitespace characters like spaces, tabs, or newlines"
+    // WHY: Standard atoi behavior - "  123" should parse as 123
     while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n') {
-        i++;    // Move past whitespace
+        // Move past each whitespace character
+        // Say: "I move past each whitespace character"
+        i++;
     }
 
     // Step 2: Handle optional sign
     // Say: "I check for an optional plus or minus sign"
+    // WHY: Both "-123" and "+123" are valid inputs
     if (str[i] == '-') {
         sign = -1;  // Negative number
         i++;        // Move past the sign
@@ -108,52 +164,75 @@ int my_atoi(const char* str) {
 
     // Step 3: Convert digits to integer
     // Say: "Now I process each digit, converting it to an integer"
+    // WHY: str[i] >= '0' && str[i] <= '9' checks if it's a digit character
     while (str[i] >= '0' && str[i] <= '9') {
         // Extract the numeric value of the current digit
         // Say: "I extract the digit by subtracting the ASCII value of zero"
+        // WHY: '5' - '0' = 53 - 48 = 5 (converts char to int)
         int digit = str[i] - '0';
 
         // Check for overflow BEFORE it happens
         // Say: "Before adding the digit, I check if it would cause overflow"
-        // INT_MAX = 2147483647, so INT_MAX / 10 = 214748364
+        // WHY: INT_MAX = 2147483647, so INT_MAX / 10 = 214748364
+        // If result > 214748364, then result * 10 > INT_MAX
+        // If result == 214748364 and digit > 7, then result * 10 + digit > INT_MAX
         if (result > INT_MAX / 10 ||
             (result == INT_MAX / 10 && digit > 7)) {
             // Would overflow - return appropriate limit
             // Say: "If it would overflow, I return INT_MAX or INT_MIN based on the sign"
+            // WHY: Clamp to valid range instead of undefined behavior
             return (sign == 1) ? INT_MAX : INT_MIN;
         }
 
         // Safe to add digit: multiply result by 10 and add new digit
         // Say: "I multiply the current result by 10 and add the new digit"
+        // WHY: This shifts existing digits left and appends new one
+        // Example: "123" → 0*10+1=1 → 1*10+2=12 → 12*10+3=123
         result = result * 10 + digit;
 
         // Move to next character
+        // Say: "I move to the next character"
         i++;
     }
 
     // Apply sign and return
     // Say: "Finally, I apply the sign and return the result"
+    // WHY: sign * result converts to negative if needed
     return sign * result;
 }
 
+/*
+ * ============================================================================
+ * ATOI SIMPLE FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * This is a simplified version without overflow checking.
+ * Good for interview quick solutions, but not production-ready.
+ *
+ * ============================================================================
+ */
 // Simple version (no overflow check)
 // Say: "Here's a simpler version without overflow checking for basic cases"
 int my_atoi_simple(const char* str) {
     // Check for NULL
     // Say: "Check for NULL pointer"
+    // WHY: Dereferencing NULL causes crash
     if (str == NULL) return 0;
 
     // Initialize parsing variables
-    int result = 0;
-    int sign = 1;
-    int i = 0;
+    // Say: "I initialize result, sign, and index"
+    int result = 0;     // Accumulates the integer value
+    int sign = 1;       // 1 for positive, -1 for negative
+    int i = 0;          // Current position in string
 
     // Skip whitespace
     // Say: "Skip leading spaces"
+    // WHY: Standard atoi skips leading whitespace
     while (str[i] == ' ') i++;
 
     // Handle sign
     // Say: "Check for a sign character"
+    // WHY: Ternary operator is compact way to set sign
     if (str[i] == '-' || str[i] == '+') {
         sign = (str[i] == '-') ? -1 : 1;    // Set sign based on character
         i++;                                 // Move past sign
@@ -161,12 +240,17 @@ int my_atoi_simple(const char* str) {
 
     // Convert digits
     // Say: "Convert each digit by multiplying result by 10 and adding the digit"
+    // WHY: This loop builds the number digit by digit
     while (str[i] >= '0' && str[i] <= '9') {
-        result = result * 10 + (str[i] - '0');  // Accumulate digit
-        i++;                                     // Move to next
+        // Accumulate digit: shift left and add new digit
+        // Say: "I shift existing digits and add the new one"
+        result = result * 10 + (str[i] - '0');
+        // Move to next character
+        i++;
     }
 
     // Apply sign and return
+    // Say: "Apply the sign and return the final result"
     return sign * result;
 }
 

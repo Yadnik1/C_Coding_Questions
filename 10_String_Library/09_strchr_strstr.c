@@ -9,6 +9,28 @@
  * strstr - Find first occurrence of substring in string
  *
  * ============================================================================
+ * WHAT YOU MUST KNOW BEFORE SOLVING:
+ * ============================================================================
+ *
+ * 1. RETURN VALUE:
+ *    - Returns POINTER to found position (not index!)
+ *    - Returns NULL if not found
+ *    - Caller can get index by: ptr - original_string
+ *
+ * 2. STRCHR SPECIAL CASE:
+ *    - Can search for '\0' (returns pointer to string's null terminator)
+ *    - Takes int c but internally casts to char
+ *
+ * 3. STRSTR EDGE CASES:
+ *    - Empty needle ("") returns pointer to start of haystack
+ *    - Needle longer than haystack returns NULL
+ *
+ * 4. NAIVE VS OPTIMIZED:
+ *    - Naive strstr is O(n*m) but simple
+ *    - KMP/Boyer-Moore/Rabin-Karp achieve O(n+m)
+ *    - For interviews, naive is usually sufficient
+ *
+ * ============================================================================
  * VISUALIZATION: strchr("Hello", 'l')
  * ============================================================================
  *
@@ -71,58 +93,122 @@
 #include <stdio.h>
 #include <stddef.h>
 
+/*
+ * ============================================================================
+ * STRCHR FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * char* my_strchr(const char* str, int c):
+ *   - Returns "char*" = pointer to found character (NULL if not found)
+ *   - "const char* str" = string to search in
+ *   - "int c" = character to find (cast to char internally)
+ *
+ * while (*str != '\0'):
+ *   - Scan through string until null terminator
+ *   - Check each character for a match
+ *
+ * if (*str == (char)c):
+ *   - Cast c to char for comparison
+ *   - WHY int parameter? Historical C calling convention
+ *
+ * return (char*)str:
+ *   - Cast away const to return modifiable pointer
+ *   - Standard library behavior
+ *
+ * Special case for '\0':
+ *   - if ((char)c == '\0') return (char*)str;
+ *   - Can search for the null terminator itself
+ *
+ * ============================================================================
+ */
 // strchr - Find character in string
 // Say: "I'll implement strchr by scanning through the string until I find the character"
 char* my_strchr(const char* str, int c) {
     // Check for NULL pointer
     // Say: "First, I check if the string pointer is NULL"
+    // WHY: Dereferencing NULL causes crash
     if (str == NULL) return NULL;
 
     // Scan through string looking for the character
     // Say: "I scan through each character looking for a match"
+    // WHY: Linear scan is the only way to find a character in unsorted data
     while (*str != '\0') {
         // Check if current character matches what we're looking for
         // Say: "If I find the character, I return a pointer to its location"
+        // WHY: Cast c to char because parameter is int (historical C convention)
         if (*str == (char)c) {
-            return (char*)str;  // Found it, return pointer to this position
+            // Found it, return pointer to this position
+            // Say: "I cast away const to return a modifiable pointer"
+            // WHY: Standard library returns char*, not const char*
+            return (char*)str;
         }
-        str++;  // Move to next character
+        // Move to next character
+        // Say: "I advance to the next character"
+        str++;
     }
 
     // Special case: searching for null terminator itself
     // Say: "I also need to check if we're searching for the null terminator"
+    // WHY: strchr('\0') returns pointer to string's terminator
     if ((char)c == '\0') {
         return (char*)str;  // Return pointer to the null terminator
     }
 
     // Character not found
     // Say: "If not found, I return NULL"
+    // WHY: NULL indicates character doesn't exist in string
     return NULL;
 }
 
+/*
+ * ============================================================================
+ * STRRCHR FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * char* my_strrchr(const char* str, int c):
+ *   - Returns pointer to LAST occurrence (not first!)
+ *   - Key difference: must scan ENTIRE string
+ *
+ * const char* last = NULL:
+ *   - Track last position where character was found
+ *   - Update each time we find a match
+ *
+ * while (*str != '\0') ... last = str:
+ *   - Don't stop at first match, keep updating last
+ *   - After loop, last points to final occurrence
+ *
+ * ============================================================================
+ */
 // strrchr - Find LAST occurrence of character
 // Say: "I'll implement strrchr which finds the last occurrence instead of the first"
 char* my_strrchr(const char* str, int c) {
     // Check for NULL pointer
     // Say: "Check for NULL pointer"
+    // WHY: Dereferencing NULL causes crash
     if (str == NULL) return NULL;
 
     // Track the last position where we found the character
     // Say: "I keep track of the last position where I found the character"
+    // WHY: Unlike strchr, we need to scan the ENTIRE string
     const char* last = NULL;
 
     // Scan entire string, updating last position each time we find it
     // Say: "I scan the entire string, updating my pointer each time I find a match"
+    // WHY: Can't stop at first match - need to find the LAST one
     while (*str != '\0') {
         // Update last position if we find the character
+        // Say: "Each time I find the character, I update my saved position"
         if (*str == (char)c) {
             last = str;     // Update last found position
         }
-        str++;  // Keep scanning
+        // Keep scanning even after finding a match
+        // Say: "I continue scanning to find later occurrences"
+        str++;
     }
 
     // Check for null terminator
     // Say: "Check if we're looking for the null terminator"
+    // WHY: '\0' is always the last character of any string
     if ((char)c == '\0') {
         return (char*)str;  // Return pointer to null terminator
     }
@@ -132,45 +218,77 @@ char* my_strrchr(const char* str, int c) {
     return (char*)last;
 }
 
+/*
+ * ============================================================================
+ * STRSTR FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * char* my_strstr(const char* haystack, const char* needle):
+ *   - Returns pointer to start of first match (NULL if not found)
+ *   - "haystack" = string to search in
+ *   - "needle" = substring to find
+ *
+ * Algorithm (Naive/Brute Force):
+ *   - For each position in haystack:
+ *     - Try to match entire needle starting there
+ *     - If complete match, return that position
+ *   - If no position works, return NULL
+ *
+ * Time: O(n*m) where n=len(haystack), m=len(needle)
+ * Can be optimized to O(n+m) with KMP, Boyer-Moore, or Rabin-Karp
+ *
+ * ============================================================================
+ */
 // strstr - Find substring in string
 // Say: "I'll implement strstr to find a substring within a string"
 char* my_strstr(const char* haystack, const char* needle) {
     // Check for NULL pointers
     // Say: "First, I check that both pointers are valid"
+    // WHY: Dereferencing NULL causes crash
     if (haystack == NULL || needle == NULL) return NULL;
 
     // Empty needle matches at the start (standard behavior)
     // Say: "An empty needle is defined to match at the beginning"
+    // WHY: Every string "contains" the empty string at position 0
     if (*needle == '\0') {
         return (char*)haystack;
     }
 
     // Try to find needle starting at each position in haystack
     // Say: "I try matching the needle at each position in the haystack"
+    // WHY: Outer loop slides the starting position through haystack
     while (*haystack != '\0') {
         // Set up pointers to compare from this position
+        // Say: "I set up temporary pointers to compare characters"
+        // WHY: Need to preserve haystack pointer for next iteration
         const char* h = haystack;   // Current position in haystack
         const char* n = needle;     // Start of needle
 
         // Try to match needle at current position
         // Say: "At each position, I try to match the entire needle"
+        // WHY: Compare character by character until mismatch or end of needle
         while (*h == *n && *n != '\0') {
+            // Advance both pointers while characters match
+            // Say: "I advance both pointers while characters match"
             h++;    // Advance in haystack
             n++;    // Advance in needle
         }
 
         // If we reached end of needle, we found a complete match
         // Say: "If I matched the entire needle, I return the starting position"
+        // WHY: *n == '\0' means we matched ALL characters of needle
         if (*n == '\0') {
             return (char*)haystack;  // Match found at this position
         }
 
         // No match at this position, try next position in haystack
+        // Say: "I move to the next starting position"
         haystack++;
     }
 
     // Needle not found in haystack
     // Say: "If no match is found, I return NULL"
+    // WHY: NULL indicates substring doesn't exist in string
     return NULL;
 }
 

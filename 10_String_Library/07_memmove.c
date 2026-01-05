@@ -8,6 +8,26 @@
  * memmove copies n bytes, correctly handling overlapping memory regions
  *
  * ============================================================================
+ * WHAT YOU MUST KNOW BEFORE SOLVING:
+ * ============================================================================
+ *
+ * 1. THE OVERLAP PROBLEM:
+ *    - memcpy assumes src and dest DON'T overlap
+ *    - memmove handles overlap correctly by choosing copy direction
+ *    - If dest > src: must copy backward (end to start)
+ *    - If dest < src: can copy forward (start to end)
+ *
+ * 2. COPY DIRECTION:
+ *    - Forward copy: d[0]=s[0], d[1]=s[1], d[2]=s[2]...
+ *    - Backward copy: d[n-1]=s[n-1], d[n-2]=s[n-2]...
+ *    - Direction choice prevents overwriting source before reading
+ *
+ * 3. POINTER ARITHMETIC:
+ *    - d += n moves pointer to position n (past end)
+ *    - *--d decrements pointer THEN dereferences
+ *    - *d++ dereferences THEN increments pointer
+ *
+ * ============================================================================
  * WHY memmove IS NEEDED:
  * ============================================================================
  *
@@ -69,51 +89,99 @@
 #include <stdio.h>
 #include <stddef.h>
 
+/*
+ * ============================================================================
+ * MEMMOVE FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * void* my_memmove(void* dest, const void* src, size_t n):
+ *   - Returns "void*" = pointer to dest (for chaining)
+ *   - "void* dest" = destination memory (we modify it)
+ *   - "const void* src" = source memory (we read from it)
+ *   - "size_t n" = number of bytes to copy
+ *
+ * unsigned char* d = (unsigned char*)dest:
+ *   - Cast void* to unsigned char* for byte access
+ *   - WHY void*? Works with ANY data type
+ *   - WHY unsigned char? Byte values 0-255, no sign issues
+ *
+ * if (d < s) - Forward copy:
+ *   - dest is before src in memory
+ *   - Safe to copy start→end, won't overwrite src
+ *
+ * else if (d > s) - Backward copy:
+ *   - dest overlaps with src (dest after src)
+ *   - Must copy end→start to avoid corruption
+ *   - d += n; s += n; moves pointers past end
+ *   - *--d = *--s; pre-decrement then copy
+ *
+ * return dest:
+ *   - Return original dest pointer (not advanced!)
+ *
+ * ============================================================================
+ */
 // memmove - Copy n bytes, handling overlap correctly
 // Say: "I'll implement memmove which handles overlapping memory by choosing copy direction"
 void* my_memmove(void* dest, const void* src, size_t n) {
     // Handle edge cases: NULL pointers or zero bytes
     // Say: "First, I check for NULL pointers or zero bytes to copy"
+    // WHY: Dereferencing NULL causes crash, zero bytes means nothing to do
     if (dest == NULL || src == NULL || n == 0) return dest;
 
     // Cast to byte pointers for byte-level access
     // Say: "I cast both pointers to unsigned char for byte operations"
+    // WHY: void* cannot be dereferenced, need byte-sized type
     unsigned char* d = (unsigned char*)dest;
     const unsigned char* s = (const unsigned char*)src;
 
     // Check if dest is before src in memory
     // Say: "If dest is before src, I can safely copy forward"
+    // WHY: Forward copy won't overwrite unread source bytes
     if (d < s) {
         // No overlap risk OR dest before src
         // Copy forward (beginning to end) is safe
         // Say: "I copy from the beginning to the end"
         while (n > 0) {
-            *d++ = *s++;    // Copy byte and advance
-            n--;            // Decrement count
+            // Copy byte and advance both pointers
+            // Say: "I copy one byte and advance both pointers"
+            *d++ = *s++;
+            // Decrement remaining count
+            // Say: "I decrement the count of remaining bytes"
+            n--;
         }
     }
     // Check if dest is after src in memory
     // Say: "If dest is after src, there might be overlap, so I copy backward"
+    // WHY: Backward copy prevents overwriting source before reading
     else if (d > s) {
         // Potential overlap with dest after src
         // Copy backward (end to beginning) to avoid overwriting source
         // Say: "I start from the end and copy backward to avoid overwriting source data"
 
-        // Move pointers to end of regions
-        d += n;     // Point past the end
-        s += n;     // Point past the end
+        // Move pointers to end of regions (past last byte)
+        // Say: "I move both pointers to past the end of their regions"
+        // WHY: Pre-decrement (*--p) needs to start past the end
+        d += n;
+        s += n;
 
         // Copy from end to beginning
+        // Say: "I copy from end to beginning using pre-decrement"
         while (n > 0) {
-            *--d = *--s;    // Pre-decrement then copy
-            n--;            // Decrement count
+            // Pre-decrement then copy: moves pointer first, then copies
+            // Say: "I decrement the pointer first, then copy the byte"
+            // WHY: This copies d[n-1]=s[n-1], d[n-2]=s[n-2], etc.
+            *--d = *--s;
+            // Decrement remaining count
+            n--;
         }
     }
     // If d == s, nothing to do (source and dest are the same)
     // Say: "If pointers are equal, no copy is needed"
+    // WHY: Copying memory to itself is a no-op
 
     // Return the original destination pointer
     // Say: "Return the original dest pointer"
+    // WHY: Enables chaining, returns where data was copied to
     return dest;
 }
 

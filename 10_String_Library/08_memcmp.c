@@ -8,6 +8,40 @@
  * memcmp compares n bytes of two memory regions
  *
  * ============================================================================
+ * WHAT YOU MUST KNOW BEFORE SOLVING:
+ * ============================================================================
+ *
+ * 1. UNSIGNED CHAR FOR BYTE COMPARISON:
+ *    - void* must be cast to unsigned char* for dereferencing
+ *    - unsigned ensures bytes 0-255 compare correctly
+ *    - signed char would make 0x80-0xFF appear negative
+ *
+ * 2. KEY DIFFERENCE FROM strcmp:
+ *    - strcmp stops at '\0' (null terminator)
+ *    - memcmp compares exactly n bytes, doesn't stop at '\0'
+ *    - Use memcmp for binary data, structs, arrays with embedded nulls
+ *
+ * 3. RETURN VALUE INTERPRETATION:
+ *    - < 0: ptr1's first differing byte is smaller
+ *    - = 0: All n bytes are identical
+ *    - > 0: ptr1's first differing byte is larger
+ *
+ * ============================================================================
+ * VISUALIZATION: memcmp("ABC\0D", "ABC\0E", 5)
+ * ============================================================================
+ *
+ *   ptr1: ['A']['B']['C']['\0']['D']
+ *   ptr2: ['A']['B']['C']['\0']['E']
+ *
+ *   Compare byte 0: 'A' == 'A' ✓ continue
+ *   Compare byte 1: 'B' == 'B' ✓ continue
+ *   Compare byte 2: 'C' == 'C' ✓ continue
+ *   Compare byte 3: '\0' == '\0' ✓ continue  ← strcmp would STOP here!
+ *   Compare byte 4: 'D' != 'E' ✗ STOP
+ *
+ *   Return: 'D' - 'E' = 68 - 69 = -1 (negative)
+ *
+ * ============================================================================
  * RETURN VALUES:
  * ============================================================================
  *
@@ -67,38 +101,77 @@
 #include <stdio.h>
 #include <stddef.h>
 
+/*
+ * ============================================================================
+ * MEMCMP FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * int my_memcmp(const void* ptr1, const void* ptr2, size_t n):
+ *   - Returns "int" = difference of first differing bytes
+ *   - "const void* ptr1" = first memory region (read-only)
+ *   - "const void* ptr2" = second memory region (read-only)
+ *   - "size_t n" = number of bytes to compare
+ *
+ * const unsigned char* p1 = (const unsigned char*)ptr1:
+ *   - Cast void* to unsigned char* for byte access
+ *   - WHY const? We're only reading, not modifying
+ *   - WHY unsigned? Bytes 0-255 compare correctly
+ *
+ * while (n > 0):
+ *   - Compare exactly n bytes (doesn't stop at '\0')
+ *   - KEY DIFFERENCE from strcmp!
+ *
+ * if (*p1 != *p2) return *p1 - *p2:
+ *   - Found difference, return immediately
+ *   - Positive if p1 > p2, negative if p1 < p2
+ *
+ * return 0:
+ *   - All n bytes matched
+ *
+ * ============================================================================
+ */
 // memcmp - Compare n bytes of two memory regions
 // Say: "I'll implement memcmp by comparing exactly n bytes, regardless of null terminators"
 int my_memcmp(const void* ptr1, const void* ptr2, size_t n) {
     // Handle NULL pointers to avoid crashes
     // Say: "First, I check for NULL pointers"
+    // WHY: Dereferencing NULL causes segmentation fault
     if (ptr1 == NULL || ptr2 == NULL) {
-        if (ptr1 == ptr2) return 0;         // Both NULL, consider equal
-        return ptr1 == NULL ? -1 : 1;       // One NULL
+        // Both NULL = equal
+        if (ptr1 == ptr2) return 0;
+        // One NULL = NULL is "less than" non-NULL
+        return ptr1 == NULL ? -1 : 1;
     }
 
     // Cast void pointers to unsigned char for byte-level comparison
     // Say: "I cast both pointers to unsigned char to compare byte by byte"
+    // WHY: void* cannot be dereferenced; unsigned char ensures 0-255 range
     const unsigned char* p1 = (const unsigned char*)ptr1;
     const unsigned char* p2 = (const unsigned char*)ptr2;
 
-    // Compare exactly n bytes
+    // Compare exactly n bytes (does NOT stop at '\0' like strcmp!)
     // Say: "I compare each byte until I find a difference or reach n bytes"
+    // WHY: Key difference from strcmp - compares binary data correctly
     while (n > 0) {
         // Check if current bytes differ
         // Say: "If the bytes differ, I return their difference"
+        // WHY: Positive means p1 > p2, negative means p1 < p2
         if (*p1 != *p2) {
             return *p1 - *p2;   // Return difference of first non-matching bytes
         }
 
         // Move to next byte in both regions
+        // Say: "I advance both pointers to the next byte"
         p1++;       // Advance first pointer
         p2++;       // Advance second pointer
-        n--;        // Decrement remaining count
+        // Decrement remaining count
+        // Say: "I decrement the count of remaining bytes to compare"
+        n--;
     }
 
     // All n bytes matched
     // Say: "If all n bytes matched, I return zero"
+    // WHY: Zero indicates the memory regions are identical
     return 0;
 }
 
