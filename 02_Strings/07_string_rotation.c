@@ -116,6 +116,34 @@
  * 4. Single character: Same char = rotation
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why does concatenation (s1 + s1) contain all rotations?"
+ * A1: Any rotation is a cut at position k. In s1+s1, every possible
+ *     cut point exists! So s2 (any rotation) will be a substring.
+ *
+ *     "abcd" + "abcd" = "abcdabcd"
+ *     Contains: "abcd", "bcda", "cdab", "dabc"
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What's the time complexity of strstr?"
+ * A2: Naive strstr: O(n*m) worst case.
+ *     KMP/Boyer-Moore: O(n+m).
+ *     For interviews, O(n*m) is usually acceptable.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can you check rotation without extra space?"
+ * A3: Yes, but more complex. For each rotation point, compare:
+ *     - s1[i:] + s1[:i] with s2
+ *     This is O(n²) time but O(1) extra space.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How to find the rotation amount?"
+ * A4: Find position of s2 in s1+s1. That index IS the rotation amount.
+ *     Example: "cdab" at index 2 in "abcdabcd" → rotated by 2 positions.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

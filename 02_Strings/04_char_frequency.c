@@ -108,6 +108,30 @@
  * 4. Sort by frequency: Store pairs and sort
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use char - 'a' as index?"
+ * A1: Maps 'a'-'z' to indices 0-25. This is a perfect hash function
+ *     for lowercase letters with O(1) lookup and no collisions.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How to find the most frequent character?"
+ * A2: Track max count and corresponding character while counting:
+ *     if (count[i] > max_count) { max_count = count[i]; max_char = 'a'+i; }
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What if we need frequency for ALL ASCII characters?"
+ * A3: Use array of size 128 (or 256 for extended ASCII).
+ *     Index directly with character value: count[str[i]]++
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Time complexity for different methods?"
+ * A4: Count array: O(n) time, O(1) space (fixed 26/128/256)
+ *     Hash map: O(n) time, O(k) space (k = unique chars)
+ *     Sorting: O(n log n) time, O(n) space
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

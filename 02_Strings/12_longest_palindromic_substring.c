@@ -39,6 +39,35 @@
  * ============================================================================
  * TIME: O(n²) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why expand around center instead of checking all substrings?"
+ * A1: Checking all substrings is O(n³) - O(n²) substrings × O(n) check each.
+ *     Expand-around-center is O(n²) - O(n) centers × O(n) expansion.
+ *     Much faster!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why check both odd and even length separately?"
+ * A2: Odd palindromes have single center ("aba" - center at 'b').
+ *     Even palindromes have two centers ("abba" - centers are 'bb').
+ *     Must check both to find all palindromes.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What's Manacher's algorithm?"
+ * A3: O(n) algorithm for this problem! Uses clever preprocessing
+ *     and reuses previous palindrome information.
+ *     Complex to implement - expand-around-center is usually sufficient.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can you use dynamic programming?"
+ * A4: Yes! dp[i][j] = true if s[i..j] is palindrome.
+ *     dp[i][j] = (s[i] == s[j]) && dp[i+1][j-1]
+ *     O(n²) time and O(n²) space - worse than expand-around-center.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

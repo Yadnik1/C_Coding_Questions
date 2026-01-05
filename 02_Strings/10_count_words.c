@@ -128,6 +128,36 @@
  * 6. Multiple spaces between words: Handle correctly
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "State machine vs counting transitions?"
+ * A1: State machine: Track if we're "in a word" or not.
+ *     Counting transitions: Count space-to-letter transitions.
+ *     Both are O(n), state machine is cleaner.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What characters are word separators?"
+ * A2: Depends on requirements! Common options:
+ *     - Just space: isspace(c)
+ *     - All whitespace: space, tab, newline
+ *     - Punctuation too: !isalnum(c)
+ *     Always clarify with interviewer!
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How to handle special cases like hyphens?"
+ * A3: Depends on definition:
+ *     - "well-known": 1 word or 2 words?
+ *     - "don't": 1 word or 2 words?
+ *     Define separator rules based on requirements.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can strtok be used?"
+ * A4: Yes, but be careful! strtok modifies the original string
+ *     and uses static buffer (not thread-safe).
+ *     Manual implementation is often preferred.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

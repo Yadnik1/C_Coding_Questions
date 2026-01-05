@@ -117,6 +117,33 @@
  * 5. No common prefix: Return ""
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Vertical vs horizontal scanning?"
+ * A1: Vertical: Compare char by char across ALL strings (shown here).
+ *     Horizontal: Compare pairs of strings, reduce prefix progressively.
+ *     Both are O(S) where S = sum of all characters.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can binary search help here?"
+ * A2: Yes! Binary search on prefix length (0 to min_length).
+ *     For each mid, check if first 'mid' chars match all strings.
+ *     Time: O(S * log(minLen)), useful when strings are very similar.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What about using Trie?"
+ * A3: Build trie from all strings. LCP is the path from root until
+ *     first branch (node with >1 children) or end marker.
+ *     Good for multiple queries but O(S) preprocessing.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Why is early termination important?"
+ * A4: If any character doesn't match, we can stop immediately.
+ *     Best case: O(minLen) when strings differ early.
+ *     Worst case: O(S) when all strings are identical.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

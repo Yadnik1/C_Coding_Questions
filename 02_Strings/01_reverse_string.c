@@ -123,6 +123,33 @@
  * 3. Palindrome "racecar": Result same as input
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "What's the difference between reversing string and array?"
+ * A1: Same algorithm! But strings have null terminator '\0' which we
+ *     must preserve. Use strlen() to find the actual content length.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How would you reverse words in a sentence?"
+ * A2: Two-step approach:
+ *     1. Reverse entire string
+ *     2. Reverse each word individually
+ *
+ *     "hello world" → "dlrow olleh" → "world hello"
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can you reverse without extra space (temp variable)?"
+ * A3: Yes, using XOR swap, but it's error-prone and not recommended.
+ *     Temp variable is cleaner and works in all cases.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What about Unicode/UTF-8 strings?"
+ * A4: More complex! Multi-byte characters can't be swapped byte-by-byte.
+ *     Need to identify character boundaries first. C stdlib doesn't
+ *     handle this well - use wide characters (wchar_t).
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

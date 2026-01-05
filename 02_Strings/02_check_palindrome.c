@@ -101,6 +101,35 @@
  *    "A man, a plan, a canal: Panama" → true
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "How do you handle spaces and punctuation?"
+ * A1: Skip non-alphanumeric characters using isalnum():
+ *     while (!isalnum(str[left])) left++;
+ *     while (!isalnum(str[right])) right--;
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What about case sensitivity?"
+ * A2: Use tolower() or toupper() when comparing:
+ *     if (tolower(str[left]) != tolower(str[right]))
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can you check palindrome using recursion?"
+ * A3: Yes, but uses O(n) stack space:
+ *     bool isPal(str, l, r) {
+ *         if (l >= r) return true;
+ *         if (str[l] != str[r]) return false;
+ *         return isPal(str, l+1, r-1);
+ *     }
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What about checking if string can become palindrome?"
+ * A4: Count character frequencies. For palindrome:
+ *     - At most ONE character can have odd frequency
+ *     - That character goes in the middle
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

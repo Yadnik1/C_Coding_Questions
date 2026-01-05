@@ -124,6 +124,31 @@
  * 5. Needle at end of haystack: Still find it
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "What's the difference between strstr and strncmp?"
+ * A1: strstr finds substring anywhere in string.
+ *     strncmp compares first n characters of two strings.
+ *     strstr often uses strncmp internally for comparison.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why is KMP better than brute force?"
+ * A2: KMP never re-examines characters in haystack. Uses prefix table
+ *     to skip ahead after mismatch. O(n+m) vs O(n*m) worst case.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "When is brute force actually faster?"
+ * A3: For short patterns or random text, brute force is often faster
+ *     due to simpler code (better cache, no preprocessing overhead).
+ *     KMP shines with patterns that have repeated prefixes.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What about Boyer-Moore algorithm?"
+ * A4: Even faster than KMP for long patterns. Scans right-to-left,
+ *     can skip large portions of text. Best for searching in files.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

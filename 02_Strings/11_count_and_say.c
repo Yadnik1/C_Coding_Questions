@@ -34,6 +34,33 @@
  * ============================================================================
  * TIME: O(n * m) where m is length of string | SPACE: O(m)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why does the string grow so fast?"
+ * A1: Each term describes the previous, usually needing MORE characters.
+ *     Growth is approximately O(1.3^n) - nearly exponential!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can the count ever be more than 3?"
+ * A2: No! This is a proven property of the sequence. The count is always
+ *     1, 2, or 3 (never 4 or more consecutive same digits appear).
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Is there a closed-form formula?"
+ * A3: No simple formula exists. Must generate iteratively or recursively.
+ *     This is what makes it a good interview problem!
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How to handle very large n?"
+ * A4: String length grows exponentially. For large n:
+ *     - Use dynamic memory allocation
+ *     - Consider returning only length or specific properties
+ *     - Watch for buffer overflow!
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

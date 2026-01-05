@@ -118,6 +118,32 @@
  * 4. Find kth non-repeating
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why two passes instead of one?"
+ * A1: First pass counts ALL occurrences. Only then can we know which
+ *     characters are non-repeating. Second pass finds the FIRST one.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How to handle this in a stream (characters arriving one by one)?"
+ * A2: Use queue + hash map:
+ *     - Queue stores characters in arrival order
+ *     - Hash map stores frequency
+ *     - Pop from queue while front has count > 1
+ *     - First non-repeating is queue front
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can we do this in one pass?"
+ * A3: Not easily. We need to see ALL characters to know frequencies.
+ *     Could use index tracking: store first occurrence index, mark -2 if repeated.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the space complexity for Unicode?"
+ * A4: O(k) where k = unique characters. Fixed array works for ASCII (128/256),
+ *     but need hash map for full Unicode (millions of code points).
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

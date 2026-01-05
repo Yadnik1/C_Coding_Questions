@@ -145,6 +145,30 @@
  * 4. Single character: Return same
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Does this preserve the order of first occurrences?"
+ * A1: Yes! We keep the first occurrence of each character and skip
+ *     subsequent duplicates, preserving original order.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why use seen[256] instead of seen[26]?"
+ * A2: To handle ALL ASCII characters, not just lowercase letters.
+ *     Works for digits, uppercase, punctuation, etc.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What if we want to remove duplicates but keep last occurrence?"
+ * A3: Scan from right to left, or make two passes:
+ *     1. Count frequency
+ *     2. Keep char only if remaining count > 0
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "In-place without boolean array?"
+ * A4: Possible but O(n²): for each char, check if it appeared before.
+ *     Boolean array trades O(1) space for O(256) = O(1) space but faster.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

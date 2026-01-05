@@ -123,6 +123,29 @@
  * 4. Case sensitive: 'A' != 'a' (handle if needed)
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why increment for str1 and decrement for str2?"
+ * A1: Anagrams have same characters, so increments from str1 are
+ *     cancelled by decrements from str2. Final array should be all zeros.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Sorting vs counting - which is better?"
+ * A2: Counting is better: O(n) vs O(n log n).
+ *     Both use O(1) extra space (26 chars or sorted in-place).
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What if strings have Unicode characters?"
+ * A3: Need hash map instead of fixed array.
+ *     Count array of 26 only works for lowercase English letters.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How to find all anagrams in a list of words?"
+ * A4: Group by sorted version or character count signature.
+ *     Use hash map where key = sorted string, value = list of anagrams.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
