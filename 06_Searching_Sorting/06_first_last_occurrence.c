@@ -39,6 +39,35 @@
  * ============================================================================
  * TIME: O(log n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "What's the difference from regular binary search?"
+ * A1: Regular search stops immediately when found. For first occurrence,
+ *     when found, save result and keep searching LEFT (high = mid - 1).
+ *     For last occurrence, search RIGHT (low = mid + 1). Don't stop early!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do you count occurrences of an element?"
+ * A2: count = lastOccurrence - firstOccurrence + 1
+ *     Two binary searches = O(log n) total. Much better than linear O(n)!
+ *     If either returns -1, count is 0.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What if I need to insert while maintaining sorted order?"
+ * A3: Use modified binary search to find insertion point! For duplicates,
+ *     findFirst gives insert-before position, findLast+1 gives insert-after.
+ *     C++ has lower_bound/upper_bound for this.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can you do this in one pass?"
+ * A4: Not with O(log n). You need two separate searches. But if you find
+ *     one occurrence, you can limit the search range for the other
+ *     (first must be <= found, last must be >= found).
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

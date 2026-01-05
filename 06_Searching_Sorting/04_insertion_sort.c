@@ -50,6 +50,36 @@
  * ============================================================================
  * TIME: O(n²) worst, O(n) best | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "When is insertion sort better than quicksort?"
+ * A1: - Small arrays (n < 10-20): Less overhead than divide-and-conquer
+ *     - Nearly sorted arrays: O(n) vs O(n log n)
+ *     - Online sorting: Can sort as data arrives
+ *     Many libraries use insertion sort for small subarrays in quicksort!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Is insertion sort stable?"
+ * A2: Yes! Equal elements maintain their relative order. When we shift,
+ *     we only move elements greater than key, not greater-or-equal.
+ *     This preserves original order of equal elements.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why is it called 'insertion' sort?"
+ * A3: Each element is INSERT-ed into its correct position in the already
+ *     sorted portion. Like inserting a card into a sorted hand of cards.
+ *     Unlike selection sort which SELECTS the minimum each time.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How do you sort a linked list?"
+ * A4: Insertion sort works well! No random access needed. Just traverse
+ *     and insert each node in correct position in sorted portion.
+ *     Still O(n²) but better than array for insertions (no shifting).
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

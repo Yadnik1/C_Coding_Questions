@@ -51,6 +51,36 @@
  * ============================================================================
  * TIME: O(log n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why check arr[low] <= arr[mid] to determine sorted half?"
+ * A1: In a rotated sorted array, exactly ONE half is always properly sorted.
+ *     If arr[low] <= arr[mid], left half is sorted (no rotation point in it).
+ *     Use <= not < to handle the case when low == mid (single element half).
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What if there are duplicates?"
+ * A2: This gets tricky! When arr[low] == arr[mid] == arr[high], we can't
+ *     determine which half is sorted. Solution: low++ or high-- to skip
+ *     duplicates. Worst case becomes O(n) but average is still O(log n).
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How do you find the rotation point (minimum element)?"
+ * A3: Modified binary search: if arr[mid] > arr[high], minimum is in right half.
+ *     Else minimum is in left half (including mid). When low == high, found!
+ *     This is the "Find Minimum in Rotated Sorted Array" problem.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What are real-world examples of rotated arrays?"
+ * A4: - Circular log buffers that wrapped around
+ *     - Time-series data that starts mid-cycle
+ *     - Any circular array accessed linearly
+ *     - After partial array rotation for load balancing
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

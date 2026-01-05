@@ -61,6 +61,36 @@
  * ============================================================================
  * TIME: O(log n) | SPACE: O(1) iterative, O(log n) recursive
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use low + (high - low) / 2 instead of (low + high) / 2?"
+ * A1: To prevent integer overflow! If low and high are both large (close to
+ *     INT_MAX), their sum overflows. low + (high - low)/2 is mathematically
+ *     equivalent but safe because (high - low) never overflows.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What happens if the array has duplicates?"
+ * A2: Basic binary search finds ANY occurrence (not necessarily first/last).
+ *     For first/last occurrence, use modified binary search that continues
+ *     searching left/right even after finding target.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Iterative vs recursive - which to use in interviews?"
+ * A3: Iterative is preferred: O(1) space vs O(log n) stack space, no risk
+ *     of stack overflow, and slightly faster. Show iterative first, then
+ *     mention you could do recursive if asked.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Where is binary search used in embedded systems?"
+ * A4: - Lookup tables (ADC calibration, temperature compensation)
+ *     - Finding configuration values in sorted EEPROM
+ *     - Binary protocols (finding packet boundaries)
+ *     - Sensor threshold detection
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -43,6 +43,35 @@
  * ============================================================================
  * TIME: O(log n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why does binary search work for finding a peak?"
+ * A1: If arr[mid] < arr[mid+1], the slope is going UP, so a peak MUST exist
+ *     on the right (eventually hits boundary or turns down). Similarly for
+ *     left. Binary search always moves toward a guaranteed peak!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What if there are multiple peaks?"
+ * A2: Binary search finds ONE peak (any one), not necessarily the highest.
+ *     To find the global maximum, you'd need O(n) linear scan, or use
+ *     ternary search if the function is unimodal (single peak).
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why use low < high instead of low <= high?"
+ * A3: Because we're narrowing to exactly one element. When low == high,
+ *     we've found the peak. Using <= would cause infinite loop since
+ *     high = mid (not mid-1) when going left.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What about plateau (adjacent equal elements)?"
+ * A4: The problem usually assumes no equal neighbors, or treats plateau
+ *     as a peak. If equal neighbors exist, you may need to handle them
+ *     specially - move past the plateau then continue search.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
