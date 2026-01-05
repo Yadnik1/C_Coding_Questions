@@ -37,6 +37,27 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(n)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Is stack method better than two-pointer for reversing?"
+ * A1: No! Two-pointer is O(1) space, stack uses O(n) space.
+ *     But this demonstrates stack's LIFO property clearly.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "When would you actually use stack for string reversal?"
+ * A2: When reversing is part of a larger stack-based algorithm,
+ *     like expression evaluation or parentheses matching.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can you reverse words in a sentence using stacks?"
+ * A3: Yes! Use two stacks or one stack twice:
+ *     1. Push chars to reverse string
+ *     2. Push chars of each word to reverse words back
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

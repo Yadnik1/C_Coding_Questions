@@ -49,6 +49,33 @@
  * ============================================================================
  * TIME: Amortized O(1) for dequeue
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why is dequeue amortized O(1)?"
+ * A1: Each element is moved from Stack1 to Stack2 at most once.
+ *     Worst case single dequeue is O(n), but over n operations,
+ *     total work is O(n), so average is O(1).
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "When to transfer from Stack1 to Stack2?"
+ * A2: Only when Stack2 is empty and we need to dequeue!
+ *     This is lazy transfer - don't move until necessary.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why does reversing twice give original order?"
+ * A3: Push 1,2,3 to Stack1 (order: 3,2,1 from top).
+ *     Transfer to Stack2 (order: 1,2,3 from top).
+ *     Pop from Stack2 gives 1,2,3 - FIFO order!
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can you implement stack using queues?"
+ * A4: Yes! But more complex. Need to rotate queue for each push OR pop.
+ *     Either push O(n) + pop O(1), or push O(1) + pop O(n).
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

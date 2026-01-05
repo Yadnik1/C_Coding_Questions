@@ -47,6 +47,31 @@
  * TIME: O(1) for all operations
  * SPACE: O(n) for auxiliary min stack
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Can you reduce space to O(1)?"
+ * A1: Yes! Store encoded value: 2*val - min when val < min.
+ *     Decode during pop. Tricky to implement correctly though.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why push current min even if new value is larger?"
+ * A2: Simpler to always push to min stack so sizes match.
+ *     Alternative: Only push when new value <= current min.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What about Max Stack?"
+ * A3: Same approach! Just track maximum instead of minimum.
+ *     Push to aux stack when value >= current max.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can you implement Min Queue?"
+ * A4: More complex! Use monotonic deque (double-ended queue).
+ *     Or use two min stacks to simulate queue.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

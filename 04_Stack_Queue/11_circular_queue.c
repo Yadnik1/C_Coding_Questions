@@ -59,6 +59,34 @@
  * ============================================================================
  * TIME: O(1) all operations | SPACE: O(n)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why keep one slot empty?"
+ * A1: To distinguish full from empty! If we use all slots, front==rear could
+ *     mean empty OR full. By wasting one slot, ((rear+1)%SIZE==front) means
+ *     full, and (front==rear) means empty.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can we use all slots without wasting one?"
+ * A2: Yes! Add a 'count' variable or 'isFull' flag. But this adds complexity
+ *     and extra storage. The wasted slot approach is simpler and common.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why is circular queue important in embedded systems?"
+ * A3: Ring buffers are EVERYWHERE in embedded: UART receive buffers, audio
+ *     streaming, sensor data logging, producer-consumer patterns. Fixed size,
+ *     no dynamic allocation, O(1) operations - perfect for real-time!
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How would you make this thread-safe?"
+ * A4: For single producer/single consumer: atomic reads/writes often enough.
+ *     For multiple producers/consumers: use mutex or lock-free techniques
+ *     with memory barriers. Volatile keyword alone is NOT sufficient!
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -54,6 +54,32 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(n)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use a stack for this problem?"
+ * A1: Stack matches LIFO nature of bracket matching.
+ *     Most recent opening bracket must match first closing bracket.
+ *     Perfect stack use case!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What about only one type of bracket?"
+ * A2: Just count! No stack needed. Increment for '(', decrement for ')'.
+ *     Invalid if count goes negative. Valid if count ends at 0.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can you solve without extra space?"
+ * A3: Not for multiple bracket types! Need to remember opening sequence.
+ *     For single type: yes, just use counter.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What if string contains other characters?"
+ * A4: Simply ignore non-bracket characters - continue to next iteration.
+ *     Only process '(', ')', '[', ']', '{', '}'.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

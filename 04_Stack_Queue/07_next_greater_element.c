@@ -56,6 +56,31 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(n)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why traverse right to left?"
+ * A1: We need elements to the RIGHT of current. By going right-to-left,
+ *     stack already contains all right-side elements.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why is this O(n) despite nested loop?"
+ * A2: Each element is pushed once and popped at most once.
+ *     Total operations = 2n = O(n). This is the monotonic stack pattern!
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What's a monotonic stack?"
+ * A3: Stack that maintains elements in sorted order (increasing or decreasing).
+ *     Here, decreasing from bottom to top - smallest on top.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What about Next Greater Element in circular array?"
+ * A4: Traverse array twice (or use 2n-1 iterations with modulo).
+ *     Same algorithm, just wrap around to beginning.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

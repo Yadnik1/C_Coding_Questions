@@ -49,6 +49,32 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(n)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use monotonic increasing stack?"
+ * A1: When we see a shorter bar, we know the taller bars can't extend further.
+ *     So we pop and calculate their max area. Stack maintains potential
+ *     "still-extending" bars.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What's stored in the stack?"
+ * A2: INDICES, not heights! We need index to calculate width.
+ *     Height is retrieved via heights[stack[top]].
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why add height 0 at the end?"
+ * A3: Forces all remaining bars to be popped and processed.
+ *     Without it, bars in increasing sequence would stay in stack.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the relation to Maximal Rectangle in binary matrix?"
+ * A4: Build histogram for each row (height = consecutive 1s above).
+ *     Run this algorithm on each row's histogram.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

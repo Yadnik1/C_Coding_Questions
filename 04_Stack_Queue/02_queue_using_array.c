@@ -45,6 +45,38 @@
  * ============================================================================
  * TIME: O(1) for all operations
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use circular queue instead of linear?"
+ * A1: Linear queue wastes space! After dequeue, front moves right,
+ *     leaving unused slots at the start. Circular wraps around,
+ *     reusing space efficiently.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How to distinguish full from empty in circular queue?"
+ * A2: Three approaches:
+ *     1. Keep count variable (shown here)
+ *     2. Waste one slot as sentinel
+ *     3. Use boolean flag (full_flag)
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Array vs Linked List for queue?"
+ * A3: Array (circular): O(1) all ops, fixed size, better cache
+ *     Linked List: O(1) all ops, dynamic size, more memory
+ *     Array preferred for embedded (predictable memory).
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Common applications of queues?"
+ * A4: - UART/SPI data buffers
+ *     - BFS graph traversal
+ *     - Print job scheduling
+ *     - Interrupt handling queue
+ *     - Producer-consumer patterns
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

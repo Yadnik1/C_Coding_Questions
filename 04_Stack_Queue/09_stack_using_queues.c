@@ -36,6 +36,33 @@
  * ============================================================================
  * TIME: O(n) push or pop | SPACE: O(n)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Costly push vs costly pop - which is better?"
+ * A1: Depends on usage pattern!
+ *     - More pushes than pops: Use costly pop (O(1) push)
+ *     - More pops than pushes: Use costly push (O(1) pop)
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can this be done with ONE queue?"
+ * A2: Yes! After enqueue, rotate queue n-1 times.
+ *     Push x: enqueue(x), then dequeue+enqueue n-1 times.
+ *     Still O(n) but uses less space.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why is this harder than queue using stacks?"
+ * A3: Stack reverses order naturally (LIFO). To simulate LIFO with FIFO,
+ *     we must actively rotate elements. Queue using stacks is simpler.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Real-world use case?"
+ * A4: When only queue operations are available (like in some message systems)
+ *     but stack behavior is needed. Mostly interview/educational.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -34,6 +34,32 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(n)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Can you reverse queue without stack?"
+ * A1: Yes, using recursion! Dequeue element, reverse rest recursively,
+ *     then enqueue the element. Uses O(n) call stack though.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can you reverse queue in O(1) space?"
+ * A2: Not with standard queue. But with deque (double-ended queue),
+ *     swap front and rear pointers. O(1) operation!
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What about reversing first K elements?"
+ * A3: Push K elements to stack, pop back to queue,
+ *     then move remaining n-K elements from front to rear.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Why does stack + queue reverse order?"
+ * A4: Queue gives FIFO: 1,2,3 → push to stack in order 1,2,3.
+ *     Stack gives LIFO: pop gives 3,2,1.
+ *     Enqueue to queue: 3,2,1 - REVERSED!
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

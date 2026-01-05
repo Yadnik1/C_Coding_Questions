@@ -66,6 +66,36 @@
  * | isEmpty   | O(1) | O(1)  |
  *
  * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Array vs Linked List implementation?"
+ * A1: Array: O(1) all ops, fixed size, cache-friendly.
+ *     Linked List: O(1) all ops, dynamic size, more memory (pointers).
+ *     Array is preferred for embedded (no dynamic allocation).
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What happens on stack overflow?"
+ * A2: Push fails when top == MAX_SIZE - 1. Options:
+ *     - Return error code
+ *     - Resize array (dynamic implementation)
+ *     - For embedded: fixed size, caller must handle overflow
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why is top initialized to -1?"
+ * A3: So that top always points to the actual top element.
+ *     top = -1 means no elements. After first push, top = 0.
+ *     Alternative: top = 0 means next empty slot (less intuitive).
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What are common applications of stacks?"
+ * A4: - Function call stack (recursion)
+ *     - Expression evaluation (postfix)
+ *     - Balanced parentheses checking
+ *     - Undo operations in editors
+ *     - Browser back button
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

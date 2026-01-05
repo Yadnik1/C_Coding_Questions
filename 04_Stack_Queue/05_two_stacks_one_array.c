@@ -33,6 +33,34 @@
  * ============================================================================
  * TIME: O(1) for all operations
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why grow from opposite ends?"
+ * A1: Maximizes space utilization! If both grew same direction,
+ *     one stack might overflow while space exists for the other.
+ *     This way, total elements can use ALL available space.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can you implement 3 stacks in one array?"
+ * A2: More complex! Options:
+ *     - Fixed division (waste space)
+ *     - Dynamic: middle stack uses flexible boundaries
+ *     - Array of records with next pointers (linked list in array)
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How do you check if array is full?"
+ * A3: top1 + 1 == top2 means pointers have met.
+ *     No more space for either stack!
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the embedded systems use case?"
+ * A4: Limited memory! Two related data structures sharing one buffer.
+ *     Example: TX and RX buffers in same memory region.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
