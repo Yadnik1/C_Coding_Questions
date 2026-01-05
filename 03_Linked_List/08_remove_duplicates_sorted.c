@@ -157,40 +157,153 @@ Node* createNode(int data) {
     return node;
 }
 
+/*
+ * ============================================================================
+ * REMOVE DUPLICATES FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * Node* removeDuplicates(Node* head):
+ *   - Returns "Node*" = pointer to head of modified list (head itself unchanged)
+ *   - "Node* head" = pointer to the first node of a SORTED list
+ *   - Purpose: Remove duplicate values, keeping only first occurrence
+ *   - PREREQUISITE: List must be SORTED (duplicates are adjacent)
+ *
+ * ALGORITHM: Compare Adjacent Nodes
+ * ---------------------------------
+ * Since the list is SORTED, duplicates are always ADJACENT.
+ * For each node, compare with next node:
+ *   - If same value: skip (and free) the next node
+ *   - If different: move to next node
+ *
+ * WHY THIS WORKS FOR SORTED LISTS:
+ * ---------------------------------
+ * In a sorted list, all duplicates are consecutive:
+ *   [1, 1, 2, 3, 3] → duplicates 1,1 and 3,3 are adjacent
+ *
+ * If the list were unsorted:
+ *   [1, 3, 1, 2, 3] → duplicates not adjacent, this algorithm fails!
+ *   Would need hash set (O(n) space) or O(n²) nested loop
+ *
+ * KEY INSIGHT: WHY WE DON'T MOVE CURR AFTER REMOVING?
+ * ---------------------------------
+ * After removing a duplicate, the NEW next might ALSO be a duplicate!
+ *
+ * Example: 1 → 1 → 1 → 2
+ *   At curr=1, next=1: Remove next → 1 → 1 → 2
+ *   Still at curr=1, next=1 (new next!): Remove again → 1 → 2
+ *   Now curr=1, next=2: Different, NOW move forward
+ *
+ * If we moved curr immediately, we'd miss the second duplicate!
+ *
+ * VISUALIZATION:
+ * ---------------------------------
+ * Initial: 1 → 1 → 2 → 3 → 3 → NULL
+ *          ^
+ *         curr
+ *
+ * Step 1: curr(1) == next(1) → Remove next
+ *   1 → 2 → 3 → 3 → NULL
+ *   ^
+ *  curr (stays! check again)
+ *
+ * Step 2: curr(1) != next(2) → Move forward
+ *   1 → 2 → 3 → 3 → NULL
+ *       ^
+ *      curr
+ *
+ * Step 3: curr(2) != next(3) → Move forward
+ *   1 → 2 → 3 → 3 → NULL
+ *           ^
+ *          curr
+ *
+ * Step 4: curr(3) == next(3) → Remove next
+ *   1 → 2 → 3 → NULL
+ *           ^
+ *          curr (stays, but next is NULL)
+ *
+ * Step 5: curr->next == NULL → Loop ends
+ *
+ * Result: 1 → 2 → 3 → NULL
+ *
+ * MEMORY MANAGEMENT - CRITICAL FOR EMBEDDED!
+ * ---------------------------------
+ * We MUST free removed nodes to prevent memory leaks.
+ * The removed nodes are no longer in the list but still allocated!
+ *
+ * TIME COMPLEXITY: O(n)
+ * ---------------------------------
+ * - Each node visited at most once
+ * - Even though we don't always advance curr, each node can only be
+ *   removed once, so total operations still O(n)
+ *
+ * SPACE COMPLEXITY: O(1)
+ * ---------------------------------
+ * - Only one pointer (curr) regardless of list size
+ * - No extra data structures!
+ *
+ * ============================================================================
+ */
+// Remove duplicates from a SORTED linked list
+// Say: "I'll compare adjacent nodes and remove duplicates since the list is sorted"
 Node* removeDuplicates(Node* head) {
-    // Start at head
-    // Say: "I'll traverse the list starting from the head"
+    // =========================================================================
+    // INITIALIZE: Start traversal from head
+    // =========================================================================
+    // Say: "I start at the head of the list"
+    // WHY curr not head directly? We could use head, but curr is clearer
+    // Also, using curr preserves head for return
     Node* curr = head;
 
-    // Traverse until end
-    // Say: "For each node, I'll check if it's equal to the next node"
+    // =========================================================================
+    // MAIN LOOP: Compare each node with its next neighbor
+    // =========================================================================
+    // Say: "I traverse, comparing each node with the next one"
+    // WHY curr != NULL? Handle empty list case
+    // WHY curr->next != NULL? Need a next node to compare with
     while (curr != NULL && curr->next != NULL) {
-        // Check if current equals next
-        // Say: "Compare current node's value with next node's value"
+        // Check if current value equals next value (duplicate found!)
+        // Say: "I compare current node's value with the next node's value"
+        // WHY compare data? We're looking for duplicate VALUES, not addresses
         if (curr->data == curr->next->data) {
-            // Found duplicate, skip it
-            // Say: "Found a duplicate, so I'll skip the next node"
+            // =========================================================
+            // DUPLICATE FOUND: Remove the next node
+            // =========================================================
+            // Say: "I found a duplicate - the next node has the same value"
 
-            // Save duplicate node
-            // Say: "Save the duplicate node so we can free it"
+            // Save pointer to duplicate node before unlinking
+            // Say: "I save the duplicate node so I can free its memory"
+            // WHY save? After curr->next changes, we'd lose access to free it
             Node* duplicate = curr->next;
 
-            // Skip the duplicate
-            // Say: "Point current's next to the node after the duplicate"
+            // Skip over the duplicate by relinking
+            // Say: "I skip the duplicate by pointing curr's next past it"
+            // WHY this works? curr → dup → X becomes curr → X
             curr->next = curr->next->next;
 
-            // Free duplicate node
-            // Say: "Free the memory of the duplicate node"
+            // Free the duplicate node (critical for embedded systems!)
+            // Say: "I free the memory of the removed duplicate node"
+            // WHY free? Prevent memory leak - node is unreachable but allocated
             free(duplicate);
+
+            // IMPORTANT: Do NOT move curr forward here!
+            // Say: "I stay at curr to check if the new next is also a duplicate"
+            // WHY stay? The NEW next might also be a duplicate of curr
         } else {
-            // Not a duplicate, move forward
-            // Say: "No duplicate found, move to the next node"
+            // =========================================================
+            // NO DUPLICATE: Safe to move forward
+            // =========================================================
+            // Say: "No duplicate here, so I move to the next node"
+            // WHY move only here? We've confirmed curr != curr->next
             curr = curr->next;
         }
     }
 
-    // Return head (unchanged)
-    // Say: "Return the head of the modified list"
+    // =========================================================================
+    // RETURN: Head is unchanged (we only modified links, not head itself)
+    // =========================================================================
+    // Say: "I return the head of the modified list"
+    // WHY head unchanged? We never reassigned head, only modified internal links
+    // The list has fewer nodes now but still starts at the same head
     return head;
 }
 
@@ -200,30 +313,57 @@ Node* removeDuplicates(Node* head) {
  * ============================================================================
  *
  * void printList(Node* head):
- *   - "void" = doesn't return anything
- *   - "Node* head" = receives COPY of pointer (safe to modify)
+ *   - "void" = Function doesn't return anything (just prints to console)
+ *   - "Node* head" = Receives a COPY of the head pointer (pass by value)
+ *   - We can safely modify this copy without affecting caller's pointer
  *
- * while (head):
- *   - Shorthand for "while (head != NULL)"
- *   - Non-NULL pointers evaluate to true in C
+ * WHY USE head DIRECTLY (no separate traversal pointer)?
+ * ---------------------------------
+ * - "head" is a LOCAL COPY of the pointer passed in
+ * - Modifying head inside the function does NOT affect caller's pointer
+ * - This is more concise - no need for extra "curr" variable
+ * - Both approaches work; this is the cleaner style
+ *
+ * while (head != NULL):
+ *   - Loop continues while head points to a valid node
+ *   - When head becomes NULL, we've printed all nodes
+ *   - NULL marks the end of a properly terminated linked list
+ *
+ * printf("%d", head->data):
+ *   - Access the data field of the node head points to
+ *   - %d prints the integer value
+ *   - "->" is shorthand for (*head).data
+ *
+ * if (head->next) printf(" -> "):
+ *   - Shorthand for "if (head->next != NULL)"
+ *   - In C, non-NULL pointers evaluate to TRUE
+ *   - Only print arrow if there's another node
+ *   - Cleaner output: no trailing arrow after last node
  *
  * head = head->next:
- *   - Traversal step - move to next node
- *   - Original caller's pointer unchanged (we have a copy)
+ *   - Move to the next node in the list
+ *   - This is the TRAVERSAL step
+ *   - Original caller's head pointer is UNCHANGED
+ *
+ * printf(" -> NULL\n"):
+ *   - Show that the list properly terminates
+ *   - Visual indicator of list end
+ *   - \n adds newline for clean output
  *
  * ============================================================================
  */
 // Print list - traverse and print each node's data
 // Say: "I'll traverse the list and print each node's value"
 void printList(Node* head) {
-    // Loop until we reach the end
+    // Loop until we reach the end (NULL)
     // Say: "I loop while head is not NULL"
-    while (head) {
+    // WHY use head directly? It's a local copy, won't affect caller
+    while (head != NULL) {
         // Print current node's data
         // Say: "I print the current node's data"
         printf("%d", head->data);
 
-        // Print arrow if more nodes exist
+        // Print arrow if there's a next node
         // Say: "If there's a next node, I print an arrow"
         if (head->next) printf(" -> ");
 
@@ -232,7 +372,7 @@ void printList(Node* head) {
         head = head->next;
     }
 
-    // Print NULL to show end
+    // Print NULL to show end of list
     // Say: "I print NULL to show the end of the list"
     printf(" -> NULL\n");
 }

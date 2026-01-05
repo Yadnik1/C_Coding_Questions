@@ -168,96 +168,219 @@ Node* createNode(int data) {
     return node;
 }
 
+/*
+ * ============================================================================
+ * CLONE LIST FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * Node* cloneList(Node* head):
+ *   - Returns "Node*" = pointer to head of the cloned list
+ *   - "Node* head" = pointer to the original list with random pointers
+ *   - Purpose: Create a DEEP COPY of the list, including random pointers
+ *
+ * THE CHALLENGE:
+ * ---------------------------------
+ * Why is this problem HARD?
+ * - Simple cloning: just copy data and set next pointers
+ * - But random pointers point to nodes that DON'T EXIST YET in the clone!
+ * - How do we know which clone node corresponds to which original?
+ *
+ * TWO SOLUTIONS:
+ * ---------------------------------
+ * 1. Hash Map Approach (O(n) space):
+ *    - map[original] = clone
+ *    - clone->random = map[original->random]
+ *    Easy but uses extra space!
+ *
+ * 2. Interleaving Approach (O(1) space) - WHAT WE USE:
+ *    - Insert clones right after originals
+ *    - Use position to find corresponding clone
+ *    - Separate lists at the end
+ *
+ * ALGORITHM: THREE-STEP INTERLEAVING
+ * ---------------------------------
+ *
+ * STEP 1: INTERLEAVE - Insert clone after each original
+ *   Original: A → B → C → NULL
+ *   After:    A → A' → B → B' → C → C' → NULL
+ *
+ *   Now every original's clone is just original->next!
+ *
+ * STEP 2: SET RANDOM POINTERS
+ *   Key insight: clone->random = original->random->next
+ *
+ *   Why? Because original->random is an original node,
+ *   and that original's clone is at original->random->next!
+ *
+ *   If original->random = B, then clone->random = B' = B->next
+ *
+ * STEP 3: SEPARATE - Restore both lists
+ *   Interleaved: A → A' → B → B' → C → C' → NULL
+ *   Original:    A → B → C → NULL (restored)
+ *   Clone:       A' → B' → C' → NULL (extracted)
+ *
+ * VISUALIZATION:
+ * ---------------------------------
+ * Original: 1 → 2 → 3 → NULL
+ * Random:   1→3, 2→1, 3→2
+ *
+ * After Step 1 (Interleave):
+ *   1 → 1' → 2 → 2' → 3 → 3' → NULL
+ *
+ * After Step 2 (Set random):
+ *   1'.random = 1.random.next = 3.next = 3'  ✓
+ *   2'.random = 2.random.next = 1.next = 1'  ✓
+ *   3'.random = 3.random.next = 2.next = 2'  ✓
+ *
+ * After Step 3 (Separate):
+ *   Original: 1 → 2 → 3 → NULL (restored!)
+ *   Clone:    1' → 2' → 3' → NULL (with correct random pointers!)
+ *
+ * WHY IS THIS O(1) SPACE?
+ * ---------------------------------
+ * We don't use a hash map or any auxiliary data structure.
+ * We only use the list's own structure (interleaving) to track mappings.
+ * The only "extra" space is the clone nodes themselves (required output).
+ *
+ * TIME COMPLEXITY: O(n)
+ * ---------------------------------
+ * - Step 1: O(n) - traverse and insert clones
+ * - Step 2: O(n) - traverse and set random pointers
+ * - Step 3: O(n) - traverse and separate
+ * - Total: O(3n) = O(n)
+ *
+ * SPACE COMPLEXITY: O(1) extra
+ * ---------------------------------
+ * - Only a few pointers regardless of list size
+ * - Clone nodes are required output, not "extra" space
+ *
+ * ============================================================================
+ */
+// Clone a list with random pointers using O(1) space interleaving method
+// Say: "I'll clone this list using the three-step interleaving approach"
 Node* cloneList(Node* head) {
-    // Edge case: empty list
-    // Say: "First check if the list is empty"
+    // =========================================================================
+    // EDGE CASE: Empty list has no clone
+    // =========================================================================
+    // Say: "First I check if the list is empty"
+    // WHY check? Can't clone an empty list
     if (head == NULL) return NULL;
 
-    // Declare pointer for traversal
+    // Declare pointer for traversal (reused across all steps)
     Node* current;
 
-    // Step 1: Insert cloned nodes between original nodes
-    // Say: "Step 1: I'll create clones and interleave them with originals"
-    // A → B → C becomes A → A' → B → B' → C → C'
+    // =========================================================================
+    // STEP 1: INTERLEAVE - Insert clone after each original node
+    // =========================================================================
+    // Say: "Step 1: I create clones and insert them right after each original"
+    // This transforms: A → B → C → NULL
+    //            into: A → A' → B → B' → C → C' → NULL
     current = head;
 
-    // Create and insert clones
-    // Say: "For each node, create a clone and insert it right after"
+    // Traverse and create clones
+    // Say: "For each node, I create a clone and insert it immediately after"
     while (current != NULL) {
-        // Create clone of current node
-        // Say: "Create a clone with the same data"
+        // Create clone with same data value
+        // Say: "I create a clone with the same data value"
+        // WHY createNode? It allocates memory and initializes next/random to NULL
         Node* clone = createNode(current->data);
 
-        // Insert clone after current
-        // Say: "Insert the clone between current and current's next"
+        // Insert clone between current and current's next
+        // Say: "I insert the clone between current and its next"
+        // WHY this order? Clone needs to point to what current pointed to
         clone->next = current->next;
 
-        // Link current to clone
-        // Say: "Link current node to its clone"
+        // Link current to its clone
+        // Say: "I link current to its clone"
+        // WHY? Now current->next IS the clone (key for Step 2!)
         current->next = clone;
 
-        // Move to next original node (skip the clone)
-        // Say: "Move to the next original node"
+        // Move to next ORIGINAL node (skip the clone we just inserted)
+        // Say: "I move to the next original node, skipping the clone"
+        // WHY clone->next? That's where the next original is now
         current = clone->next;
     }
+    // After this loop: A → A' → B → B' → C → C' → NULL
 
-    // Step 2: Set random pointers for cloned nodes
-    // Say: "Step 2: Set up the random pointers for all cloned nodes"
+    // =========================================================================
+    // STEP 2: SET RANDOM POINTERS for cloned nodes
+    // =========================================================================
+    // Say: "Step 2: I set up the random pointers for all cloned nodes"
+    // Key insight: clone->random = original->random->next
     current = head;
 
     // Traverse and set random pointers
-    // Say: "For each original node, set its clone's random pointer"
+    // Say: "For each original, I set its clone's random pointer"
     while (current != NULL) {
-        // If original has random pointer
-        // Say: "If the original has a random pointer"
+        // Only set random if original has a random pointer
+        // Say: "If the original has a random pointer, I set the clone's random"
+        // WHY check? If random is NULL, clone's random stays NULL (from createNode)
         if (current->random != NULL) {
-            // Clone's random = original's random's clone
-            // Say: "Set clone's random to the clone of original's random"
+            // THE KEY LINE: clone->random = original->random->next
+            // Say: "Clone's random equals the clone of original's random target"
+            // WHY this works?
+            //   - current->next is current's clone
+            //   - current->random is some original node X
+            //   - current->random->next is X's clone (X')
+            //   - So clone's random should point to X' ✓
             current->next->random = current->random->next;
         }
 
-        // Move to next original node
-        // Say: "Move to the next original node"
+        // Move to next ORIGINAL node (every other node)
+        // Say: "I move to the next original node"
+        // WHY current->next->next? Skip the clone to get to next original
         current = current->next->next;
     }
 
-    // Step 3: Separate the two lists
-    // Say: "Step 3: Separate the original and cloned lists"
+    // =========================================================================
+    // STEP 3: SEPARATE - Extract clone list and restore original list
+    // =========================================================================
+    // Say: "Step 3: I separate the interleaved list into two separate lists"
 
-    // Save clone head
-    // Say: "Save the head of the cloned list"
+    // Save clone head (needed for return)
+    // Say: "I save the head of the cloned list"
+    // WHY head->next? First clone is right after first original
     Node* cloneHead = head->next;
 
-    // Reset current to head
+    // Reset current to head for separation
     current = head;
 
-    // Declare clone current
+    // Pointer for clone traversal
     Node* cloneCurrent;
 
     // Separate the lists
-    // Say: "Restore the original list and build the cloned list"
+    // Say: "I restore the original list and extract the cloned list"
     while (current != NULL) {
-        // Get clone of current
-        // Say: "Get the clone of the current node"
+        // Get clone of current (it's right after current)
+        // Say: "I get the clone of the current node"
         cloneCurrent = current->next;
 
-        // Restore original's next
-        // Say: "Restore original's next pointer to skip the clone"
+        // Restore original's next (skip the clone)
+        // Say: "I restore original's next pointer to skip over the clone"
+        // WHY cloneCurrent->next? That's the next original (or NULL)
         current->next = cloneCurrent->next;
 
-        // Set clone's next if not at end
-        // Say: "Set clone's next to the next clone if it exists"
+        // Set clone's next to the next clone (if it exists)
+        // Say: "I set clone's next to point to the next clone"
+        // WHY check? If cloneCurrent->next is NULL, there's no next clone
         if (cloneCurrent->next != NULL) {
+            // WHY cloneCurrent->next->next? Next original's clone is after it
             cloneCurrent->next = cloneCurrent->next->next;
         }
 
-        // Move to next original
-        // Say: "Move to next original node"
+        // Move to next original (we just restored this link)
+        // Say: "I move to the next original node"
         current = current->next;
     }
+    // After this loop:
+    //   Original: A → B → C → NULL (restored!)
+    //   Clone:    A' → B' → C' → NULL (with correct random pointers!)
 
-    // Return cloned list
-    // Say: "Return the head of the cloned list"
+    // =========================================================================
+    // RETURN: Head of the cloned list
+    // =========================================================================
+    // Say: "I return the head of the cloned list"
+    // WHY cloneHead? We saved it before separating; it's the clone's head
     return cloneHead;
 }
 

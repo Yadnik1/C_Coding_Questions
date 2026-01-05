@@ -264,63 +264,255 @@ Node* createNode(int data) {
     return newNode;
 }
 
-// Find middle (returns second middle for even length)
+/*
+ * ============================================================================
+ * FIND MIDDLE FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * Node* findMiddle(Node* head):
+ *   - Returns "Node*" = pointer to the middle node
+ *   - "Node* head" = pointer to the first node of the list
+ *   - Purpose: Find the middle node using slow/fast pointer technique
+ *   - For even-length lists, returns the SECOND middle node
+ *
+ * ALGORITHM: Slow/Fast Pointer (Tortoise and Hare)
+ * ---------------------------------
+ * Two pointers move at different speeds:
+ *   - Slow (tortoise): moves 1 step per iteration
+ *   - Fast (hare): moves 2 steps per iteration
+ *
+ * When fast reaches the end, slow is at the middle!
+ *
+ * WHY THIS WORKS - MATHEMATICAL INTUITION:
+ * ---------------------------------
+ * Let n = total nodes in the list
+ *
+ * When fast pointer reaches the end:
+ *   - Fast has traveled n steps (entire list)
+ *   - Slow has traveled n/2 steps (half the list)
+ *   - Slow is at position n/2 = middle!
+ *
+ * For ODD length (n=5):
+ *   - Positions: 1, 2, 3, 4, 5
+ *   - Middle is position 3 (index 2)
+ *   - Fast ends at position 5, slow at position 3 ✓
+ *
+ * For EVEN length (n=6):
+ *   - Positions: 1, 2, 3, 4, 5, 6
+ *   - Two middles: 3 (first) and 4 (second)
+ *   - Fast ends past position 6 (NULL), slow at position 4 ✓
+ *   - Returns SECOND middle (4)
+ *
+ * WHY CHECK BOTH fast != NULL AND fast->next != NULL?
+ * ---------------------------------
+ * - fast != NULL: Handles EVEN length lists
+ *   (fast becomes NULL after jumping past the last node)
+ * - fast->next != NULL: Handles ODD length lists
+ *   (fast lands on last node, can't take another step)
+ *
+ * Without both checks, we'd crash trying to access fast->next->next
+ * when fast or fast->next is NULL!
+ *
+ * VISUALIZATION - ODD LENGTH (1->2->3->4->5):
+ * ---------------------------------
+ *   Start:    S,F at 1
+ *   Step 1:   S at 2, F at 3
+ *   Step 2:   S at 3, F at 5
+ *   F->next is NULL, STOP
+ *   Return slow (node 3) ✓
+ *
+ * VISUALIZATION - EVEN LENGTH (1->2->3->4->5->6):
+ * ---------------------------------
+ *   Start:    S,F at 1
+ *   Step 1:   S at 2, F at 3
+ *   Step 2:   S at 3, F at 5
+ *   Step 3:   S at 4, F at NULL (jumped past 6)
+ *   F is NULL, STOP
+ *   Return slow (node 4 = second middle) ✓
+ *
+ * TIME COMPLEXITY: O(n/2) = O(n)
+ * ---------------------------------
+ * - Only n/2 iterations (fast traverses while slow moves half)
+ * - Much faster than counting length first (1.5n operations)
+ *
+ * SPACE COMPLEXITY: O(1)
+ * ---------------------------------
+ * - Only two pointer variables
+ * - No extra data structures needed
+ *
+ * ============================================================================
+ */
+// Find middle node (returns second middle for even length)
+// Say: "I'll use the slow/fast pointer technique to find the middle"
 Node* findMiddle(Node* head) {
-    // Edge case: empty list
-    // Say: "First check if the list is empty"
+    // =========================================================================
+    // EDGE CASE: Empty list has no middle
+    // =========================================================================
+    // Say: "First, I check if the list is empty"
+    // WHY check NULL? Can't find middle of empty list
     if (head == NULL) return NULL;
 
-    // Initialize slow pointer at head
-    // Say: "I'll use the tortoise and hare technique with two pointers"
-    Node* slow = head;
+    // =========================================================================
+    // INITIALIZE: Both pointers start at head
+    // =========================================================================
+    // Say: "I initialize slow and fast pointers, both starting at head"
+    // WHY both at head? Both "runners" start at the same position
+    Node* slow = head;  // Tortoise: moves 1 step per iteration
+    Node* fast = head;  // Hare: moves 2 steps per iteration
 
-    // Initialize fast pointer at head
-    // Say: "Both pointers start at the head"
-    Node* fast = head;
-
-    // Traverse until fast reaches end
-    // Say: "Move slow by 1 and fast by 2 until fast reaches the end"
+    // =========================================================================
+    // TRAVERSE: Move pointers until fast reaches the end
+    // =========================================================================
+    // Say: "I move slow by 1 and fast by 2 until fast reaches the end"
+    // WHY fast != NULL? For even length, fast becomes NULL after last jump
+    // WHY fast->next != NULL? For odd length, fast lands on last node
+    // Both conditions prevent crash when accessing fast->next->next
     while (fast != NULL && fast->next != NULL) {
-        // Move slow one step
-        // Say: "Slow moves one step forward"
+        // Move slow pointer one step forward (tortoise speed)
+        // Say: "I move slow one step forward"
+        // WHY one step? Slow covers half the distance of fast
         slow = slow->next;
 
-        // Move fast two steps
-        // Say: "Fast moves two steps forward"
+        // Move fast pointer two steps forward (hare speed)
+        // Say: "I move fast two steps forward"
+        // WHY two steps? When fast reaches end, slow is at middle
+        // This is safe because we checked fast->next != NULL above
         fast = fast->next->next;
     }
 
-    // When fast reaches end, slow is at middle
+    // =========================================================================
+    // RETURN: Slow is now at the middle
+    // =========================================================================
     // Say: "When fast reaches the end, slow is at the middle"
+    // WHY slow? Fast traveled full distance, slow traveled half = middle
     return slow;
 }
 
-// Find first middle for even length
+/*
+ * ============================================================================
+ * FIND FIRST MIDDLE FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * Node* findFirstMiddle(Node* head):
+ *   - Returns "Node*" = pointer to the FIRST middle node
+ *   - "Node* head" = pointer to the first node of the list
+ *   - Purpose: Find middle for even-length lists where we want the FIRST middle
+ *   - For odd-length lists, behaves same as findMiddle (only one middle exists)
+ *
+ * KEY DIFFERENCE FROM findMiddle():
+ * ---------------------------------
+ * The ONLY difference is where fast starts:
+ *   - findMiddle():      fast = head        → returns SECOND middle
+ *   - findFirstMiddle(): fast = head->next  → returns FIRST middle
+ *
+ * WHY STARTING FAST ONE AHEAD WORKS:
+ * ---------------------------------
+ * By starting fast one position ahead, we effectively make fast "reach the end"
+ * one iteration earlier. This causes slow to stop one node earlier too!
+ *
+ * MATHEMATICAL INTUITION:
+ * ---------------------------------
+ * For even length n:
+ *   - First middle is at position n/2
+ *   - Second middle is at position (n/2) + 1
+ *
+ * Starting fast at head->next is like having a list that's 1 shorter from
+ * fast's perspective, so slow stops 1 position earlier.
+ *
+ * VISUALIZATION - EVEN LENGTH (1->2->3->4->5->6):
+ * ---------------------------------
+ *   Start:    S at 1, F at 2 (one ahead!)
+ *
+ *   Step 1:   S at 2, F at 4
+ *             1 -> 2 -> 3 -> 4 -> 5 -> 6 -> NULL
+ *                  S         F
+ *
+ *   Step 2:   S at 3, F at 6
+ *             1 -> 2 -> 3 -> 4 -> 5 -> 6 -> NULL
+ *                       S              F
+ *
+ *   Step 3:   F->next is NULL, STOP
+ *             Return slow (node 3 = FIRST middle) ✓
+ *
+ * COMPARE WITH findMiddle() ON SAME LIST:
+ * ---------------------------------
+ *   findMiddle():      Returns 4 (second middle)
+ *   findFirstMiddle(): Returns 3 (first middle)
+ *
+ * VISUALIZATION - ODD LENGTH (1->2->3->4->5):
+ * ---------------------------------
+ *   Start:    S at 1, F at 2
+ *
+ *   Step 1:   S at 2, F at 4
+ *   Step 2:   S at 3, F at NULL (jumped past 5)
+ *
+ *   F is NULL, STOP
+ *   Return slow (node 3) - same as findMiddle()!
+ *
+ * For odd length, both functions return the same middle (there's only one)
+ *
+ * WHEN TO USE EACH FUNCTION:
+ * ---------------------------------
+ * - findMiddle(): When you need the second middle (splitting for merge sort)
+ * - findFirstMiddle(): When you need the first middle (some interview variants)
+ *
+ * TIME COMPLEXITY: O(n/2) = O(n)
+ * ---------------------------------
+ * - Same as findMiddle() - only n/2 iterations needed
+ *
+ * SPACE COMPLEXITY: O(1)
+ * ---------------------------------
+ * - Only two pointer variables
+ *
+ * ============================================================================
+ */
+// Find first middle for even length (same middle for odd length)
+// Say: "I'll use slow/fast but start fast one ahead to get the first middle"
 Node* findFirstMiddle(Node* head) {
-    // Edge case: empty list
-    // Say: "Handle the edge case of an empty list"
+    // =========================================================================
+    // EDGE CASE: Empty list has no middle
+    // =========================================================================
+    // Say: "First, I check if the list is empty"
+    // WHY check NULL? Can't find middle of empty list
     if (head == NULL) return NULL;
 
-    // Initialize slow at head
-    // Say: "For the first middle, I'll start slow at head"
+    // =========================================================================
+    // INITIALIZE SLOW: Starts at head (same as findMiddle)
+    // =========================================================================
+    // Say: "I initialize slow pointer at head"
+    // WHY at head? Slow always starts at the beginning
     Node* slow = head;
 
-    // Initialize fast one step ahead
-    // Say: "And start fast one step ahead at head->next"
+    // =========================================================================
+    // INITIALIZE FAST: Starts ONE AHEAD at head->next (KEY DIFFERENCE!)
+    // =========================================================================
+    // Say: "I initialize fast pointer at head->next - this is the key difference!"
+    // WHY one ahead? This makes slow stop at the FIRST middle instead of second
+    // It's like making the list "appear shorter" to fast by 1 node
     Node* fast = head->next;
 
-    // Traverse with adjusted starting position
-    // Say: "This adjustment makes slow land on the first middle for even-length lists"
+    // =========================================================================
+    // TRAVERSE: Move pointers until fast reaches the end
+    // =========================================================================
+    // Say: "I traverse with slow moving 1 step and fast moving 2 steps"
+    // WHY same loop condition? We still need to prevent accessing NULL
     while (fast != NULL && fast->next != NULL) {
-        // Move slow one step
+        // Move slow pointer one step forward
+        // Say: "I move slow one step forward"
+        // WHY one step? Same reason as findMiddle - slow covers half the distance
         slow = slow->next;
 
-        // Move fast two steps
+        // Move fast pointer two steps forward
+        // Say: "I move fast two steps forward"
+        // WHY two steps? Fast reaches end faster, but started ahead
         fast = fast->next->next;
     }
 
-    // Return first middle
-    // Say: "Return slow which points to the first middle"
+    // =========================================================================
+    // RETURN: Slow is now at the FIRST middle
+    // =========================================================================
+    // Say: "When fast reaches the end, slow is at the first middle"
+    // WHY first middle? Because fast started one ahead, slow stopped one earlier
     return slow;
 }
 
@@ -330,55 +522,42 @@ Node* findFirstMiddle(Node* head) {
  * ============================================================================
  *
  * void printList(Node* head):
- *   - "void" means function doesn't return anything (just prints)
- *   - "Node* head" receives a COPY of the pointer (not the original)
- *   - We can safely modify "head" inside without affecting caller's pointer
+ *   - "void" = Function doesn't return anything (just prints to console)
+ *   - "Node* head" = Receives a COPY of the head pointer (pass by value)
+ *   - We can safely modify this copy without affecting caller's pointer
  *
- * WHY WE CAN USE head DIRECTLY (instead of creating temp pointer):
- *   - Parameters are COPIES in C (pass by value)
- *   - Original pointer in main() is NOT modified
- *   - Using head directly saves creating an extra variable
+ * WHY USE head DIRECTLY (no separate traversal pointer)?
+ * ---------------------------------
+ * - "head" is a LOCAL COPY of the pointer passed in
+ * - Modifying head inside the function does NOT affect caller's pointer
+ * - This is more concise - no need for extra "curr" variable
+ * - Both approaches work; this is the cleaner style
  *
  * while (head != NULL):
- *   - Loop continues as long as head points to a valid node
- *   - When head becomes NULL, we've passed the last node
- *   - NULL acts as the "end of list" marker
+ *   - Loop continues while head points to a valid node
+ *   - When head becomes NULL, we've printed all nodes
+ *   - NULL marks the end of a properly terminated linked list
  *
  * printf("%d", head->data):
- *   - head->data accesses the data field of current node
+ *   - Access the data field of the node head points to
  *   - %d prints the integer value
- *   - Equivalent to: (*head).data
+ *   - "->" is shorthand for (*head).data
  *
  * if (head->next) printf(" -> "):
- *   - head->next is a pointer (address or NULL)
- *   - Non-NULL pointer evaluates to TRUE
- *   - NULL pointer evaluates to FALSE
- *   - Only print arrow if there's a next node (cleaner output)
+ *   - Shorthand for "if (head->next != NULL)"
+ *   - In C, non-NULL pointers evaluate to TRUE
+ *   - Only print arrow if there's another node
+ *   - Cleaner output: no trailing arrow after last node
  *
  * head = head->next:
- *   - Move head to point to the next node
- *   - This is the "traversal step" - advances through the list
- *   - Original head in caller is UNCHANGED (we modified the copy)
+ *   - Move to the next node in the list
+ *   - This is the TRAVERSAL step
+ *   - Original caller's head pointer is UNCHANGED
  *
- * TRAVERSAL VISUALIZATION:
- *   List: 1 -> 2 -> 3 -> NULL
- *
- *   Iteration 1: head points to node(1), print "1"
- *                head->next exists, print " -> "
- *                head = head->next (now points to node(2))
- *
- *   Iteration 2: head points to node(2), print "2"
- *                head->next exists, print " -> "
- *                head = head->next (now points to node(3))
- *
- *   Iteration 3: head points to node(3), print "3"
- *                head->next is NULL, don't print arrow
- *                head = head->next (now head = NULL)
- *
- *   Loop ends: head == NULL
- *   Print " -> NULL\n" for clarity
- *
- *   Output: "1 -> 2 -> 3 -> NULL"
+ * printf(" -> NULL\n"):
+ *   - Show that the list properly terminates
+ *   - Visual indicator of list end
+ *   - \n adds newline for clean output
  *
  * ============================================================================
  */
@@ -387,21 +566,22 @@ Node* findFirstMiddle(Node* head) {
 void printList(Node* head) {
     // Loop until we reach the end (NULL)
     // Say: "I loop while head is not NULL"
+    // WHY use head directly? It's a local copy, won't affect caller
     while (head != NULL) {
         // Print current node's data
         // Say: "I print the current node's data"
         printf("%d", head->data);
 
         // Print arrow if there's a next node
-        // Say: "If there's a next node, I print an arrow for readability"
+        // Say: "If there's a next node, I print an arrow"
         if (head->next) printf(" -> ");
 
-        // Move to next node (this modifies our LOCAL copy of head)
+        // Move to next node
         // Say: "I advance head to the next node"
         head = head->next;
     }
 
-    // Print NULL at the end to show list termination
+    // Print NULL to show end of list
     // Say: "I print NULL to show the end of the list"
     printf(" -> NULL\n");
 }

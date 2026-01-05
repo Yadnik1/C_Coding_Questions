@@ -651,6 +651,81 @@ int countLoopLength(Node* head) {
 
 /*
  * ============================================================================
+ * PRINT LIST FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * void printList(Node* head):
+ *   - "void" = Function doesn't return anything (just prints to console)
+ *   - "Node* head" = Receives a COPY of the head pointer (pass by value)
+ *   - We can safely modify this copy without affecting caller's pointer
+ *
+ * WHY USE head DIRECTLY (no separate traversal pointer)?
+ * ---------------------------------
+ * - "head" is a LOCAL COPY of the pointer passed in
+ * - Modifying head inside the function does NOT affect caller's pointer
+ * - This is more concise - no need for extra "curr" variable
+ * - Both approaches work; this is the cleaner style
+ *
+ * while (head != NULL):
+ *   - Loop continues while head points to a valid node
+ *   - When head becomes NULL, we've printed all nodes
+ *   - NULL marks the end of a properly terminated linked list
+ *
+ * printf("%d", head->data):
+ *   - Access the data field of the node head points to
+ *   - %d prints the integer value
+ *   - "->" is shorthand for (*head).data
+ *
+ * if (head->next) printf(" -> "):
+ *   - Shorthand for "if (head->next != NULL)"
+ *   - In C, non-NULL pointers evaluate to TRUE
+ *   - Only print arrow if there's another node
+ *   - Cleaner output: no trailing arrow after last node
+ *
+ * head = head->next:
+ *   - Move to the next node in the list
+ *   - This is the TRAVERSAL step
+ *   - Original caller's head pointer is UNCHANGED
+ *
+ * printf(" -> NULL\n"):
+ *   - Show that the list properly terminates
+ *   - Visual indicator of list end
+ *   - \n adds newline for clean output
+ *
+ * NOTE FOR LISTS WITH LOOPS:
+ *   - This function will loop forever on lists with cycles!
+ *   - Use the hasLoop() function first to detect loops
+ *   - Or use a version with maxNodes limit (see 09_remove_loop.c)
+ *
+ * ============================================================================
+ */
+// Print list - traverse and print each node's data
+// Say: "I'll traverse the list and print each node's value"
+void printList(Node* head) {
+    // Loop until we reach the end (NULL)
+    // Say: "I loop while head is not NULL"
+    // WHY use head directly? It's a local copy, won't affect caller
+    while (head != NULL) {
+        // Print current node's data
+        // Say: "I print the current node's data"
+        printf("%d", head->data);
+
+        // Print arrow if there's a next node
+        // Say: "If there's a next node, I print an arrow"
+        if (head->next) printf(" -> ");
+
+        // Move to next node
+        // Say: "I advance head to the next node"
+        head = head->next;
+    }
+
+    // Print NULL to show end of list
+    // Say: "I print NULL to show the end of the list"
+    printf(" -> NULL\n");
+}
+
+/*
+ * ============================================================================
  * FREE LIST FUNCTION - LINE BY LINE EXPLANATION
  * ============================================================================
  *

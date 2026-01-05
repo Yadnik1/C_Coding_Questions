@@ -642,62 +642,67 @@ Node* reverseRecursive(Node* head) {
  * ============================================================================
  *
  * void printList(Node* head):
- *   - "void" = This function doesn't return anything, just prints
- *   - "Node* head" = Takes pointer to the first node of the list
+ *   - "void" = Function doesn't return anything (just prints to console)
+ *   - "Node* head" = Receives a COPY of the head pointer (pass by value)
+ *   - We can safely modify this copy without affecting caller's pointer
  *
- * Node* curr = head:
- *   - Create a traversal pointer starting at head
- *   - We use 'curr' instead of modifying 'head' directly
- *   - This preserves the original head pointer
+ * WHY USE head DIRECTLY (no separate traversal pointer)?
+ * ---------------------------------
+ * - "head" is a LOCAL COPY of the pointer passed in
+ * - Modifying head inside the function does NOT affect caller's pointer
+ * - This is more concise - no need for extra "curr" variable
+ * - Both approaches work; this is the cleaner style
  *
- * while (curr != NULL):
- *   - Continue looping until we reach the end of the list
- *   - NULL marks the end (last node's next is NULL)
+ * while (head != NULL):
+ *   - Loop continues while head points to a valid node
+ *   - When head becomes NULL, we've printed all nodes
+ *   - NULL marks the end of a properly terminated linked list
  *
- * printf("%d", curr->data):
- *   - Print the data value of the current node
- *   - curr->data accesses the data field through the pointer
+ * printf("%d", head->data):
+ *   - Access the data field of the node head points to
+ *   - %d prints the integer value
+ *   - "->" is shorthand for (*head).data
  *
- * if (curr->next != NULL) printf(" -> "):
- *   - Print arrow separator only if there's a next node
- *   - This prevents printing " -> " after the last node
+ * if (head->next) printf(" -> "):
+ *   - Shorthand for "if (head->next != NULL)"
+ *   - In C, non-NULL pointers evaluate to TRUE
+ *   - Only print arrow if there's another node
+ *   - Cleaner output: no trailing arrow after last node
  *
- * curr = curr->next:
+ * head = head->next:
  *   - Move to the next node in the list
- *   - This is how we traverse the linked list
+ *   - This is the TRAVERSAL step
+ *   - Original caller's head pointer is UNCHANGED
  *
  * printf(" -> NULL\n"):
- *   - Print NULL at the end to show the list terminates
- *   - Visual representation of the list ending
+ *   - Show that the list properly terminates
+ *   - Visual indicator of list end
+ *   - \n adds newline for clean output
  *
  * ============================================================================
  */
-// Print linked list - traverses and prints each node's data
+// Print list - traverse and print each node's data
+// Say: "I'll traverse the list and print each node's value"
 void printList(Node* head) {
-    // Create a traversal pointer - don't modify head directly!
-    // Say: "I'll use a curr pointer to traverse without losing the head"
-    Node* curr = head;
+    // Loop until we reach the end (NULL)
+    // Say: "I loop while head is not NULL"
+    // WHY use head directly? It's a local copy, won't affect caller
+    while (head != NULL) {
+        // Print current node's data
+        // Say: "I print the current node's data"
+        printf("%d", head->data);
 
-    // Traverse until we reach the end (NULL)
-    // Say: "I loop through each node until curr becomes NULL"
-    while (curr != NULL) {
-        // Print the current node's data value
-        // Say: "Print the data value of the current node"
-        printf("%d", curr->data);
+        // Print arrow if there's a next node
+        // Say: "If there's a next node, I print an arrow"
+        if (head->next) printf(" -> ");
 
-        // Print arrow if there's a next node (for formatting)
-        // Say: "If there's a next node, print an arrow separator"
-        if (curr->next != NULL) {
-            printf(" -> ");
-        }
-
-        // Move to the next node
-        // Say: "Move curr to point to the next node"
-        curr = curr->next;
+        // Move to next node
+        // Say: "I advance head to the next node"
+        head = head->next;
     }
 
     // Print NULL to show end of list
-    // Say: "Print NULL to indicate the end of the list"
+    // Say: "I print NULL to show the end of the list"
     printf(" -> NULL\n");
 }
 

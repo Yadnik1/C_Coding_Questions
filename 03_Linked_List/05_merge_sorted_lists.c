@@ -188,53 +188,173 @@ Node* createNode(int data) {
     return node;
 }
 
+/*
+ * ============================================================================
+ * MERGE SORTED LISTS FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * Node* mergeSortedLists(Node* l1, Node* l2):
+ *   - Returns "Node*" = pointer to the head of merged list
+ *   - "Node* l1" = pointer to first sorted list
+ *   - "Node* l2" = pointer to second sorted list
+ *   - Purpose: Merge two SORTED lists into one SORTED list
+ *   - IMPORTANT: This REUSES existing nodes (doesn't create new ones!)
+ *
+ * ALGORITHM: Two-Pointer Merge (same as Merge Sort's merge step)
+ * ---------------------------------
+ * 1. Compare heads of both lists
+ * 2. Take the smaller node, attach to result
+ * 3. Advance the pointer of the list we took from
+ * 4. Repeat until one list is exhausted
+ * 5. Attach remaining nodes (already sorted!)
+ *
+ * WHY USE STACK-ALLOCATED DUMMY NODE?
+ * ---------------------------------
+ * - "Node dummy;" allocates on STACK (not heap)
+ * - No need to malloc/free - automatic cleanup when function returns
+ * - Dummy simplifies code: always append to tail->next
+ * - Without dummy: need special handling for first node
+ *
+ * COMPARISON: Heap vs Stack Dummy
+ * ---------------------------------
+ * Stack (what we use):  Node dummy;           → auto cleanup
+ * Heap (alternative):   Node* dummy = malloc() → must free()
+ *
+ * Stack is preferred here - cleaner and no memory leak risk!
+ *
+ * WHY USE "<=" INSTEAD OF "<"?
+ * ---------------------------------
+ * Using <= makes the algorithm STABLE:
+ * - Elements from l1 come first when equal
+ * - Preserves relative order of equal elements
+ * - Important when merge sort uses this function!
+ *
+ * VISUALIZATION:
+ * ---------------------------------
+ * L1: 1 -> 3 -> 5 -> NULL
+ * L2: 2 -> 4 -> 6 -> NULL
+ *
+ * Initial: dummy -> NULL, tail = dummy
+ *
+ * Step 1: Compare 1 vs 2, take 1
+ *   dummy -> 1, tail -> 1
+ *   L1: 3 -> 5 -> NULL
+ *
+ * Step 2: Compare 3 vs 2, take 2
+ *   dummy -> 1 -> 2, tail -> 2
+ *   L2: 4 -> 6 -> NULL
+ *
+ * Step 3: Compare 3 vs 4, take 3
+ *   dummy -> 1 -> 2 -> 3, tail -> 3
+ *
+ * Step 4: Compare 5 vs 4, take 4
+ *   dummy -> 1 -> 2 -> 3 -> 4, tail -> 4
+ *
+ * Step 5: Compare 5 vs 6, take 5
+ *   dummy -> 1 -> 2 -> 3 -> 4 -> 5, tail -> 5
+ *   L1: NULL (exhausted!)
+ *
+ * Attach remaining L2:
+ *   dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> NULL
+ *
+ * Return dummy.next = 1 -> 2 -> 3 -> 4 -> 5 -> 6
+ *
+ * EDGE CASES HANDLED AUTOMATICALLY:
+ * ---------------------------------
+ * - l1 empty: while loop never runs, tail->next = l2
+ * - l2 empty: while loop never runs, tail->next = l1
+ * - Both empty: while loop never runs, tail->next = NULL
+ *
+ * TIME COMPLEXITY: O(n + m)
+ * ---------------------------------
+ * - n = length of l1, m = length of l2
+ * - Each node visited exactly once
+ *
+ * SPACE COMPLEXITY: O(1)
+ * ---------------------------------
+ * - Only one stack-allocated dummy node
+ * - No new nodes created - we REUSE existing nodes!
+ * - This is called "in-place" merging
+ *
+ * ============================================================================
+ */
+// Merge two sorted lists into one sorted list (in-place, reuses nodes)
+// Say: "I'll merge two sorted lists by comparing nodes and attaching smaller ones"
 Node* mergeSortedLists(Node* l1, Node* l2) {
-    // Create dummy node on stack
-    // Say: "I'll create a dummy node to simplify the merge logic"
+    // =========================================================================
+    // STEP 1: CREATE STACK-ALLOCATED DUMMY NODE
+    // =========================================================================
+    // Say: "I create a dummy node on the stack to simplify building the result"
+    // WHY stack? Automatic cleanup, no need to free, cleaner code
+    // WHY dummy? Avoids special case for first node - always append to tail->next
     Node dummy;
 
-    // Initialize tail pointer
-    // Say: "Tail will track the end of our merged list"
+    // =========================================================================
+    // STEP 2: INITIALIZE TAIL POINTER
+    // =========================================================================
+    // Say: "Tail pointer will track the end of our merged list"
+    // WHY tail? We need to know where to append the next node
+    // WHY point to dummy? First node will be attached to dummy.next via tail->next
     Node* tail = &dummy;
 
-    // Initialize dummy's next to NULL
-    // Say: "Initialize the dummy's next pointer to NULL"
+    // Initialize dummy's next to NULL (good practice)
+    // Say: "I initialize dummy's next to NULL"
+    // WHY initialize? Safety - in case we return early or both lists are empty
     dummy.next = NULL;
 
-    // Merge while both lists have nodes
+    // =========================================================================
+    // STEP 3: MAIN MERGE LOOP - Compare and attach smaller node
+    // =========================================================================
     // Say: "I'll compare nodes from both lists and attach the smaller one"
+    // WHY both conditions? We can only compare when BOTH lists have nodes
+    // When one is exhausted, we attach the remaining list directly
     while (l1 != NULL && l2 != NULL) {
         // Compare current nodes from both lists
-        // Say: "Compare the current nodes from both lists"
+        // Say: "I compare the current values from both lists"
+        // WHY <=? Makes algorithm STABLE (preserves order of equal elements)
         if (l1->data <= l2->data) {
-            // L1's node is smaller or equal
-            // Say: "L1's value is smaller, so attach it to our result"
+            // L1's node is smaller or equal - take it
+            // Say: "L1's value is smaller or equal, so I attach it to our result"
+            // WHY attach? We're building a new sorted list by relinking existing nodes
             tail->next = l1;
 
-            // Move l1 forward
-            // Say: "Move l1 forward to its next node"
+            // Move l1 forward (we've "consumed" this node)
+            // Say: "I move l1 forward to its next node"
+            // WHY advance? This node is now in our result, get the next candidate
             l1 = l1->next;
         } else {
-            // L2's node is smaller
-            // Say: "L2's value is smaller, so attach it to our result"
+            // L2's node is smaller - take it
+            // Say: "L2's value is smaller, so I attach it to our result"
+            // WHY else? l2->data < l1->data, so l2's node should come first
             tail->next = l2;
 
-            // Move l2 forward
-            // Say: "Move l2 forward to its next node"
+            // Move l2 forward (we've "consumed" this node)
+            // Say: "I move l2 forward to its next node"
+            // WHY advance? This node is now in our result, get the next candidate
             l2 = l2->next;
         }
 
-        // Move tail forward
-        // Say: "Move tail forward to the node we just added"
+        // Move tail forward to the node we just added
+        // Say: "I move tail forward to maintain it at the end of our result"
+        // WHY move tail? Next iteration needs to append after this node
         tail = tail->next;
     }
 
-    // Attach remaining nodes from non-empty list
-    // Say: "Attach whichever list still has remaining nodes"
+    // =========================================================================
+    // STEP 4: ATTACH REMAINING NODES (One list is exhausted)
+    // =========================================================================
+    // Say: "I attach whichever list still has remaining nodes"
+    // WHY ternary? One of l1/l2 is NULL; attach the non-NULL one
+    // If both NULL, tail->next = NULL (already sorted/empty)
+    // WHY can we attach directly? The remaining list is already sorted!
     tail->next = (l1 != NULL) ? l1 : l2;
 
-    // Return the merged list (skip dummy)
-    // Say: "Return dummy's next which is the head of our merged list"
+    // =========================================================================
+    // STEP 5: RETURN THE MERGED LIST (skip dummy)
+    // =========================================================================
+    // Say: "I return dummy's next which is the head of our merged list"
+    // WHY dummy.next? Dummy was just a placeholder; real list starts at next
+    // WHY "."? dummy is a struct (not pointer), so we use "." not "->"
     return dummy.next;
 }
 
@@ -244,16 +364,42 @@ Node* mergeSortedLists(Node* l1, Node* l2) {
  * ============================================================================
  *
  * void printList(Node* head):
- *   - "void" means function doesn't return anything (just prints)
- *   - "Node* head" receives a COPY of the pointer (not the original)
+ *   - "void" = Function doesn't return anything (just prints to console)
+ *   - "Node* head" = Receives a COPY of the head pointer (pass by value)
+ *   - We can safely modify this copy without affecting caller's pointer
  *
- * while (head):
- *   - Shorthand for "while (head != NULL)"
- *   - In C, any non-NULL pointer evaluates to true
+ * WHY USE head DIRECTLY (no separate traversal pointer)?
+ * ---------------------------------
+ * - "head" is a LOCAL COPY of the pointer passed in
+ * - Modifying head inside the function does NOT affect caller's pointer
+ * - This is more concise - no need for extra "curr" variable
+ * - Both approaches work; this is the cleaner style
+ *
+ * while (head != NULL):
+ *   - Loop continues while head points to a valid node
+ *   - When head becomes NULL, we've printed all nodes
+ *   - NULL marks the end of a properly terminated linked list
+ *
+ * printf("%d", head->data):
+ *   - Access the data field of the node head points to
+ *   - %d prints the integer value
+ *   - "->" is shorthand for (*head).data
+ *
+ * if (head->next) printf(" -> "):
+ *   - Shorthand for "if (head->next != NULL)"
+ *   - In C, non-NULL pointers evaluate to TRUE
+ *   - Only print arrow if there's another node
+ *   - Cleaner output: no trailing arrow after last node
  *
  * head = head->next:
- *   - Move head to next node (traversal step)
- *   - Original pointer in caller is UNCHANGED
+ *   - Move to the next node in the list
+ *   - This is the TRAVERSAL step
+ *   - Original caller's head pointer is UNCHANGED
+ *
+ * printf(" -> NULL\n"):
+ *   - Show that the list properly terminates
+ *   - Visual indicator of list end
+ *   - \n adds newline for clean output
  *
  * ============================================================================
  */
@@ -262,7 +408,8 @@ Node* mergeSortedLists(Node* l1, Node* l2) {
 void printList(Node* head) {
     // Loop until we reach the end (NULL)
     // Say: "I loop while head is not NULL"
-    while (head) {
+    // WHY use head directly? It's a local copy, won't affect caller
+    while (head != NULL) {
         // Print current node's data
         // Say: "I print the current node's data"
         printf("%d", head->data);
@@ -276,7 +423,7 @@ void printList(Node* head) {
         head = head->next;
     }
 
-    // Print NULL to show list termination
+    // Print NULL to show end of list
     // Say: "I print NULL to show the end of the list"
     printf(" -> NULL\n");
 }
