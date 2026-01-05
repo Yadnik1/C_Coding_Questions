@@ -31,6 +31,37 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use memcmp instead of strcmp?"
+ * A1: strcmp stops at null bytes, memcmp doesn't. For binary data (images,
+ *     network packets, encrypted data), null bytes are valid data - strcmp
+ *     would give wrong results. Also use memcmp to compare structs or arrays.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can you use memcmp to compare structs?"
+ * A2: Yes, but beware of padding! Compilers add padding bytes for alignment,
+ *     and padding contents are undefined. Two "equal" structs may have
+ *     different padding bytes. Either memset struct to 0 before use, or
+ *     compare field-by-field for safety.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Is memcmp safe for cryptographic comparisons?"
+ * A3: NO! Standard memcmp is vulnerable to timing attacks - it returns early
+ *     on first difference. Attacker can measure time to guess secrets.
+ *     Use constant-time comparison for crypto: always compare ALL bytes,
+ *     accumulate differences with XOR, then check if result is zero.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How do optimized memcmp implementations work?"
+ * A4: Compare word-at-a-time (8 bytes) when aligned. XOR words to find
+ *     differences quickly. Only do byte-by-byte for unaligned portions or
+ *     when difference found. Can use SIMD for even faster bulk comparison.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

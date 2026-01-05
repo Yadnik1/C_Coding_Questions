@@ -24,6 +24,36 @@
  *
  * TIME: O(n + m) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why is repeated strcat in a loop inefficient?"
+ * A1: Each strcat must find the end of dest first - O(n) each time!
+ *     Concatenating k strings of length n: O(n) + O(2n) + O(3n) = O(kn²).
+ *     Better: track end position, or use snprintf, or pre-calculate total
+ *     length and copy directly. This is "Schlemiel the painter's algorithm".
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How does strncat differ from strncpy in null termination?"
+ * A2: strncat ALWAYS adds null terminator after appending (so needs n+1 space).
+ *     strncpy does NOT add null if src >= n characters. This inconsistency
+ *     is a common source of bugs. strncat is safer in this regard.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What's the safest way to concatenate strings in C?"
+ * A3: Use snprintf: snprintf(dest, size, "%s%s", str1, str2). It always
+ *     null-terminates and returns chars that would be written (for truncation
+ *     check). Or use strlcat on BSD systems. Never use strcat in production.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can strcat cause security vulnerabilities?"
+ * A4: Absolutely! Same as strcpy - buffer overflow if dest too small.
+ *     Attacker-controlled src can overflow stack/heap, enabling code execution.
+ *     Always validate lengths before concatenation. Use bounded functions.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

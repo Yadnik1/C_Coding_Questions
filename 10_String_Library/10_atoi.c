@@ -42,6 +42,36 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "How do you detect overflow before it happens?"
+ * A1: Before result = result * 10 + digit, check: result > INT_MAX / 10 OR
+ *     (result == INT_MAX / 10 AND digit > 7). This catches overflow before
+ *     the operation. For negative, check digit > 8 for INT_MIN's last digit.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What's the difference between atoi, strtol, and sscanf?"
+ * A2: atoi: Simple, no error detection (returns 0 on failure, same as "0").
+ *     strtol: Better - sets errno on overflow, returns end pointer for error
+ *     detection, supports any base. sscanf: Most flexible but heavier.
+ *     Use strtol in production code for proper error handling.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why is the digit check (str[i] >= '0' && str[i] <= '9') instead of isdigit?"
+ * A3: Both work, but direct comparison is: 1) More portable (isdigit behavior
+ *     varies with locale), 2) Faster (no function call), 3) Clearer intent.
+ *     isdigit is fine but may accept locale-specific digit characters.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How would you modify atoi to handle different bases?"
+ * A4: Accept base parameter (2-36). Use strtol's logic: for base > 10,
+ *     accept letters a-z/A-Z for digits 10-35. Validate digit < base.
+ *     Handle 0x prefix for hex, 0 prefix for octal if supporting auto-detect.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

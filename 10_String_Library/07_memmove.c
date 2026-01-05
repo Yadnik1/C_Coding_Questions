@@ -35,6 +35,35 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "When should you use memmove vs memcpy?"
+ * A1: Use memmove when source and destination MIGHT overlap (even if unsure).
+ *     Use memcpy only when you're CERTAIN there's no overlap. When in doubt,
+ *     use memmove - it's safer. Performance difference is minimal.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why doesn't memmove just use a temporary buffer?"
+ * A2: That would require O(n) extra space and another copy operation.
+ *     By choosing copy direction intelligently (forward if dest < src,
+ *     backward if dest > src), we handle overlap in O(n) time, O(1) space.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How do you detect if memory regions overlap?"
+ * A3: Regions [a, a+n) and [b, b+m) overlap if: a < b+m AND b < a+n.
+ *     But memmove doesn't need to detect overlap - it just copies in the
+ *     safe direction based on pointer comparison. If d < s, forward is safe.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What real-world operations need memmove?"
+ * A4: Array element deletion (shift elements left), insertion (shift right),
+ *     in-place string manipulation, ring buffer operations, gap buffer in
+ *     text editors. Any time you shift data within the same array.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

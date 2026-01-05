@@ -39,6 +39,36 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why can't you use memset to initialize an int array to 1?"
+ * A1: memset fills each BYTE, not each int! Setting bytes to 0x01 creates
+ *     0x01010101 = 16843009 for each int. Only 0 (all bytes 0x00) and -1
+ *     (all bytes 0xFF) work correctly for int arrays.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do optimized memset implementations work?"
+ * A2: They use word-aligned writes (8 bytes at a time on 64-bit) for the
+ *     middle portion. First handle unaligned prefix bytes, then write 64-bit
+ *     words with the byte pattern repeated 8 times, then handle suffix.
+ *     Can also use SIMD (SSE/AVX) for even larger chunks.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What's volatile and when would you use it with memset?"
+ * A3: Use memset_s or explicit_bzero for security-sensitive clearing (passwords).
+ *     Regular memset can be optimized away by compilers if buffer isn't used
+ *     afterward. volatile prevents this: *(volatile char*)p = 0;
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the difference between memset and calloc?"
+ * A4: calloc allocates AND zeros memory atomically. memset only fills existing
+ *     memory. calloc may use OS-provided pre-zeroed pages (faster for large
+ *     allocations). Use calloc for new zeroed allocations, memset for existing.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

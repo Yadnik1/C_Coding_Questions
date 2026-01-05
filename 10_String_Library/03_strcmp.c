@@ -30,6 +30,35 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why cast to unsigned char?"
+ * A1: char can be signed (-128 to 127) on some platforms. Extended ASCII
+ *     characters (128-255) would be negative, causing wrong comparison.
+ *     unsigned char ensures all values 0-255 compare correctly.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What does strcmp actually return?"
+ * A2: The difference of first differing chars, not just -1/0/1! Standard only
+ *     guarantees <0, 0, or >0. Don't write code that depends on specific
+ *     values like -1 or 1. Always use < 0, == 0, > 0 comparisons.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How do you do case-insensitive comparison?"
+ * A3: Use strcasecmp (POSIX) or _stricmp (Windows). Or implement:
+ *     Convert both chars to lowercase using tolower() before comparing.
+ *     while (*s1 && tolower(*s1) == tolower(*s2)) { s1++; s2++; }
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What about locale-aware string comparison?"
+ * A4: strcmp does byte comparison, not locale-aware. For proper locale
+ *     handling (accents, umlauts), use strcoll() which considers locale's
+ *     collation rules. Critical for internationalized applications.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

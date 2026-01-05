@@ -35,6 +35,37 @@
  * ============================================================================
  * TIME: strchr O(n), strstr O(n*m) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Can strstr be optimized beyond O(n*m)?"
+ * A1: Yes! KMP (Knuth-Morris-Pratt) achieves O(n+m) by preprocessing needle
+ *     to skip redundant comparisons. Rabin-Karp uses rolling hash for O(n+m)
+ *     average case. Boyer-Moore skips ahead based on mismatch character.
+ *     For short needles, naive O(n*m) is often faster due to simplicity.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why does strchr take int c instead of char c?"
+ * A2: Historical reasons - early C promoted char to int in function calls.
+ *     Also allows EOF (-1) to be passed for certain use cases. The value
+ *     is internally cast to char. Modern code could use char, but int is
+ *     standard for compatibility.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "How does strstr handle empty needle?"
+ * A3: Empty needle returns pointer to start of haystack (standard behavior).
+ *     This is logical: every string "contains" the empty string at position 0.
+ *     Important to check this edge case explicitly in implementation.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the difference between strchr and memchr?"
+ * A4: strchr stops at null terminator, memchr searches exactly n bytes.
+ *     Use memchr for binary data that may contain null bytes, or when you
+ *     know the exact length. memchr is also faster for fixed-size buffers.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -29,6 +29,36 @@
  * ============================================================================
  * TIME: O(log n) | SPACE: O(1) - modifies provided buffer
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why is itoa not standard C?"
+ * A1: itoa is not in C standard library! It's a non-standard extension from
+ *     older compilers. Use sprintf(buf, "%d", value) for portable code, or
+ *     snprintf for safety. Some systems provide itoa, but don't rely on it.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do you handle INT_MIN in itoa?"
+ * A2: INT_MIN (-2147483648) can't be negated because |INT_MIN| > INT_MAX.
+ *     Solution: Handle last digit separately (8), then process -214748364.
+ *     Or use unsigned arithmetic: work with (unsigned)value throughout.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why do digits come out in reverse order?"
+ * A3: We extract digits using % 10 which gives the rightmost digit first.
+ *     123 % 10 = 3, 12 % 10 = 2, 1 % 10 = 1. So we get "321" and must
+ *     reverse to "123". Alternative: calculate total digits first, fill
+ *     from end backwards (no reversal needed).
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How would you implement itoa without reversing?"
+ * A4: First count digits: log10(n)+1 for positive, +1 for sign. Then fill
+ *     buffer from the end: buf[len-1] = '0' + n%10; n/=10; repeat backward.
+ *     This avoids the reverse step but requires two passes over the number.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

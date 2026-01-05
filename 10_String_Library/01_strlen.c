@@ -21,6 +21,35 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "What's the difference between size_t and int?"
+ * A1: size_t is unsigned and guaranteed to hold any array size on the platform.
+ *     int might be too small for very large strings. Always use size_t for
+ *     lengths and array indices in production code.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Can strlen be faster than O(n)?"
+ * A2: Not without additional data structure. Some libraries use word-at-a-time
+ *     tricks (check 4/8 bytes at once for null), but still O(n).
+ *     If you store length separately (like std::string), then O(1).
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What happens with unterminated string?"
+ * A3: Undefined behavior! strlen keeps reading until it finds '\0'.
+ *     May read past allocated memory, causing crash or security vulnerability.
+ *     Always ensure strings are properly null-terminated.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Array indexing vs pointer - which is better?"
+ * A4: Modern compilers optimize both to identical machine code. Use whichever
+ *     is clearer. Pointer version shows understanding of C memory model.
+ *     Array indexing is easier to understand for beginners.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -24,6 +24,36 @@
  *
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why does memcpy have undefined behavior with overlapping memory?"
+ * A1: For performance! Without checking for overlap, memcpy can copy in any
+ *     direction and use optimized word-sized copies. The standard allows this
+ *     flexibility. If overlap is possible, you MUST use memmove.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do optimized memcpy implementations achieve high throughput?"
+ * A2: Multiple techniques: 1) Word-aligned copies (8 bytes at a time),
+ *     2) SIMD instructions (16-64 bytes), 3) Non-temporal stores for large
+ *     copies (bypass cache), 4) Rep movsb on modern x86 (hardware optimized).
+ *     Modern libc memcpy can reach memory bandwidth limits.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can memcpy copy structs safely?"
+ * A3: Yes for POD (plain old data) types without pointers. Copies raw bytes
+ *     including padding. For structs with pointers, you get shallow copy -
+ *     both copies point to same memory! For deep copy, implement manually.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's restrict keyword and how does it help memcpy?"
+ * A4: restrict tells compiler the pointers don't overlap, enabling more
+ *     aggressive optimizations. Standard memcpy declaration uses restrict:
+ *     void *memcpy(void *restrict dest, const void *restrict src, size_t n).
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

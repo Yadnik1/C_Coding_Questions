@@ -25,6 +25,37 @@
  *
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why is strcpy considered dangerous?"
+ * A1: No bounds checking! If dest buffer is smaller than src, it overflows
+ *     into adjacent memory - classic buffer overflow vulnerability.
+ *     This is the cause of countless security exploits. Use strncpy, strlcpy,
+ *     or snprintf instead in production code.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What's the difference between strncpy and strlcpy?"
+ * A2: strncpy: Pads with nulls if src < n, but does NOT null-terminate if
+ *     src >= n. You must manually add '\0'. Also wastes cycles padding.
+ *     strlcpy: Always null-terminates, returns total length needed (for
+ *     truncation detection). Not standard C, but available on BSD/macOS.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why does strcpy return char*?"
+ * A3: Enables chaining: printf("%s", strcpy(dest, src)). Also allows checking
+ *     if operation succeeded (returns NULL on error in safe implementations).
+ *     The return is always the original dest pointer, not current position.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What happens if src and dest overlap?"
+ * A4: Undefined behavior! If copying "hello" within same buffer where regions
+ *     overlap, you get corrupted data. Use memmove for overlapping regions.
+ *     strcpy is only safe when src and dest are completely separate buffers.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
