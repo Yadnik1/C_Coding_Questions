@@ -55,6 +55,61 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why reset slow to head in phase 2?"
+ * A1: Mathematical proof shows distances are equal:
+ *
+ *     Let x = distance head to loop start
+ *     Let y = distance loop start to meeting point
+ *     Let L = loop length
+ *
+ *     At meeting: slow = x+y, fast = x+y+nL
+ *     Since fast = 2*slow: x+y+nL = 2(x+y) → x = nL-y
+ *
+ *     This means: x = (n-1)L + (L-y)
+ *     Distance from head = distance from meeting point to loop start!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why do we check slow->next != fast->next, not slow != fast?"
+ * A2: We need to STOP one node BEFORE the loop start!
+ *
+ *     If we used slow != fast, we'd stop AT the loop start.
+ *     But we need to set fast->next = NULL, so we need the node
+ *     BEFORE the loop start (the one whose next points into the loop).
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What's the special case when loop starts at head?"
+ * A3: When slow == head initially, we can't use the normal algorithm:
+ *
+ *     Example: 1 → 2 → 3 → 1 (back to head)
+ *
+ *     In this case:
+ *     - Find the node whose next is head (last node in loop)
+ *     - Set that node's next = NULL
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can you use hash set to remove loop?"
+ * A4: Yes, but O(n) space:
+ *
+ *     1. Traverse list, store each node in hash set
+ *     2. Before storing, check if next is already in set
+ *     3. If yes, next is loop start; set current->next = NULL
+ *
+ *     Floyd's is preferred for embedded (O(1) space).
+ *
+ * -------------------------------------------------------------------------
+ * Q5: "How do you handle the edge case of a single-node loop?"
+ * A5: Single node pointing to itself: 1 → 1 (back to itself)
+ *
+ *     Detection works: slow and fast both stay at node 1
+ *     Removal: Find node whose next is head, set to NULL
+ *     Result: 1 → NULL
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -48,6 +48,57 @@
  * ============================================================================
  * TIME: O(n + m) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why does the two-pointer technique work?"
+ * A1: Both pointers travel the SAME total distance:
+ *
+ *     Pointer A: len(L1) + len(L2 up to intersection)
+ *     Pointer B: len(L2) + len(L1 up to intersection)
+ *
+ *     Since both traverse len(L1) + len(L2) total, they meet at intersection!
+ *     If no intersection, both become NULL at the same time.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What's the length difference approach?"
+ * A2: Alternative method that's more intuitive:
+ *
+ *     1. Find length of both lists
+ *     2. Advance longer list by (lenA - lenB)
+ *     3. Move both simultaneously - they meet at intersection
+ *
+ *     Two-pointer is more elegant (no counting), but both are O(n+m).
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can you use a hash set instead?"
+ * A3: Yes, but uses O(n) extra space:
+ *
+ *     1. Store all nodes from L1 in hash set
+ *     2. Traverse L2, check if node exists in set
+ *     3. First match is intersection
+ *
+ *     Two-pointer is better for embedded (O(1) space).
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What if lists have different lengths with no intersection?"
+ * A4: Both pointers become NULL at the same time!
+ *
+ *     pA traverses: L1 → NULL → L2 → NULL
+ *     pB traverses: L2 → NULL → L1 → NULL
+ *
+ *     They reach NULL together, so we return NULL correctly.
+ *
+ * -------------------------------------------------------------------------
+ * Q5: "How do you verify two lists actually share nodes (not just values)?"
+ * A5: We compare POINTERS, not data values!
+ *
+ *     pA == pB checks if they point to the SAME memory address.
+ *     Two nodes with data=5 are NOT the same unless they're the same object.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

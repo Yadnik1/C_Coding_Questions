@@ -44,6 +44,60 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1) extra (excluding output)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why not just use a hash map?"
+ * A1: Hash map works but uses O(n) extra space:
+ *
+ *     map[original] = clone
+ *
+ *     For each node:
+ *       clone->random = map[original->random]
+ *
+ *     Interleaving method uses O(1) extra space - better for embedded!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why interleave instead of creating a separate list?"
+ * A2: Interleaving gives us a O(1) way to find each clone:
+ *
+ *     original->next is ALWAYS the clone
+ *     original->random->next is ALWAYS the clone of random
+ *
+ *     Without interleaving, we'd need a hash map to track mappings.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What's the key insight for setting random pointers?"
+ * A3: clone->random = original->random->next
+ *
+ *     Because after interleaving:
+ *     - Every original node is followed by its clone
+ *     - So original->random (another original) is followed by ITS clone
+ *     - That clone is what we want for clone->random!
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What if random pointer is NULL?"
+ * A4: We must check before dereferencing:
+ *
+ *     if (current->random != NULL) {
+ *         current->next->random = current->random->next;
+ *     }
+ *     // else clone->random stays NULL (from initialization)
+ *
+ * -------------------------------------------------------------------------
+ * Q5: "Is this problem common in embedded systems?"
+ * A5: The TECHNIQUE is valuable! It demonstrates:
+ *
+ *     - In-place algorithms (O(1) space)
+ *     - Pointer manipulation skills
+ *     - Understanding of memory layout
+ *
+ *     Similar patterns used in: memory-mapped structures, DMA descriptor
+ *     chains, interrupt vectors with callbacks.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -42,6 +42,60 @@
  * ============================================================================
  * TIME: O(n log n) | SPACE: O(log n) recursion stack
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why merge sort instead of quick sort for linked lists?"
+ * A1: Random access is the key difference:
+ *
+ *     Quick Sort: Needs random access for partitioning - O(n) in linked list
+ *     Merge Sort: Only needs sequential access - perfect for linked lists!
+ *
+ *     Also, merge sort is STABLE (preserves order of equal elements).
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why start fast at head->next for finding middle?"
+ * A2: This gives us the FIRST middle for even-length lists:
+ *
+ *     1 → 2 → 3 → 4
+ *     We want slow to stop at 2 (not 3) so we can split evenly.
+ *
+ *     With fast = head->next: slow stops at node 2
+ *     With fast = head: slow stops at node 3 (uneven split)
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can you do this iteratively (without recursion)?"
+ * A3: Yes! Bottom-up merge sort:
+ *
+ *     1. Merge pairs of 1-element sublists
+ *     2. Merge pairs of 2-element sublists
+ *     3. Merge pairs of 4-element sublists...
+ *     Continue until entire list is sorted
+ *
+ *     This uses O(1) space but is more complex to implement.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the space complexity really?"
+ * A4: O(log n) for recursion stack:
+ *
+ *     - Each recursive call splits the list in half
+ *     - Maximum depth = log₂(n) calls
+ *     - Each call uses constant space (just pointers)
+ *
+ *     For truly O(1) space, use iterative bottom-up approach.
+ *
+ * -------------------------------------------------------------------------
+ * Q5: "Why use a dummy node in merge function?"
+ * A5: Simplifies the code by avoiding special case for head:
+ *
+ *     Without dummy: Need to handle "which list has smaller first element"
+ *     With dummy: Just append to tail->next, return dummy.next
+ *
+ *     Stack-allocated dummy (not malloc) so no memory leak risk.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

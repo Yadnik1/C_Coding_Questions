@@ -46,6 +46,60 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why do we only move curr when there's no duplicate?"
+ * A1: Because after removing a duplicate, the NEW next might also be a duplicate!
+ *
+ *     Example: 1 → 1 → 1 → 2
+ *     After first removal: 1 → 1 → 2
+ *     We need to check again, so we DON'T move curr.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What if the list is UNSORTED?"
+ * A2: Then duplicates are NOT adjacent. Two approaches:
+ *
+ *     Approach 1: Hash set (O(n) time, O(n) space)
+ *     - Track seen values in a set
+ *     - Skip nodes with values already in set
+ *
+ *     Approach 2: Brute force (O(n²) time, O(1) space)
+ *     - For each node, check all subsequent nodes
+ *     - Remove matches
+ *
+ *     For embedded with memory constraints, brute force may be preferred.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Should I free the duplicate nodes?"
+ * A3: YES! Always free removed nodes to prevent memory leaks:
+ *
+ *     Node* duplicate = curr->next;
+ *     curr->next = curr->next->next;
+ *     free(duplicate);  // Critical for embedded systems!
+ *
+ *     ALWAYS mention memory management in embedded interviews.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What about removing ALL occurrences (keep only unique values)?"
+ * A4: Different problem! For 1→1→2→3→3, output is 2 (not 1→2→3).
+ *
+ *     This requires:
+ *     - Dummy head (in case first nodes are duplicates)
+ *     - Track if current value has duplicates
+ *     - Skip ALL nodes with that value
+ *
+ * -------------------------------------------------------------------------
+ * Q5: "Why is the sorted property important?"
+ * A5: Sorted means duplicates are ADJACENT!
+ *
+ *     - Only compare curr with curr->next
+ *     - Single pass O(n) is possible
+ *     - No extra data structures needed (O(1) space)
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
