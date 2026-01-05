@@ -127,15 +127,77 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * typedef struct Node {
+ *     int data;           // PAYLOAD: The actual value stored
+ *     struct Node* next;  // LINK: Pointer to the next node
+ * } Node;
+ *
+ * - "typedef" creates an alias so we can write "Node" instead of "struct Node"
+ * - "int data" stores the value (can be any type: int, char, float, etc.)
+ * - "struct Node* next" points to the next node (NULL if last node)
+ * - We use "struct Node*" inside because typedef isn't complete yet
+ *
+ * MEMORY LAYOUT:
+ *   +------+------+
+ *   | data | next |---> (next node or NULL)
+ *   +------+------+
+ *
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
+    int data;           // The data field stores the actual value (payload)
+    struct Node* next;  // Pointer to the next node in the list (or NULL)
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * Node* createNode(int data):
+ *   - Returns a POINTER to a new Node (allocated on heap)
+ *   - Takes the data value to store as parameter
+ *
+ * malloc(sizeof(Node)):
+ *   - Requests memory from HEAP (persists after function returns)
+ *   - sizeof(Node) = exact bytes needed (typically 12-16 bytes)
+ *   - Returns NULL if allocation fails
+ *
+ * newNode->data = data:
+ *   - "->" accesses struct member through pointer
+ *   - Equivalent to: (*newNode).data = data
+ *   - Stores the parameter value in the node
+ *
+ * newNode->next = NULL:
+ *   - Initialize pointer to NULL (not connected to any node)
+ *   - CRITICAL: Always initialize pointers to avoid undefined behavior
+ *
+ * return newNode:
+ *   - Returns pointer to the heap-allocated node
+ *   - Caller must eventually free() to prevent memory leaks
+ *
+ * ============================================================================
+ */
 Node* createNode(int data) {
+    // Allocate memory on HEAP for one Node structure
+    // Say: "I allocate memory for a new node using malloc"
     Node* newNode = (Node*)malloc(sizeof(Node));
+
+    // Store the data value in the node
+    // Say: "I store the data value in the node's data field"
     newNode->data = data;
+
+    // Initialize next pointer to NULL (not connected yet)
+    // Say: "I set next to NULL since this node isn't linked to anything yet"
     newNode->next = NULL;
+
+    // Return pointer to the new node
+    // Say: "I return the pointer to the newly created node"
     return newNode;
 }
 

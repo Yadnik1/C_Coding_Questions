@@ -60,15 +60,55 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * typedef struct Node {
+ *     int data;           // PAYLOAD: The actual value stored
+ *     struct Node* next;  // LINK: Pointer to the next node
+ * } Node;
+ *
+ * - "typedef" creates an alias so we can write "Node" instead of "struct Node"
+ * - "int data" stores the value (can be any type: int, char, float, etc.)
+ * - "struct Node* next" points to the next node (NULL if last node)
+ * - We use "struct Node*" inside because typedef isn't complete yet
+ *
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
+    int data;           // The data field stores the actual value (payload)
+    struct Node* next;  // Pointer to the next node in the list (or NULL)
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * malloc(sizeof(Node)): Allocates memory on HEAP for one Node
+ * node->data = data:    Stores the parameter value using -> operator
+ * node->next = NULL:    Initializes pointer (CRITICAL to avoid bugs)
+ * return node:          Returns pointer to heap-allocated node
+ *
+ * ============================================================================
+ */
 Node* createNode(int data) {
+    // Allocate memory on HEAP for one Node structure
+    // Say: "I allocate memory for a new node using malloc"
     Node* node = (Node*)malloc(sizeof(Node));
+
+    // Store the data value in the node
+    // Say: "I store the data value in the node's data field"
     node->data = data;
+
+    // Initialize next pointer to NULL (not connected yet)
+    // Say: "I set next to NULL since this node isn't linked to anything yet"
     node->next = NULL;
+
+    // Return pointer to the new node
+    // Say: "I return the pointer to the newly created node"
     return node;
 }
 

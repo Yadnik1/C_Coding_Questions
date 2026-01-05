@@ -49,17 +49,68 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - LINE BY LINE EXPLANATION (SPECIAL: WITH RANDOM POINTER)
+ * ============================================================================
+ *
+ * typedef struct Node {
+ *     int data;            // PAYLOAD: The actual value stored
+ *     struct Node* next;   // LINK: Pointer to the next node
+ *     struct Node* random; // RANDOM: Pointer to any arbitrary node (or NULL)
+ * } Node;
+ *
+ * This is a SPECIAL node structure with an additional "random" pointer:
+ * - "int data" stores the value
+ * - "struct Node* next" points to the next node (standard linked list)
+ * - "struct Node* random" can point to ANY node in the list (or NULL)
+ *   This is what makes cloning this list tricky!
+ *
+ * MEMORY LAYOUT:
+ *   +------+------+--------+
+ *   | data | next | random |---> (any node or NULL)
+ *   +------+------+--------+
+ *
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
-    struct Node* random;
+    int data;            // The data field stores the actual value (payload)
+    struct Node* next;   // Pointer to the next node in the list (or NULL)
+    struct Node* random; // Pointer to any arbitrary node (or NULL)
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * malloc(sizeof(Node)): Allocates memory on HEAP for one Node
+ * node->data = data:    Stores the parameter value using -> operator
+ * node->next = NULL:    Initializes next pointer (CRITICAL to avoid bugs)
+ * node->random = NULL:  Initializes random pointer (special for this problem)
+ * return node:          Returns pointer to heap-allocated node
+ *
+ * ============================================================================
+ */
 Node* createNode(int data) {
+    // Allocate memory on HEAP for one Node structure
+    // Say: "I allocate memory for a new node using malloc"
     Node* node = (Node*)malloc(sizeof(Node));
+
+    // Store the data value in the node
+    // Say: "I store the data value in the node's data field"
     node->data = data;
+
+    // Initialize next pointer to NULL (not connected yet)
+    // Say: "I set next to NULL since this node isn't linked to anything yet"
     node->next = NULL;
+
+    // Initialize random pointer to NULL (special for this problem)
+    // Say: "I also set random to NULL - it will be set later if needed"
     node->random = NULL;
+
+    // Return pointer to the new node
+    // Say: "I return the pointer to the newly created node"
     return node;
 }
 

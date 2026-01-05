@@ -148,17 +148,190 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Node structure
-typedef struct Node {
-    int data;
-    struct Node* next;
-} Node;
+/*
+ * ============================================================================
+ * NODE STRUCTURE - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * typedef struct Node {
+ *     int data;
+ *     struct Node* next;
+ * } Node;
+ *
+ * LINE 1: typedef struct Node {
+ * ---------------------------------
+ * - "typedef" = We're creating a new type name (alias)
+ * - "struct Node" = We're defining a structure AND giving it a tag name "Node"
+ * - The "{" opens the structure definition
+ * - We use "struct Node" as the tag so we can reference it inside itself (for next pointer)
+ *
+ * LINE 2: int data;
+ * ---------------------------------
+ * - This is the PAYLOAD - the actual value stored in the node
+ * - Can be any type: int, char, float, or even another struct
+ * - Each node carries one piece of data
+ *
+ * LINE 3: struct Node* next;
+ * ---------------------------------
+ * - This is the LINK - pointer to the next node in the list
+ * - "struct Node*" = pointer to another Node structure
+ * - We MUST say "struct Node*" here (not just "Node*") because
+ *   the typedef alias "Node" isn't complete yet at this point!
+ * - This is what makes it a "linked" list - nodes point to each other
+ * - Last node has next = NULL (end of list marker)
+ *
+ * LINE 4: } Node;
+ * ---------------------------------
+ * - "}" closes the structure definition
+ * - "Node" after the "}" completes the typedef
+ * - Now we can use "Node" as a type instead of "struct Node"
+ * - Example: Node myNode; instead of struct Node myNode;
+ *
+ * MEMORY LAYOUT (assuming 64-bit system):
+ * ---------------------------------
+ *   +------------------+------------------+
+ *   |      data        |      next        |
+ *   |    (4 bytes)     |    (8 bytes)     |
+ *   +------------------+------------------+
+ *   Total: 12-16 bytes (with padding)
+ *
+ * VISUAL REPRESENTATION:
+ * ---------------------------------
+ *   Node A          Node B          Node C
+ *   +------+---+    +------+---+    +------+------+
+ *   | data |  -+--->| data |  -+--->| data | NULL |
+ *   +------+---+    +------+---+    +------+------+
+ *      10              20              30
+ *
+ * ============================================================================
+ */
 
-// Create a new node
+// Node structure definition
+typedef struct Node {
+    // The data field stores the actual value (payload) of this node
+    // Say: "Each node has a data field to store the integer value"
+    int data;
+
+    // The next pointer stores the address of the next node in the list
+    // Say: "And a next pointer that points to the next node, or NULL if this is the last node"
+    // NOTE: We use "struct Node*" because the typedef "Node" isn't complete yet
+    struct Node* next;
+} Node;  // "Node" is now an alias for "struct Node"
+
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * Node* createNode(int data) {
+ *     Node* newNode = (Node*)malloc(sizeof(Node));
+ *     newNode->data = data;
+ *     newNode->next = NULL;
+ *     return newNode;
+ * }
+ *
+ * LINE 1: Node* createNode(int data) {
+ * ---------------------------------
+ * - "Node*" = This function RETURNS a pointer to a Node
+ * - "createNode" = Function name (descriptive!)
+ * - "int data" = The value we want to store in the new node
+ * - This is a FACTORY FUNCTION - it creates and returns new nodes
+ *
+ * LINE 2: Node* newNode = (Node*)malloc(sizeof(Node));
+ * ---------------------------------
+ * - "Node* newNode" = Declare a pointer that will hold address of new node
+ * - "malloc(sizeof(Node))" = Request memory from heap for one Node
+ *   - sizeof(Node) = calculates exact bytes needed for one Node structure
+ *   - malloc returns void* (generic pointer) to the allocated memory
+ *   - Returns NULL if allocation fails (out of memory)
+ * - "(Node*)" = Cast the void* to Node* (required in C++)
+ * - The node is allocated on the HEAP (persists after function returns)
+ *   - Unlike local variables which are on STACK (destroyed after function)
+ *
+ * WHY HEAP ALLOCATION?
+ * - Stack memory is freed when function returns
+ * - Heap memory persists until we explicitly free() it
+ * - Linked list nodes must outlive the function that creates them
+ *
+ * LINE 3: newNode->data = data;
+ * ---------------------------------
+ * - "newNode->data" = Access the 'data' field of the node pointed to by newNode
+ * - "->" is the arrow operator: shorthand for (*newNode).data
+ * - "= data" = Copy the parameter value into the node's data field
+ * - This stores the actual value in our new node
+ *
+ * LINE 4: newNode->next = NULL;
+ * ---------------------------------
+ * - "newNode->next" = Access the 'next' pointer field
+ * - "= NULL" = Set it to NULL (no next node yet)
+ * - IMPORTANT: Always initialize pointers! Uninitialized pointers = bugs
+ * - New nodes are "orphans" - not connected to any list yet
+ * - The caller will set 'next' to link this node into a list
+ *
+ * LINE 5: return newNode;
+ * ---------------------------------
+ * - Return the pointer to our newly created node
+ * - Caller receives the address of the node on the heap
+ * - Caller is responsible for:
+ *   1. Linking this node into a list
+ *   2. Eventually calling free() to prevent memory leaks
+ *
+ * MEMORY VISUALIZATION:
+ * ---------------------------------
+ *
+ *   BEFORE malloc:
+ *   Stack                    Heap
+ *   +--------+              (empty)
+ *   | data=5 |
+ *   +--------+
+ *   |newNode |---> ???
+ *   +--------+
+ *
+ *   AFTER malloc:
+ *   Stack                    Heap
+ *   +--------+              +------+------+
+ *   | data=5 |              | ???  | ???  |
+ *   +--------+              +------+------+
+ *   |newNode |------------->| 0x100       |
+ *   +--------+              +------+------+
+ *
+ *   AFTER initialization:
+ *   Stack                    Heap
+ *   +--------+              +------+------+
+ *   | data=5 |              |  5   | NULL |
+ *   +--------+              +------+------+
+ *   |newNode |------------->| 0x100       |
+ *   +--------+              +------+------+
+ *
+ * ============================================================================
+ */
+
+// Create a new node with given data
 Node* createNode(int data) {
+    // Allocate memory on the HEAP for one Node structure
+    // malloc returns pointer to allocated memory, or NULL if failed
+    // sizeof(Node) calculates the exact number of bytes needed
+    // (Node*) casts the void* returned by malloc to Node*
+    // Say: "First, I allocate memory for a new node using malloc"
     Node* newNode = (Node*)malloc(sizeof(Node));
+
+    // OPTIONAL: Check if malloc succeeded (good practice!)
+    // if (newNode == NULL) return NULL;
+
+    // Store the data value in the node's data field
+    // The -> operator accesses struct members through a pointer
+    // This is equivalent to: (*newNode).data = data;
+    // Say: "Then I store the data value in the node's data field"
     newNode->data = data;
+
+    // Initialize next pointer to NULL (not connected to any node yet)
+    // CRITICAL: Always initialize pointers to avoid undefined behavior
+    // Say: "I set the next pointer to NULL since this node isn't linked yet"
     newNode->next = NULL;
+
+    // Return pointer to the newly created node
+    // Caller will link this node into a list
+    // Say: "Finally, I return the pointer to the new node"
     return newNode;
 }
 
