@@ -51,6 +51,35 @@
  * Iterative: O(n)
  *
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why is simple recursion O(2^n)?"
+ * A1: Each call branches into TWO more calls. F(5) calls F(4) and F(3).
+ *     F(4) calls F(3) and F(2). Tree doubles at each level!
+ *     Total calls ≈ 2^n. Very inefficient!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What's the difference between memoization and tabulation?"
+ * A2: Memoization = top-down with cache (recursion + memo array).
+ *     Tabulation = bottom-up iterative (build table from F(0) up).
+ *     Both achieve O(n) but tabulation avoids recursion overhead.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can you compute Fibonacci in O(log n)?"
+ * A3: Yes! Use matrix exponentiation:
+ *     [[1,1],[1,0]]^n gives [[F(n+1),F(n)],[F(n),F(n-1)]].
+ *     Use fast exponentiation for O(log n). Rarely asked but impressive!
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What about integer overflow for large n?"
+ * A4: F(47) overflows 32-bit signed int. For large Fibonacci:
+ *     Use long long (up to F(92)), or big integer libraries,
+ *     or compute modulo some value (common in competitive programming).
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

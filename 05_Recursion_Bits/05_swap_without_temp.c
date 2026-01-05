@@ -61,6 +61,35 @@
  * WARNING: Can overflow for large numbers!
  *
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why check a != b in XOR swap?"
+ * A1: If a and b point to SAME memory location, XOR swap fails!
+ *     a = a ^ a = 0, then both variables become 0.
+ *     Self-swap bug! Always check pointers are different.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Which method is better: XOR or temp variable?"
+ * A2: Temp variable is better in production! It's clearer, no edge cases,
+ *     and modern compilers optimize it to register swaps anyway.
+ *     XOR swap is for interviews and embedded constraints only.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "When would you actually use no-temp swap?"
+ * A3: Embedded systems with extreme memory constraints, or swapping register
+ *     values in assembly. In C, the compiler often does better optimization
+ *     with temp variable than with XOR tricks.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can XOR swap work with floating point?"
+ * A4: Not directly! XOR is a bitwise integer operation. For floats,
+ *     you'd need to reinterpret bits as integers, swap, then convert back.
+ *     Just use temp variable for floats!
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

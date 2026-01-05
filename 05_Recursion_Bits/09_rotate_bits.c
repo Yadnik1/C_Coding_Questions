@@ -39,6 +39,36 @@
  * ============================================================================
  * TIME: O(1) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why normalize n with modulo?"
+ * A1: Rotating by 32 (or any multiple) returns the original value.
+ *     n % 32 handles large rotation counts efficiently.
+ *     Without it, shifting by >= word size is undefined behavior in C!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Is there a hardware rotate instruction?"
+ * A2: Yes! x86 has ROL (rotate left) and ROR (rotate right).
+ *     ARM has ROR. GCC may optimize shift-OR pattern to use hardware rotate.
+ *     Use __builtin intrinsics for guaranteed hardware instruction.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Where is bit rotation used in embedded?"
+ * A3: - CRC calculations (polynomial division)
+ *     - Cryptographic algorithms (SHA, MD5, AES)
+ *     - Hash functions
+ *     - Circular buffer indexing (power-of-2 size)
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the difference between logical and arithmetic shift?"
+ * A4: Logical shift: fills with zeros (used for unsigned).
+ *     Arithmetic shift right: fills with sign bit (used for signed).
+ *     Rotate: no fill needed, bits wrap around. Always use unsigned for rotate!
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

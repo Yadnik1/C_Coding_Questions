@@ -202,6 +202,35 @@
  * ============================================================================
  * TIME: O(1) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why use 1U instead of 1 for shifting?"
+ * A1: 1U is unsigned, preventing undefined behavior on left shift.
+ *     Shifting 1 (signed) left by 31 is technically undefined in C!
+ *     1U << 31 is well-defined. Always use 1U for bit masks.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do you set multiple bits at once?"
+ * A2: Create a mask with all target bits set, then OR:
+ *     mask = (1U << bit1) | (1U << bit2) | (1U << bit3);
+ *     num |= mask;  // Sets bits bit1, bit2, bit3
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What's a common embedded use of bit operations?"
+ * A3: Hardware register manipulation! GPIO, UART, SPI config registers.
+ *     Example: PORTB |= (1 << 5);  // Set pin 5 high
+ *             PORTB &= ~(1 << 5); // Set pin 5 low
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How do you isolate a bit field from a register?"
+ * A4: Shift right to align field with bit 0, then mask:
+ *     field = (reg >> start_bit) & ((1U << width) - 1);
+ *     Example: Extract bits 4-7: (reg >> 4) & 0xF
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

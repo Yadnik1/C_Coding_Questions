@@ -44,6 +44,32 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(n) for recursion stack
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "What's tail recursion and why does it matter?"
+ * A1: Tail recursion = recursive call is the LAST operation (no pending work).
+ *     Compilers can optimize to a loop (tail call optimization), using O(1) space!
+ *     factorialTail(n, acc) is tail recursive; regular factorial is NOT.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "When does factorial overflow?"
+ * A2: 13! = 6,227,020,800 - overflows 32-bit signed int (max ~2.1 billion).
+ *     For larger values, use long long (up to 20!) or big integer libraries.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Recursive vs iterative - which is better?"
+ * A3: Iterative is better for production: no stack overhead, no overflow risk.
+ *     Recursive is clearer for teaching/interviews. Know BOTH approaches!
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the relationship between factorial and permutations?"
+ * A4: n! = number of ways to arrange n distinct items.
+ *     Used in permutation/combination formulas: nPr = n!/(n-r)!, nCr = n!/(r!(n-r)!)
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

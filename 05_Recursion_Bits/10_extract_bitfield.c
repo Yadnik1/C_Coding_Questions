@@ -50,6 +50,39 @@
  * ============================================================================
  * TIME: O(1) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why not use C bit-fields instead?"
+ * A1: C bit-fields have implementation-defined behavior:
+ *     - Bit order is compiler-dependent
+ *     - Padding is unpredictable
+ *     - Can't map to hardware registers reliably
+ *     Manual masks are portable and explicit!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "How do you clear a bitfield before setting it?"
+ * A2: mask = ((1U << width) - 1) << start;  // Create positioned mask
+ *     value &= ~mask;                        // Clear field (AND with NOT mask)
+ *     value |= (newVal << start) & mask;     // Set new value
+ *     Always clear before setting to avoid OR combining old and new!
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What are common register field operations?"
+ * A3: - Status registers: check specific flag bits
+ *     - Control registers: set configuration fields
+ *     - UART: baud rate divisor, parity bits
+ *     - GPIO: pin mode, pull-up/down configuration
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How do you handle bit fields that cross byte boundaries?"
+ * A4: Same formula works! (value >> start) & ((1U << width) - 1)
+ *     The mask and shift handle any alignment. Just be careful with
+ *     width > 32 which needs uint64_t.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

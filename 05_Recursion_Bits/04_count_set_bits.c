@@ -54,6 +54,36 @@
  * Kernighan's: O(k) where k = number of set bits
  *
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why is Kernighan's algorithm better?"
+ * A1: It iterates only k times where k = number of set bits.
+ *     For sparse numbers (few 1s), it's much faster.
+ *     Shift method always does 32/64 iterations regardless.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What's the __builtin_popcount() function?"
+ * A2: GCC built-in that uses hardware POPCNT instruction on modern CPUs.
+ *     Fastest possible - single CPU instruction! Always prefer this
+ *     in production if available.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Where is popcount used in embedded?"
+ * A3: - Calculating Hamming distance (error detection)
+ *     - Counting active bits in bitmask registers
+ *     - Sparse data structures (counting elements)
+ *     - Hardware diagnostics
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How do you count set bits in a range [L,R]?"
+ * A4: For each bit position, count how many numbers have that bit set.
+ *     Use math formula based on patterns in binary counting.
+ *     Or iterate with Kernighan's if range is small.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

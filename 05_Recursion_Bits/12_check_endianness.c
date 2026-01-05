@@ -42,6 +42,35 @@
  * ============================================================================
  * TIME: O(1) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Is the union method well-defined in C?"
+ * A1: Yes in C (type punning via union is allowed). In C++, it's technically
+ *     undefined but works on all major compilers. The char pointer method
+ *     is well-defined in both C and C++ and most portable.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Why does network byte order matter?"
+ * A2: TCP/IP uses big-endian (network byte order). If you're on a little-endian
+ *     system, you must convert: use htons/htonl (host to network) for sending,
+ *     ntohs/ntohl (network to host) for receiving. Critical for portability!
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "What is bi-endian and when is it used?"
+ * A3: Some processors (ARM, MIPS) can switch endianness at runtime via
+ *     configuration register. Useful when interfacing with fixed-endian
+ *     peripherals or for compatibility modes.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How does endianness affect struct packing?"
+ * A4: Fields within bytes are stored in native byte order. When sharing
+ *     structs across systems with different endianness, each multi-byte
+ *     field must be converted. Single bytes don't need conversion!
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

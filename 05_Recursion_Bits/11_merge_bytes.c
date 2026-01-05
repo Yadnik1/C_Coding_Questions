@@ -27,6 +27,35 @@
  * ============================================================================
  * TIME: O(1) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why is byte order conversion important?"
+ * A1: Network protocols use big-endian (network byte order).
+ *     x86/ARM use little-endian. Must convert when sending/receiving data!
+ *     htonl/ntohl functions do this (host to network long, network to host long).
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What's the BSWAP instruction?"
+ * A2: x86 instruction that reverses byte order in a register.
+ *     GCC has __builtin_bswap32/16/64 that compile to BSWAP.
+ *     Much faster than manual shift-OR operations!
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Why cast to uint32_t before shifting?"
+ * A3: uint8_t is promoted to int before shift. If shift result exceeds
+ *     int range, behavior is undefined. Explicit cast ensures unsigned
+ *     32-bit arithmetic. Always cast to target type before shifting!
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "When would you use memcpy instead of shifts?"
+ * A4: memcpy is safer for strict aliasing compliance and works for any size.
+ *     Compiler usually optimizes memcpy of small fixed sizes to shifts anyway.
+ *     uint32_t val; memcpy(&val, bytes, 4); // May be faster and portable
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

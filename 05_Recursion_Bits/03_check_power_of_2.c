@@ -55,6 +55,35 @@
  * ============================================================================
  * TIME: O(1) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why check n > 0?"
+ * A1: Zero is NOT a power of 2! 0 & (0-1) = 0 & (-1) = 0, which would
+ *     incorrectly return true. Also, negative numbers aren't powers of 2.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What about checking power of 4?"
+ * A2: Power of 4 has single bit set at EVEN position.
+ *     n & (n-1) == 0 AND n & 0x55555555 != 0
+ *     (0x55555555 has bits set at positions 0, 2, 4, 6...)
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Where is this used in embedded systems?"
+ * A3: - Memory alignment (addresses often power of 2)
+ *     - Buffer sizes (DMA, circular buffers)
+ *     - Hash table sizes (for fast modulo using AND)
+ *     - Bit field widths
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "Can you find the next power of 2 >= n?"
+ * A4: Yes! Decrement n, then OR with right-shifted versions, then increment:
+ *     n--; n|=n>>1; n|=n>>2; n|=n>>4; n|=n>>8; n|=n>>16; n++;
+ *     This fills all bits below highest set bit, then adds 1.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

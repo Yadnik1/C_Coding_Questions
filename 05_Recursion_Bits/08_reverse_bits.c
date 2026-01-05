@@ -63,6 +63,35 @@
  * ============================================================================
  * TIME: O(1) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "Why is divide-and-conquer method faster?"
+ * A1: Simple loop does 32 iterations with conditional branches.
+ *     D&C method uses only 5 parallel operations (no branching).
+ *     Modern CPUs execute parallel bit ops faster than loops.
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "Where is bit reversal used in embedded?"
+ * A2: - CRC calculations (some use reversed bit order)
+ *     - FFT algorithms (bit-reversal permutation)
+ *     - Serial protocols (LSB vs MSB first conversion)
+ *     - Cryptographic operations
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Is there a hardware instruction for this?"
+ * A3: ARM has RBIT instruction (Reverse BITS). x86 doesn't have direct
+ *     instruction but has BSWAP (byte swap). Use GCC's __builtin_bitreverse32
+ *     if available for platform-optimal implementation.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "How do you reverse only lower N bits?"
+ * A4: Extract lower N bits, reverse N-bit value, clear original N bits,
+ *     OR in the reversed value. Mask operations!
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>

@@ -59,6 +59,34 @@
  * ============================================================================
  * TIME: O(n) | SPACE: O(1)
  * ============================================================================
+ *
+ * ============================================================================
+ * COMMON INTERVIEW QUESTIONS & ANSWERS:
+ * ============================================================================
+ *
+ * Q1: "What if TWO elements appear once?"
+ * A1: XOR all elements gives a ^ b (both unique elements XORed).
+ *     Find any set bit in result (rightmost using n & -n).
+ *     Partition elements by that bit, XOR each partition.
+ *     Each partition gives one unique element!
+ *
+ * -------------------------------------------------------------------------
+ * Q2: "What if elements appear THREE times except one?"
+ * A2: XOR won't work (3 XORs don't cancel). Use bit counting:
+ *     For each bit position, count set bits. If count % 3 != 0,
+ *     that bit belongs to the unique element.
+ *
+ * -------------------------------------------------------------------------
+ * Q3: "Can this work with negative numbers?"
+ * A3: Yes! XOR works on bit patterns regardless of sign interpretation.
+ *     [-1, 2, -1] → XOR gives 2. Two's complement doesn't affect XOR.
+ *
+ * -------------------------------------------------------------------------
+ * Q4: "What's the space complexity of hash table approach?"
+ * A4: O(n) space for the hash table storing counts. XOR approach is superior
+ *     at O(1) space but only works when other elements appear even times.
+ *
+ * ============================================================================
  */
 
 #include <stdio.h>
