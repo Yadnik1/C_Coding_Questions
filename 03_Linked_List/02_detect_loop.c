@@ -286,121 +286,366 @@ Node* createNode(int data) {
     return newNode;
 }
 
-// Detect if loop exists
+/*
+ * ============================================================================
+ * HAS LOOP FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * bool hasLoop(Node* head):
+ *   - Returns "bool" = true if loop exists, false otherwise
+ *   - "Node* head" = pointer to the first node of the list
+ *   - Purpose: Detect if the linked list contains a cycle
+ *
+ * ALGORITHM: Floyd's Cycle Detection (Tortoise and Hare)
+ * ---------------------------------
+ * Two pointers move at different speeds:
+ *   - Slow (tortoise): moves 1 step per iteration
+ *   - Fast (hare): moves 2 steps per iteration
+ *
+ * If there's a loop, fast will eventually catch up to slow (they'll meet)
+ * If there's no loop, fast will reach NULL (end of list)
+ *
+ * WHY THIS WORKS - INTUITION:
+ * ---------------------------------
+ * Think of two runners on a circular track:
+ *   - Slow runner runs at speed 1
+ *   - Fast runner runs at speed 2
+ *   - Fast gains 1 position per unit time
+ *   - Fast WILL eventually lap slow!
+ *
+ * In a linked list with a loop:
+ *   - Once both pointers enter the loop
+ *   - Fast gains 1 position per iteration
+ *   - Eventually fast catches up to slow
+ *
+ * WHY FAST MOVES 2 STEPS (not 3 or more)?
+ * ---------------------------------
+ * - Speed of 2 guarantees meeting within one loop traversal
+ * - Higher speeds might "skip over" slow (take more iterations)
+ * - 2 steps is optimal for both correctness and efficiency
+ *
+ * TIME COMPLEXITY: O(n)
+ * ---------------------------------
+ * - If no loop: fast reaches end in n/2 iterations
+ * - If loop: fast catches slow within loop_length iterations
+ * - Both cases are O(n)
+ *
+ * SPACE COMPLEXITY: O(1)
+ * ---------------------------------
+ * - Only two pointer variables
+ * - No extra data structures needed
+ * - Much better than hash set approach (O(n) space)
+ *
+ * ============================================================================
+ */
+// Detect if loop exists using Floyd's Cycle Detection
+// Say: "I'll use Floyd's algorithm with two pointers moving at different speeds"
 bool hasLoop(Node* head) {
-    // Edge case: empty list has no loop
-    // Say: "First, handle the edge case of an empty list"
+    // =========================================================================
+    // EDGE CASE: Empty list cannot have a loop
+    // =========================================================================
+    // Say: "First, I handle the edge case of an empty list"
+    // WHY check NULL? Can't traverse an empty list, no loop possible
     if (head == NULL) return false;
 
-    // Initialize slow pointer at head
-    // Say: "I'll use Floyd's cycle detection with two pointers"
-    Node* slow = head;
+    // =========================================================================
+    // INITIALIZE: Both pointers start at the head
+    // =========================================================================
+    // Say: "I initialize slow and fast pointers, both starting at head"
+    // WHY both at head? We start both "runners" at the same starting line
+    Node* slow = head;  // Tortoise: moves 1 step at a time
+    Node* fast = head;  // Hare: moves 2 steps at a time
 
-    // Initialize fast pointer at head
-    // Say: "Both pointers start at the head"
-    Node* fast = head;
-
-    // Traverse list with two speeds
-    // Say: "I'll move slow by 1 and fast by 2 until they meet or fast reaches end"
+    // =========================================================================
+    // TRAVERSE: Move pointers until they meet or fast reaches end
+    // =========================================================================
+    // Say: "I traverse moving slow by 1 and fast by 2 until they meet or reach end"
+    // WHY fast != NULL? Ensures fast hasn't fallen off the end
+    // WHY fast->next != NULL? Ensures we can safely do fast->next->next
     while (fast != NULL && fast->next != NULL) {
-        // Move slow pointer one step
-        // Say: "Slow moves one step forward"
+        // Move slow pointer one step forward (tortoise speed)
+        // Say: "I move slow one step forward"
+        // WHY just one? Slow is the "tortoise" - moves cautiously
         slow = slow->next;
 
-        // Move fast pointer two steps
-        // Say: "Fast moves two steps forward"
+        // Move fast pointer two steps forward (hare speed)
+        // Say: "I move fast two steps forward"
+        // WHY two? Fast is the "hare" - moves twice as fast
+        // This is safe because we checked fast->next != NULL above
         fast = fast->next->next;
 
-        // Check if pointers met
-        // Say: "If they meet, we've found a loop"
+        // =====================================================================
+        // CHECK: Did the pointers meet? (same memory address)
+        // =====================================================================
+        // Say: "If slow and fast point to the same node, we found a loop"
+        // WHY same address means loop?
+        //   - In a linear list, fast reaches NULL before catching slow
+        //   - In a loop, fast keeps going and eventually laps slow
+        //   - Like a faster runner on a circular track catching a slower one
         if (slow == fast) {
-            return true;  // Loop detected!
+            return true;  // Loop detected! Both pointers at same node
         }
     }
 
-    // Fast reached end without meeting slow
-    // Say: "Fast reached the end, so no loop exists"
+    // =========================================================================
+    // NO LOOP: Fast reached the end (NULL) without meeting slow
+    // =========================================================================
+    // Say: "Fast reached NULL, which means the list has an end - no loop"
+    // WHY does reaching NULL mean no loop?
+    //   - A loop means you can never reach NULL
+    //   - If you reach NULL, the list has a proper termination
     return false;
 }
 
-// Detect loop and return start node
+/*
+ * ============================================================================
+ * DETECT LOOP START FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * Node* detectLoopStart(Node* head):
+ *   - Returns "Node*" = pointer to the node where loop starts, or NULL if no loop
+ *   - "Node* head" = pointer to the first node of the list
+ *   - Purpose: Find WHERE the loop begins (not just IF it exists)
+ *
+ * ALGORITHM: Two-Phase Approach
+ * ---------------------------------
+ * Phase 1: Detect if loop exists (Floyd's algorithm)
+ *   - Use slow/fast pointers to find meeting point inside loop
+ *
+ * Phase 2: Find loop start
+ *   - Reset slow to head
+ *   - Move BOTH pointers by 1 step until they meet
+ *   - They will meet at the loop start!
+ *
+ * WHY PHASE 2 WORKS - MATHEMATICAL PROOF:
+ * ---------------------------------
+ * Let:
+ *   - x = distance from head to loop start
+ *   - y = distance from loop start to meeting point
+ *   - L = total loop length
+ *
+ * When slow and fast meet (Phase 1):
+ *   - slow traveled: x + y (entered loop, went y steps)
+ *   - fast traveled: x + y + nL (n complete loops, n >= 1)
+ *
+ * Since fast moves twice as fast:
+ *   2(x + y) = x + y + nL
+ *   x + y = nL
+ *   x = nL - y = (n-1)L + (L - y)
+ *
+ * Key insight: x = (n-1)L + (L - y)
+ *   - (L - y) is the distance from meeting point to loop start!
+ *   - (n-1)L is some complete laps around the loop
+ *
+ * So: distance from head to loop start (x) equals
+ *     distance from meeting point to loop start (L - y) + some full loops
+ *
+ * When both pointers move at same speed:
+ *   - One starts at head, travels x steps to reach loop start
+ *   - One starts at meeting point, travels (L-y) + (n-1)L = x steps
+ *   - They MEET at loop start!
+ *
+ * VISUALIZATION:
+ * ---------------------------------
+ *
+ *   Head --x steps--> [Loop Start] --y steps--> [Meeting Point]
+ *                          |                          |
+ *                          +---- (L-y) steps ---------+
+ *
+ *   After Phase 2:
+ *   - Pointer from head travels x steps
+ *   - Pointer from meeting travels (L-y) + complete loops = x steps
+ *   - Both arrive at Loop Start simultaneously!
+ *
+ * ============================================================================
+ */
+// Detect loop and return the node where loop starts
+// Say: "I'll find where the loop starts using a two-phase approach"
 Node* detectLoopStart(Node* head) {
-    // Edge case: empty list
-    // Say: "Handle empty list edge case"
+    // =========================================================================
+    // EDGE CASE: Empty list cannot have a loop
+    // =========================================================================
+    // Say: "First, handle the edge case of an empty list"
+    // WHY check NULL? No nodes means no loop possible
     if (head == NULL) return NULL;
 
-    // Initialize pointers for phase 1
-    // Say: "Phase 1: Detect if a loop exists"
-    Node* slow = head;
-    Node* fast = head;
+    // =========================================================================
+    // PHASE 1 SETUP: Initialize pointers for loop detection
+    // =========================================================================
+    // Say: "Phase 1: I'll first detect if a loop exists"
+    // WHY two pointers? Floyd's algorithm requires slow and fast
+    Node* slow = head;  // Tortoise: moves 1 step
+    Node* fast = head;  // Hare: moves 2 steps
 
-    // Track whether loop was found
-    // Say: "I'll use a flag to track if we find a loop"
+    // Flag to track if we found a loop (needed to know if Phase 2 is required)
+    // Say: "I use a flag to remember if we detected a loop"
+    // WHY flag? We need to know whether to proceed to Phase 2
     bool loopExists = false;
 
-    // Phase 1: Detect loop
-    // Say: "First, detect if there's a loop using the same algorithm"
+    // =========================================================================
+    // PHASE 1: Detect if loop exists using Floyd's algorithm
+    // =========================================================================
+    // Say: "In Phase 1, I detect if there's a loop"
+    // WHY same as hasLoop()? We need to find the meeting point for Phase 2
     while (fast != NULL && fast->next != NULL) {
-        // Move pointers at different speeds
+        // Move slow one step, fast two steps
+        // Say: "I move slow by 1 and fast by 2"
         slow = slow->next;
         fast = fast->next->next;
 
-        // Check for meeting point
-        // Say: "When they meet, we know a loop exists"
+        // Check if they met (same memory address)
+        // Say: "When they meet, I know a loop exists"
+        // WHY break? We found what we need for Phase 2
         if (slow == fast) {
             loopExists = true;
-            break;
+            break;  // Exit loop - we have the meeting point!
         }
     }
 
-    // No loop found
-    // Say: "If no loop exists, return NULL"
+    // =========================================================================
+    // NO LOOP CHECK: If no loop, return NULL
+    // =========================================================================
+    // Say: "If no loop exists, I return NULL"
+    // WHY check loopExists? If false, fast reached NULL, no Phase 2 needed
     if (!loopExists) return NULL;
 
-    // Phase 2: Find loop start
-    // Say: "Phase 2: Find where the loop starts"
-    // Reset slow to head
-    // Say: "Reset slow to head while keeping fast at the meeting point"
+    // =========================================================================
+    // PHASE 2: Find the loop start
+    // =========================================================================
+    // Say: "Phase 2: Now I find exactly where the loop starts"
+
+    // Reset slow to head, keep fast at meeting point
+    // Say: "I reset slow to head, keeping fast at the meeting point"
+    // WHY reset slow? Math proves distance head→loop_start = meeting→loop_start
     slow = head;
 
-    // Move both pointers at same speed
-    // Say: "Now move both pointers one step at a time"
+    // Move BOTH pointers at SAME speed (1 step each)
+    // Say: "I move both pointers one step at a time until they meet"
+    // WHY same speed now? They travel equal distances to meet at loop start
+    // WHY slow != fast? They will meet at loop start (mathematical guarantee)
     while (slow != fast) {
+        // Both move one step forward
+        // Say: "Both pointers move forward one step"
         slow = slow->next;
-        fast = fast->next;  // Both move 1 step now
+        fast = fast->next;  // NOTE: Fast moves 1 step now, not 2!
     }
 
-    // They meet at loop start
-    // Say: "When they meet again, that's the start of the loop"
-    return slow;
+    // =========================================================================
+    // RETURN: Both pointers now at loop start
+    // =========================================================================
+    // Say: "When they meet, that's the start of the loop"
+    // WHY return slow? Both slow and fast point to loop start now
+    return slow;  // (or return fast - they're equal)
 }
 
-// Count nodes in loop
+/*
+ * ============================================================================
+ * COUNT LOOP LENGTH FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * int countLoopLength(Node* head):
+ *   - Returns "int" = number of nodes in the loop, or 0 if no loop
+ *   - "Node* head" = pointer to the first node of the list
+ *   - Purpose: Count how many nodes are in the cycle
+ *
+ * ALGORITHM:
+ * ---------------------------------
+ * 1. First, find where the loop starts (using detectLoopStart)
+ * 2. If no loop exists, return 0
+ * 3. Starting from loop start, traverse the loop counting nodes
+ * 4. Stop when we return to loop start (one full circle)
+ *
+ * WHY START FROM LOOP START?
+ * ---------------------------------
+ * - We could also count from the meeting point
+ * - Loop start is cleaner conceptually
+ * - We already have detectLoopStart() function
+ *
+ * ALTERNATIVE: Count during detection
+ * ---------------------------------
+ * You could also count while finding the meeting point:
+ *   - After slow == fast, keep one pointer fixed
+ *   - Move the other until it returns to same position
+ *   - Count the steps
+ *
+ * This avoids calling detectLoopStart() but is less modular.
+ *
+ * VISUALIZATION:
+ * ---------------------------------
+ *
+ *   Loop: 3 -> 4 -> 5 -> 6 -> 3 (back to 3)
+ *
+ *   loopStart = node 3
+ *   curr starts at node 4 (loopStart->next)
+ *
+ *   Iteration 1: curr = 4, count = 2
+ *   Iteration 2: curr = 5, count = 3
+ *   Iteration 3: curr = 6, count = 4
+ *   Iteration 4: curr = 3 = loopStart, STOP
+ *
+ *   Return 4 (loop has 4 nodes)
+ *
+ * TIME COMPLEXITY: O(n)
+ * ---------------------------------
+ * - detectLoopStart is O(n)
+ * - Counting the loop is O(loop_length) <= O(n)
+ * - Total: O(n)
+ *
+ * ============================================================================
+ */
+// Count the number of nodes in the loop
+// Say: "I'll count nodes in the loop by traversing it once"
 int countLoopLength(Node* head) {
-    // Find where loop starts
-    // Say: "First find the loop start node"
+    // =========================================================================
+    // STEP 1: Find where the loop starts
+    // =========================================================================
+    // Say: "First, I find the loop start node"
+    // WHY detectLoopStart? We need a reference point to count from
+    // Also handles the "no loop" case for us
     Node* loopStart = detectLoopStart(head);
 
-    // No loop case
+    // =========================================================================
+    // EDGE CASE: No loop exists
+    // =========================================================================
     // Say: "If there's no loop, return 0"
+    // WHY return 0? No loop means loop length is zero
     if (loopStart == NULL) return 0;
 
-    // Start counting from 1
-    // Say: "Initialize count to 1 for the loop start node"
+    // =========================================================================
+    // INITIALIZE: Start counting from 1 (loopStart itself is in the loop)
+    // =========================================================================
+    // Say: "I initialize count to 1 for the loop start node itself"
+    // WHY 1? The loopStart node is part of the loop, so count it
     int count = 1;
 
-    // Traverse the loop
-    // Say: "Traverse the loop and count nodes until we return to start"
+    // =========================================================================
+    // TRAVERSE: Start from the node after loopStart
+    // =========================================================================
+    // Say: "I start traversing from the node after loopStart"
+    // WHY loopStart->next? We already counted loopStart, start from next
     Node* curr = loopStart->next;
 
-    // Count until we return to start
+    // =========================================================================
+    // COUNT: Traverse until we return to loopStart
+    // =========================================================================
+    // Say: "I traverse the loop, counting nodes until I return to start"
+    // WHY curr != loopStart? We stop when we complete one full circle
     while (curr != loopStart) {
+        // Increment count for each node visited
+        // Say: "I increment count for each node in the loop"
         count++;
+
+        // Move to the next node in the loop
+        // Say: "I move to the next node"
+        // WHY no NULL check? We're in a loop, there's no NULL!
         curr = curr->next;
     }
 
-    // Return total count
-    // Say: "Return the total number of nodes in the loop"
+    // =========================================================================
+    // RETURN: Total number of nodes in the loop
+    // =========================================================================
+    // Say: "I return the total count of nodes in the loop"
+    // WHY return count? count now holds the loop length
     return count;
 }
 

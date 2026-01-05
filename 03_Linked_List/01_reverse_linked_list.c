@@ -399,67 +399,240 @@ Node* createNode(int data) {
     return newNode;
 }
 
-// Iterative reversal (PREFERRED)
+/*
+ * ============================================================================
+ * REVERSE ITERATIVE FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * Node* reverseIterative(Node* head):
+ *   - Returns "Node*" = pointer to the new head (was the last node)
+ *   - "Node* head" = pointer to the first node of the list
+ *   - Purpose: Reverse the linked list in-place using iteration
+ *
+ * WHY THREE POINTERS (prev, curr, next)?
+ * ---------------------------------
+ * - prev: Tracks the node that curr should point to after reversal
+ *         Starts at NULL because the new tail (old head) should point to NULL
+ * - curr: The node we're currently processing
+ *         Moves through the list from head to end
+ * - next: Temporarily saves curr->next BEFORE we modify it
+ *         Without this, we'd lose the rest of the list!
+ *
+ * THE FOUR-STEP DANCE (in each iteration):
+ * ---------------------------------
+ *   1. SAVE:    next = curr->next     (save before we break the link)
+ *   2. REVERSE: curr->next = prev     (point backward instead of forward)
+ *   3. ADVANCE: prev = curr           (move prev to current position)
+ *   4. ADVANCE: curr = next           (move curr to saved next position)
+ *
+ * VISUALIZATION OF ONE ITERATION:
+ * ---------------------------------
+ *   Before:  NULL <- [1] <- [2]    [3] -> [4] -> NULL
+ *                     ^     ^       ^
+ *                   prev   curr    next
+ *
+ *   Step 1: next = curr->next (next now points to [4])
+ *   Step 2: curr->next = prev ([3] now points to [2])
+ *   Step 3: prev = curr (prev now points to [3])
+ *   Step 4: curr = next (curr now points to [4])
+ *
+ *   After:   NULL <- [1] <- [2] <- [3]    [4] -> NULL
+ *                                   ^      ^
+ *                                  prev   curr
+ *
+ * WHY IS ITERATIVE PREFERRED?
+ * ---------------------------------
+ * - O(1) space - only 3 pointers, no matter how long the list
+ * - No risk of stack overflow for very long lists
+ * - Easier to debug and understand step by step
+ * - Preferred for embedded systems with limited stack space
+ *
+ * ============================================================================
+ */
+// Iterative reversal (PREFERRED for production/embedded)
+// Say: "I'll reverse the list iteratively using three pointers"
 Node* reverseIterative(Node* head) {
     // Initialize previous pointer to NULL
-    // Say: "I'll use three pointers: prev, curr, and next"
+    // Say: "I initialize prev to NULL because the new tail points to NULL"
+    // WHY NULL? The first node (head) will become the last node, pointing to NULL
     Node* prev = NULL;
 
-    // Current pointer starts at head
-    // Say: "Current starts at the head of the list"
+    // Current pointer starts at head - this is what we're processing
+    // Say: "Current starts at the head - this is the node I'm currently reversing"
+    // WHY head? We start reversing from the first node
     Node* curr = head;
 
-    // Next pointer for temporary storage
-    // Say: "Next will temporarily store the node ahead"
+    // Next pointer for temporary storage - will be set inside loop
+    // Say: "Next will temporarily store the node ahead before I break the link"
+    // WHY declare here? We need it to persist across loop iterations
     Node* next = NULL;
 
-    // Traverse until we reach the end
+    // Traverse until we reach the end (curr becomes NULL)
     // Say: "I'll iterate through the list until curr becomes NULL"
+    // WHY curr != NULL? When curr is NULL, we've processed all nodes
     while (curr != NULL) {
-        // Save the next node before we change pointers
-        // Say: "First, save the next node so we don't lose the rest of the list"
+        // =====================================================================
+        // STEP 1: SAVE - Save the next node before we break the forward link
+        // =====================================================================
+        // Say: "First, I save curr's next pointer before I modify it"
+        // WHY save first? After curr->next = prev, we lose access to the rest!
+        // This is the CRITICAL step - if you forget this, you lose the list!
         next = curr->next;
 
-        // Reverse the current node's pointer
-        // Say: "Now reverse the link by pointing current's next to prev"
+        // =====================================================================
+        // STEP 2: REVERSE - Point current node backward (to prev)
+        // =====================================================================
+        // Say: "Now I reverse the link by pointing curr's next to prev"
+        // WHY prev? prev is the node that should come AFTER curr in reversed list
+        // This is the actual reversal - changing the arrow direction!
         curr->next = prev;
 
-        // Move prev forward one step
-        // Say: "Move prev forward to current node"
+        // =====================================================================
+        // STEP 3: ADVANCE PREV - Move prev to current position
+        // =====================================================================
+        // Say: "Move prev forward to the current node"
+        // WHY? For the next iteration, curr needs to point to this node
+        // prev always trails one step behind curr
         prev = curr;
 
-        // Move curr forward one step
-        // Say: "Move curr forward to the next node we saved earlier"
+        // =====================================================================
+        // STEP 4: ADVANCE CURR - Move curr to the next node (which we saved)
+        // =====================================================================
+        // Say: "Move curr forward to the node I saved earlier"
+        // WHY use next? We can't use curr->next anymore (it points to prev!)
+        // This advances our processing to the next node
         curr = next;
     }
 
-    // When loop ends, prev points to new head
-    // Say: "When we exit the loop, prev is pointing to the new head"
+    // When loop ends: curr is NULL, prev points to the last node (new head)
+    // Say: "When I exit the loop, prev is pointing to the new head of the reversed list"
+    // WHY return prev? curr is NULL, but prev points to what was the last node
+    // That last node is now the first node of the reversed list!
     return prev;
 }
 
-// Recursive reversal
+/*
+ * ============================================================================
+ * REVERSE RECURSIVE FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * Node* reverseRecursive(Node* head):
+ *   - Returns "Node*" = pointer to the new head (was the last node)
+ *   - "Node* head" = pointer to the current node being processed
+ *   - Purpose: Reverse the linked list using recursion
+ *
+ * HOW RECURSION WORKS HERE:
+ * ---------------------------------
+ * 1. Recursively go to the END of the list first
+ * 2. On the way BACK (unwinding), reverse each link
+ * 3. The last node becomes the new head and is passed all the way up
+ *
+ * VISUALIZATION: Reversing 1 -> 2 -> 3 -> NULL
+ * ---------------------------------
+ *
+ *   Going DOWN (recursive calls):
+ *   reverseRecursive(1) -> reverseRecursive(2) -> reverseRecursive(3)
+ *                                                  ↓
+ *                                             return 3 (base case!)
+ *
+ *   Coming BACK UP (unwinding):
+ *   At node 2: head->next->next = head means 3->next = 2
+ *              head->next = NULL means 2->next = NULL (temporarily)
+ *              Result: 3 -> 2 -> NULL
+ *
+ *   At node 1: head->next->next = head means 2->next = 1
+ *              head->next = NULL means 1->next = NULL
+ *              Result: 3 -> 2 -> 1 -> NULL
+ *
+ * THE MAGIC LINE: head->next->next = head
+ * ---------------------------------
+ *   Before: head -> [A] -> [B] -> ...
+ *                    ^      ^
+ *                   head   head->next
+ *
+ *   head->next->next = head means:
+ *   "Make the node AFTER me point BACK to me"
+ *
+ *   After: head -> [A] <-> [B] -> ... (temporarily bidirectional!)
+ *
+ *   Then head->next = NULL breaks the forward link:
+ *   After: ... <- [A] <- [B] -> ...
+ *
+ * WHY RECURSIVE IS NOT PREFERRED:
+ * ---------------------------------
+ * - O(n) space due to call stack (each recursive call uses stack frame)
+ * - Risk of stack overflow for very long lists
+ * - Harder to debug (need to trace through call stack)
+ * - But: More elegant and concise code
+ *
+ * CALL STACK VISUALIZATION (for 1->2->3):
+ * ---------------------------------
+ *   STACK GROWING DOWN:
+ *   | reverseRecursive(1)  | waiting for result...
+ *   | reverseRecursive(2)  | waiting for result...
+ *   | reverseRecursive(3)  | BASE CASE! Returns 3
+ *   +----------------------+
+ *
+ *   STACK UNWINDING:
+ *   | reverseRecursive(1)  | gets 3, reverses 1<-2, returns 3
+ *   | reverseRecursive(2)  | gets 3, reverses 2<-3, returns 3
+ *   | reverseRecursive(3)  | returned 3
+ *   +----------------------+
+ *
+ * ============================================================================
+ */
+// Recursive reversal (elegant but uses O(n) stack space)
+// Say: "I'll reverse the list recursively by going to the end first, then reversing on the way back"
 Node* reverseRecursive(Node* head) {
-    // Base case: empty list or single node
-    // Say: "Base case: if empty or single node, just return it"
+    // =========================================================================
+    // BASE CASE: Empty list or single node - already reversed!
+    // =========================================================================
+    // Say: "Base case: if empty or single node, just return it - it's already reversed"
+    // WHY head == NULL? Empty list, nothing to reverse
+    // WHY head->next == NULL? Single node is already "reversed"
+    // This is also where recursion stops and starts unwinding
     if (head == NULL || head->next == NULL) {
-        return head;
+        return head;  // This becomes the new head of the reversed list!
     }
 
-    // Recursively reverse rest of list
+    // =========================================================================
+    // RECURSIVE CASE: First, reverse everything AFTER this node
+    // =========================================================================
     // Say: "Recursively reverse everything after the current node"
+    // WHY head->next? We're saying "reverse the rest of the list starting from next node"
+    // This call will eventually return the LAST node (which becomes the new head)
+    // The newHead is the same for all unwinding calls - it's always the original last node
     Node* newHead = reverseRecursive(head->next);
 
-    // Make next node point back to current
-    // Say: "Make the next node point back to me"
+    // =========================================================================
+    // REVERSE THE LINK: Make the next node point back to current
+    // =========================================================================
+    // Say: "Make the node after me point back to me"
+    // WHY head->next->next? Let's break it down:
+    //   - head->next = the node after current (let's call it B)
+    //   - head->next->next = B's next pointer
+    //   - = head = make B's next point to current (A)
+    // Before: A -> B -> ...
+    // After:  A -> B -> A (circular temporarily!) but B was already reversed
+    // Actually: ... <- B <- A (B already points backward from recursion)
     head->next->next = head;
 
-    // Current node becomes tail, points to NULL
-    // Say: "Current node is now at the end, so point to NULL"
+    // =========================================================================
+    // BREAK OLD LINK: Current node should point to NULL (for now)
+    // =========================================================================
+    // Say: "Current node is now at the end of its portion, so point to NULL"
+    // WHY NULL? We need to break the old forward link to avoid cycles
+    // The NEXT unwinding call will fix this by making the previous node point here
+    // For the original head: this stays NULL, making it the new tail!
     head->next = NULL;
 
-    // Return the new head
-    // Say: "Return the new head which came from recursion"
+    // =========================================================================
+    // RETURN: Pass the new head all the way up the call stack
+    // =========================================================================
+    // Say: "Return the new head which came from the deepest recursion"
+    // WHY return newHead? newHead is the original LAST node
+    // Every recursive call returns this same pointer
+    // It gets passed all the way up to become the new head
     return newHead;
 }
 
