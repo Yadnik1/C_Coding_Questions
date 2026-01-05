@@ -324,25 +324,193 @@ Node* findFirstMiddle(Node* head) {
     return slow;
 }
 
-// Print list
+/*
+ * ============================================================================
+ * PRINT LIST FUNCTION - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * void printList(Node* head):
+ *   - "void" means function doesn't return anything (just prints)
+ *   - "Node* head" receives a COPY of the pointer (not the original)
+ *   - We can safely modify "head" inside without affecting caller's pointer
+ *
+ * WHY WE CAN USE head DIRECTLY (instead of creating temp pointer):
+ *   - Parameters are COPIES in C (pass by value)
+ *   - Original pointer in main() is NOT modified
+ *   - Using head directly saves creating an extra variable
+ *
+ * while (head != NULL):
+ *   - Loop continues as long as head points to a valid node
+ *   - When head becomes NULL, we've passed the last node
+ *   - NULL acts as the "end of list" marker
+ *
+ * printf("%d", head->data):
+ *   - head->data accesses the data field of current node
+ *   - %d prints the integer value
+ *   - Equivalent to: (*head).data
+ *
+ * if (head->next) printf(" -> "):
+ *   - head->next is a pointer (address or NULL)
+ *   - Non-NULL pointer evaluates to TRUE
+ *   - NULL pointer evaluates to FALSE
+ *   - Only print arrow if there's a next node (cleaner output)
+ *
+ * head = head->next:
+ *   - Move head to point to the next node
+ *   - This is the "traversal step" - advances through the list
+ *   - Original head in caller is UNCHANGED (we modified the copy)
+ *
+ * TRAVERSAL VISUALIZATION:
+ *   List: 1 -> 2 -> 3 -> NULL
+ *
+ *   Iteration 1: head points to node(1), print "1"
+ *                head->next exists, print " -> "
+ *                head = head->next (now points to node(2))
+ *
+ *   Iteration 2: head points to node(2), print "2"
+ *                head->next exists, print " -> "
+ *                head = head->next (now points to node(3))
+ *
+ *   Iteration 3: head points to node(3), print "3"
+ *                head->next is NULL, don't print arrow
+ *                head = head->next (now head = NULL)
+ *
+ *   Loop ends: head == NULL
+ *   Print " -> NULL\n" for clarity
+ *
+ *   Output: "1 -> 2 -> 3 -> NULL"
+ *
+ * ============================================================================
+ */
+// Print list - traverse and print each node's data
+// Say: "I'll traverse the list and print each node's value"
 void printList(Node* head) {
+    // Loop until we reach the end (NULL)
+    // Say: "I loop while head is not NULL"
     while (head != NULL) {
+        // Print current node's data
+        // Say: "I print the current node's data"
         printf("%d", head->data);
+
+        // Print arrow if there's a next node
+        // Say: "If there's a next node, I print an arrow for readability"
         if (head->next) printf(" -> ");
+
+        // Move to next node (this modifies our LOCAL copy of head)
+        // Say: "I advance head to the next node"
         head = head->next;
     }
+
+    // Print NULL at the end to show list termination
+    // Say: "I print NULL to show the end of the list"
     printf(" -> NULL\n");
 }
 
-// Create list from array
+/*
+ * ============================================================================
+ * CREATE LIST FROM ARRAY - LINE BY LINE EXPLANATION
+ * ============================================================================
+ *
+ * Node* createList(int arr[], int n):
+ *   - Returns a pointer to the HEAD of newly created list
+ *   - "int arr[]" receives the array (decays to pointer)
+ *   - "int n" is the number of elements in the array
+ *
+ * if (n == 0) return NULL:
+ *   - Edge case: empty array means empty list
+ *   - Return NULL immediately (no nodes to create)
+ *   - ALWAYS handle edge cases first!
+ *
+ * Node* head = createNode(arr[0]):
+ *   - Create the FIRST node with first array element
+ *   - This becomes the HEAD of our list
+ *   - We save this pointer to return at the end
+ *
+ * Node* curr = head:
+ *   - "curr" is our traversal pointer (current position)
+ *   - Starts at head, will move forward as we add nodes
+ *   - We need this because we can't move head (would lose the list!)
+ *
+ * WHY WE NEED TWO POINTERS (head and curr):
+ *   - "head" stays at the first node (so we can return it)
+ *   - "curr" moves forward as we build the list
+ *   - If we only used head and moved it, we'd lose track of the start!
+ *
+ * for (int i = 1; i < n; i++):
+ *   - Start at index 1 (we already used arr[0] for head)
+ *   - Loop through remaining elements
+ *   - Each iteration adds one node to the list
+ *
+ * curr->next = createNode(arr[i]):
+ *   - Create a new node with arr[i]'s value
+ *   - Link it to current node's "next" pointer
+ *   - This CONNECTS the new node to the list
+ *
+ * curr = curr->next:
+ *   - Move curr to point to the newly added node
+ *   - Now curr is at the END of the list
+ *   - Ready to add next node in the next iteration
+ *
+ * return head:
+ *   - Return pointer to FIRST node (head never moved!)
+ *   - Caller now has access to the entire list through head
+ *
+ * STEP-BY-STEP VISUALIZATION for arr = {1, 2, 3}:
+ *
+ *   After head = createNode(arr[0]):
+ *     head -> [1|NULL]
+ *     curr -> [1|NULL]  (same as head)
+ *
+ *   Loop i=1: curr->next = createNode(arr[1])
+ *     head -> [1| *]----> [2|NULL]
+ *     curr -> [1| *]  (still at node 1)
+ *
+ *   Loop i=1: curr = curr->next
+ *     head -> [1| *]----> [2|NULL]
+ *                         curr (now at node 2)
+ *
+ *   Loop i=2: curr->next = createNode(arr[2])
+ *     head -> [1| *]----> [2| *]----> [3|NULL]
+ *                         curr
+ *
+ *   Loop i=2: curr = curr->next
+ *     head -> [1| *]----> [2| *]----> [3|NULL]
+ *                                     curr (now at node 3)
+ *
+ *   Return head: Caller gets pointer to [1| *]
+ *                Can traverse: 1 -> 2 -> 3 -> NULL
+ *
+ * ============================================================================
+ */
+// Create list from array - convert array to linked list
+// Say: "I'll create a linked list from the given array"
 Node* createList(int arr[], int n) {
+    // Edge case: empty array returns empty list (NULL)
+    // Say: "First, I check if the array is empty"
     if (n == 0) return NULL;
+
+    // Create the first node (head) with arr[0]
+    // Say: "I create the head node with the first element"
     Node* head = createNode(arr[0]);
+
+    // curr pointer will traverse as we build (head stays at start)
+    // Say: "I use a current pointer starting at head to build the list"
     Node* curr = head;
+
+    // Loop through remaining elements (starting from index 1)
+    // Say: "I loop through the rest of the array, adding nodes"
     for (int i = 1; i < n; i++) {
+        // Create new node and link it to current node's next
+        // Say: "I create a new node and link it to the current node"
         curr->next = createNode(arr[i]);
+
+        // Move curr forward to the newly added node
+        // Say: "I move current to the new node, ready for the next element"
         curr = curr->next;
     }
+
+    // Return head (first node) - gives access to entire list
+    // Say: "I return head, which points to the beginning of the list"
     return head;
 }
 
