@@ -1,42 +1,75 @@
-// Reverse a string in-place
+// Reverse a string in-place using two pointers
 // Time: O(n), Space: O(1)
 
 #include <stdio.h>
 #include <string.h>
 
 void reverse_string(char *str) {
-    // Say: "I use two pointers starting at both ends"
+    // Say: "I'll use the classic two-pointer technique for in-place reversal"
+    // Say: "One pointer starts at beginning, other at end"
+
     int left = 0;
-    int right = strlen(str) - 1;  // Say: "right starts at last char, not null terminator"
+    int right = strlen(str) - 1;  // Say: "strlen gives length excluding null terminator"
+                                   // Say: "So for 'hello', right = 4 (index of 'o')"
 
-    // Say: "I swap characters moving inward until they meet"
+    // Say: "We continue until pointers meet or cross in the middle"
     while (left < right) {
-        // Say: "Standard swap using temp variable"
-        char temp = str[left];    // Save left char
-        str[left] = str[right];   // Move right char to left
-        str[right] = temp;        // Move saved char to right
+        // Say: "Standard three-step swap using temporary variable"
+        // Say: "This is the most common swap pattern in embedded interviews"
+        char temp = str[left];    // Say: "Save left character before overwriting"
+        str[left] = str[right];   // Say: "Copy right char to left position"
+        str[right] = temp;        // Say: "Place saved char in right position"
 
-        left++;   // Say: "Move left pointer right"
-        right--;  // Say: "Move right pointer left"
+        // Say: "Move both pointers toward center"
+        left++;   // Say: "Left moves right"
+        right--;  // Say: "Right moves left"
     }
-    // Say: "When pointers meet or cross, string is reversed"
+    // Say: "When left >= right, we've swapped all pairs - string is reversed"
+    // Say: "For odd length strings, middle char stays in place automatically"
 }
 
 int main() {
-    char str[] = "embedded";  // Say: "Need char array, not char* for in-place modify"
+    // Say: "Must use char array, not char* literal - literals are read-only"
+    char str[] = "embedded";
 
     printf("Original: %s\n", str);
     reverse_string(str);
-    printf("Reversed: %s\n", str);
+    printf("Reversed: %s\n", str);  // Expected: "deddebme"
+
+    // Test with odd length
+    char str2[] = "hello";
+    printf("\nOriginal: %s\n", str2);
+    reverse_string(str2);
+    printf("Reversed: %s\n", str2);  // Expected: "olleh"
 
     return 0;
 }
 
 /*
 INTERVIEW EXPLANATION:
-"I'll use two pointers - one at the start, one at the end.
- I swap characters and move both pointers toward the center.
- When they meet, the string is fully reversed.
- Time is O(n/2) which simplifies to O(n).
- Space is O(1) since I only use one temp variable."
+"I'll reverse the string in-place using two pointers.
+
+ APPROACH:
+ - Initialize left pointer at index 0
+ - Initialize right pointer at last character (length - 1)
+ - Swap characters at both pointers
+ - Move pointers toward each other until they meet
+
+ WHY TWO POINTERS:
+ - Most efficient for in-place operations
+ - Only need one temp variable for swapping
+ - Each character is touched exactly once
+
+ EDGE CASES I HANDLE:
+ - Empty string: left=0, right=-1, loop doesn't execute
+ - Single char: left=0, right=0, left < right is false
+ - Odd length: middle char stays in place naturally
+
+ COMPLEXITY:
+ - Time: O(n/2) = O(n) - we process half the string
+ - Space: O(1) - only one temp variable, regardless of input size
+
+ COMMON MISTAKE TO AVOID:
+ - Using char* str = 'hello' instead of char str[] = 'hello'
+ - String literals are stored in read-only memory!"
 */
