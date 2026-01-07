@@ -1,11 +1,31 @@
 # C Coding Questions for Embedded/Firmware Interviews
 
-A comprehensive collection of **76 C programming problems** designed for embedded systems and firmware engineering interviews. Each solution includes detailed explanations, ASCII visualizations, time/space complexity analysis, and working code.
+A comprehensive collection of **140+ C programming problems** designed for embedded systems and firmware engineering interviews. Each solution includes detailed explanations, ASCII visualizations, time/space complexity analysis, and working code.
 
-## 📁 Repository Structure
+## 🚀 NEW: Interview Ready Section
+
+**Start here!** The `00_Interview_Ready` folder contains **64 curated problems** with:
+- **Single best solution** per problem (no confusion)
+- **"Say:" comments** telling you exactly what to say to interviewers
+- **Consistent helper functions** across all files
+- **INTERVIEW EXPLANATION** block at the end of each file
+
+```
+00_Interview_Ready/
+├── 01_Arrays/       # 12 problems (two pointers, Floyd's, Kadane's)
+├── 02_Strings/      # 12 problems (reverse, palindrome, memcpy, itoa)
+├── 03_Linked_List/  # 10 problems (reverse, cycle, merge, palindrome)
+├── 04_Stack_Queue/  # 6 problems (implement, balanced parens, min stack)
+├── 05_Bits/         # 10 problems (count bits, endianness, bitfields)
+├── 06_Search_Sort/  # 6 problems (binary search, quick/merge sort)
+└── 07_Embedded/     # 8 problems (ring buffer, state machine, CRC, watchdog)
+```
+
+## 📁 Full Repository Structure
 
 ```
 C_Coding_Questions/
+├── 00_Interview_Ready/     # ⭐ 64 curated problems (START HERE)
 ├── 01_Arrays/              # 11 problems
 ├── 02_Strings/             # 10 problems
 ├── 03_Linked_List/         # 8 problems
@@ -15,7 +35,8 @@ C_Coding_Questions/
 ├── 07_Sliding_Window/      # 2 problems
 ├── 08_Two_Pointer/         # 6 problems
 ├── 09_Embedded_Specific/   # 7 problems
-└── 10_String_Library/      # 11 problems
+├── 10_String_Library/      # 11 problems
+└── 11_RTOS/                # RTOS concepts & interview questions
 ```
 
 ## 🎯 Topics Covered
@@ -48,17 +69,21 @@ C_Coding_Questions/
 
 ## ⭐ High-Priority Problems for Interviews
 
-If you're short on time, focus on these:
+If you're short on time, **use the `00_Interview_Ready` folder** - it has the best 64 problems curated for interviews.
+
+Or focus on these specific files:
 
 ```
-✓ Circular Buffer          (01_Arrays/11_circular_buffer.c)
-✓ Reverse Linked List       (03_Linked_List/01_reverse_linked_list.c)
-✓ Detect Loop (Floyd's)     (03_Linked_List/02_detect_loop.c)
-✓ Binary Search             (06_Searching_Sorting/01_binary_search.c)
-✓ State Machine             (09_Embedded_Specific/01_state_machine_switch.c)
-✓ Endianness & Byte Swap    (09_Embedded_Specific/05_byte_swap.c)
-✓ memcpy / memmove          (10_String_Library/06_memcpy.c, 07_memmove.c)
-✓ atoi                      (10_String_Library/10_atoi.c)
+✓ Circular Buffer          (00_Interview_Ready/07_Embedded/01_ring_buffer.c)
+✓ Reverse Linked List       (00_Interview_Ready/03_Linked_List/01_reverse_linked_list.c)
+✓ Detect Cycle (Floyd's)    (00_Interview_Ready/03_Linked_List/02_detect_cycle.c)
+✓ Binary Search             (00_Interview_Ready/06_Search_Sort/01_binary_search.c)
+✓ State Machine             (00_Interview_Ready/07_Embedded/02_state_machine.c)
+✓ Endianness Check          (00_Interview_Ready/05_Bits/07_check_endianness.c)
+✓ memcpy / memmove          (00_Interview_Ready/02_Strings/11_memcpy_memmove.c)
+✓ atoi / itoa               (00_Interview_Ready/02_Strings/10_atoi_implementation.c, 12_itoa.c)
+✓ CRC Calculation           (00_Interview_Ready/07_Embedded/06_crc_calculation.c)
+✓ Watchdog Pattern          (00_Interview_Ready/07_Embedded/08_watchdog_pattern.c)
 ```
 
 ## 🔧 How to Use
