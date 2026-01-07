@@ -21,12 +21,12 @@ Each file has:
 gcc filename.c -o out && ./out
 ```
 
-## Categories (62 Total Problems)
+## Categories (64 Total Problems)
 
 | Folder | Problems | Focus |
 |--------|----------|-------|
 | 01_Arrays | 12 | Two pointers, Floyd's cycle, Boyer-Moore, Kadane's |
-| 02_Strings | 10 | Reverse, palindrome, anagram, strlen/strcpy/atoi |
+| 02_Strings | 12 | Reverse, palindrome, anagram, strlen/strcpy/atoi, memcpy/memmove, itoa |
 | 03_Linked_List | 10 | Reverse, cycle detection, merge, palindrome |
 | 04_Stack_Queue | 6 | Stack/queue impl, balanced parentheses, min stack |
 | 05_Bits | 10 | Count bits, power of 2, endianness, bitfields |
