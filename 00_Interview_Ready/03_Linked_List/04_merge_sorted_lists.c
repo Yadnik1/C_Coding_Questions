@@ -1,0 +1,204 @@
+/*
+ * MERGE TWO SORTED LINKED LISTS - Two Pointer Merge
+ *
+ * Time Complexity: O(n + m) - Visit each node once
+ * Space Complexity: O(1) - Reuse existing nodes
+ *
+ * Pattern: Two Pointer Merge with Dummy Head
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+/* ==================== HELPER FUNCTIONS ==================== */
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* create_node(int data) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void print_list(Node* head) {
+    printf("[");
+    while (head) {
+        printf("%d", head->data);
+        if (head->next) printf(" -> ");
+        head = head->next;
+    }
+    printf("]\n");
+}
+
+/* ==================== SOLUTION ==================== */
+
+Node* merge_sorted_lists(Node* l1, Node* l2) {
+    // Say: "I use a dummy head to simplify edge cases"
+    Node dummy;
+    dummy.next = NULL;
+    Node* tail = &dummy;
+
+    // Say: "Compare heads, attach smaller one, advance that pointer"
+    while (l1 != NULL && l2 != NULL) {
+        if (l1->data <= l2->data) {
+            // Say: "l1 is smaller, attach it"
+            tail->next = l1;
+            l1 = l1->next;
+        } else {
+            // Say: "l2 is smaller, attach it"
+            tail->next = l2;
+            l2 = l2->next;
+        }
+        tail = tail->next;
+    }
+
+    // Say: "Attach remaining nodes (one list might be longer)"
+    if (l1 != NULL) {
+        tail->next = l1;
+    } else {
+        tail->next = l2;
+    }
+
+    // Say: "Return dummy.next, which is the real head"
+    return dummy.next;
+}
+
+/* ==================== TEST ==================== */
+
+int main() {
+    // Test case 1: Normal merge
+    // List 1: 1 -> 3 -> 5
+    Node* l1 = create_node(1);
+    l1->next = create_node(3);
+    l1->next->next = create_node(5);
+
+    // List 2: 2 -> 4 -> 6
+    Node* l2 = create_node(2);
+    l2->next = create_node(4);
+    l2->next->next = create_node(6);
+
+    printf("List 1: ");
+    print_list(l1);
+    printf("List 2: ");
+    print_list(l2);
+
+    Node* merged = merge_sorted_lists(l1, l2);
+    printf("Merged: ");
+    print_list(merged);
+
+    // Test case 2: Lists with different lengths
+    Node* l3 = create_node(1);
+    l3->next = create_node(2);
+
+    Node* l4 = create_node(3);
+    l4->next = create_node(4);
+    l4->next->next = create_node(5);
+    l4->next->next->next = create_node(6);
+
+    printf("\nList 3: ");
+    print_list(l3);
+    printf("List 4: ");
+    print_list(l4);
+    printf("Merged: ");
+    print_list(merge_sorted_lists(l3, l4));
+
+    // Test case 3: One empty list
+    Node* l5 = create_node(1);
+    l5->next = create_node(2);
+
+    printf("\nList 5: ");
+    print_list(l5);
+    printf("Empty list: ");
+    print_list(NULL);
+    printf("Merged: ");
+    print_list(merge_sorted_lists(l5, NULL));
+
+    // Test case 4: Lists with duplicates
+    Node* l6 = create_node(1);
+    l6->next = create_node(2);
+    l6->next->next = create_node(2);
+
+    Node* l7 = create_node(1);
+    l7->next = create_node(3);
+
+    printf("\nList 6: ");
+    print_list(l6);
+    printf("List 7: ");
+    print_list(l7);
+    printf("Merged: ");
+    print_list(merge_sorted_lists(l6, l7));
+
+    return 0;
+}
+
+/*
+ * ==================== INTERVIEW EXPLANATION ====================
+ *
+ * PROBLEM: Merge two sorted linked lists into one sorted list.
+ *
+ * APPROACH - Two Pointer with Dummy Head:
+ *
+ * Visual:
+ *   l1: 1 -> 3 -> 5
+ *   l2: 2 -> 4 -> 6
+ *
+ *   dummy -> ?
+ *     ^
+ *    tail
+ *
+ *   Step 1: 1 < 2, attach 1:  dummy -> 1
+ *   Step 2: 3 > 2, attach 2:  dummy -> 1 -> 2
+ *   Step 3: 3 < 4, attach 3:  dummy -> 1 -> 2 -> 3
+ *   ... continue until one list is exhausted
+ *   Final step: Attach remaining nodes
+ *
+ * WHY DUMMY HEAD:
+ * - Eliminates special case for first node
+ * - No need to check "is head NULL?"
+ * - tail->next always valid
+ * - Return dummy.next (skip dummy itself)
+ *
+ * WHY STACK-ALLOCATED DUMMY (Node dummy vs Node* dummy):
+ * - No malloc needed, no memory leak
+ * - Simpler cleanup
+ * - Valid in this scope since we only need dummy.next
+ *
+ * EDGE CASES:
+ * 1. Both lists empty -> Return NULL
+ * 2. One list empty -> Return the other
+ * 3. Lists of different lengths -> Handle remaining
+ * 4. Duplicate values -> Both get included (stable merge)
+ *
+ * COMMON MISTAKES:
+ * - Forgetting to advance tail pointer
+ * - Not handling remaining elements after loop
+ * - Memory leak if using malloc for dummy
+ * - Returning &dummy instead of dummy.next
+ *
+ * RECURSIVE ALTERNATIVE:
+ *   Node* merge(l1, l2) {
+ *       if (!l1) return l2;
+ *       if (!l2) return l1;
+ *       if (l1->data <= l2->data) {
+ *           l1->next = merge(l1->next, l2);
+ *           return l1;
+ *       } else {
+ *           l2->next = merge(l1, l2->next);
+ *           return l2;
+ *       }
+ *   }
+ * - Elegant but O(n+m) space for recursion stack
+ *
+ * APPLICATIONS:
+ * 1. Merge Sort on linked lists
+ * 2. Merging K sorted lists (divide and conquer)
+ * 3. External sorting (merge sorted chunks)
+ *
+ * FOLLOW-UP: Merge K sorted lists?
+ * - Approach 1: Merge pairs iteratively O(N log k)
+ * - Approach 2: Min-heap of k list heads O(N log k)
+ */
