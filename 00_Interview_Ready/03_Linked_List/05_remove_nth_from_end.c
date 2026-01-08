@@ -112,6 +112,116 @@ void print_list(Node* head) {
 
 /* ==================== SOLUTION ==================== */
 
+/*
+ * ============================================================================
+ * DRY-RUN DIAGRAM: Remove Nth Node From End
+ * ============================================================================
+ *
+ * EXAMPLE: Remove 2nd from end in: 1 -> 2 -> 3 -> 4 -> 5
+ * (n = 2, so we remove node with value 4)
+ *
+ * INITIAL STATE:
+ *
+ *   dummy --> [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+ *     ^
+ *   slow, fast
+ *
+ * ----------------------------------------------------------------------------
+ * PHASE 1: Move fast n+1 (3) steps ahead to create gap
+ * ----------------------------------------------------------------------------
+ *
+ *   Step 1 (i=0): fast = fast->next (moves to 1)
+ *
+ *   dummy --> [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+ *     ^        ^
+ *   slow     fast
+ *
+ *   Step 2 (i=1): fast = fast->next (moves to 2)
+ *
+ *   dummy --> [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+ *     ^               ^
+ *   slow            fast
+ *
+ *   Step 3 (i=2): fast = fast->next (moves to 3)
+ *
+ *   dummy --> [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+ *     ^                        ^
+ *   slow                     fast
+ *
+ *   GAP = 3 nodes between slow and fast
+ *
+ * ----------------------------------------------------------------------------
+ * PHASE 2: Move both until fast reaches NULL
+ * ----------------------------------------------------------------------------
+ *
+ *   Iteration 1:
+ *   fast = fast->next (moves to 4)
+ *   slow = slow->next (moves to 1)
+ *
+ *   dummy --> [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+ *              ^                       ^
+ *            slow                    fast
+ *
+ *   Iteration 2:
+ *   fast = fast->next (moves to 5)
+ *   slow = slow->next (moves to 2)
+ *
+ *   dummy --> [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+ *                      ^                       ^
+ *                    slow                    fast
+ *
+ *   Iteration 3:
+ *   fast = fast->next (moves to NULL)
+ *   slow = slow->next (moves to 3)
+ *
+ *   dummy --> [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+ *                              ^                       ^
+ *                            slow                    fast
+ *
+ *   fast == NULL -> LOOP EXITS
+ *
+ * ----------------------------------------------------------------------------
+ * PHASE 3: Remove slow->next (which is node 4)
+ * ----------------------------------------------------------------------------
+ *
+ *   slow->next = [4]  <-- This is the node to delete (2nd from end!)
+ *
+ *   Before: slow -> [3] --> [4] --> [5]
+ *
+ *   slow->next = slow->next->next
+ *
+ *   After:  slow -> [3] -----------> [5]
+ *                           ^
+ *                      Node 4 removed!
+ *
+ *   RESULT: dummy --> [1] --> [2] --> [3] --> [5] --> NULL
+ *
+ *   Return dummy.next = [1]
+ *
+ * ============================================================================
+ * EDGE CASE: Removing the Head (n = list length)
+ * ============================================================================
+ *
+ *   List: 1 -> 2 -> 3  (n = 3, remove 3rd from end = head)
+ *
+ *   After Phase 1 (move fast 4 steps):
+ *
+ *   dummy --> [1] --> [2] --> [3] --> NULL
+ *     ^                               ^
+ *   slow                            fast
+ *
+ *   fast is already NULL -> Phase 2 loop never runs
+ *
+ *   slow->next = [1] (the head!)
+ *   slow->next = slow->next->next = [2]
+ *
+ *   dummy --> [2] --> [3] --> NULL
+ *
+ *   Return dummy.next = [2] (new head)
+ *
+ * ============================================================================
+ */
+
 Node* remove_nth_from_end(Node* head, int n) {
     // Say: "I use a dummy node to handle edge case of removing head"
     Node dummy;

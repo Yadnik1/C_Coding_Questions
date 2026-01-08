@@ -117,6 +117,99 @@ void print_list(Node* head) {
 
 /* ==================== SOLUTION ==================== */
 
+/*
+ * ============================================================================
+ * DRY-RUN DIAGRAM: Delete Node Without Head Access
+ * ============================================================================
+ *
+ * EXAMPLE: Delete node with value 3
+ *
+ * INPUT: 1 -> 2 -> 3 -> 4 -> 5 -> NULL
+ *                   ^
+ *                 node (we only have access to this!)
+ *
+ * ============================================================================
+ * THE PROBLEM:
+ * ============================================================================
+ *
+ *   Normally to delete node 3, we need to update node 2's next pointer:
+ *   node2->next = node3->next
+ *
+ *   But we don't have access to node 2 (no head pointer)!
+ *   We can only access node 3 and everything after it.
+ *
+ * ============================================================================
+ * THE TRICK: Copy data from next node, then delete next node
+ * ============================================================================
+ *
+ * INITIAL STATE:
+ *
+ *   [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+ *                    ^       ^
+ *                  node   node->next
+ *
+ * ----------------------------------------------------------------------------
+ * STEP 1: Copy next node's data to current node
+ * ----------------------------------------------------------------------------
+ *   node->data = node->next->data  (copy 4 into node)
+ *
+ *   [1] --> [2] --> [4] --> [4] --> [5] --> NULL
+ *                    ^       ^
+ *                  node   node->next
+ *                 (now 4)  (original 4)
+ *
+ * ----------------------------------------------------------------------------
+ * STEP 2: Skip over the next node
+ * ----------------------------------------------------------------------------
+ *   next_node = node->next (save pointer to node with original 4)
+ *   node->next = node->next->next (point to 5)
+ *
+ *   [1] --> [2] --> [4] -----------> [5] --> NULL
+ *                    ^        ^
+ *                  node    (dangling, will be freed)
+ *
+ * ----------------------------------------------------------------------------
+ * STEP 3: Free the old next node
+ * ----------------------------------------------------------------------------
+ *   free(next_node)
+ *
+ *   FINAL RESULT: [1] --> [2] --> [4] --> [5] --> NULL
+ *
+ *   From the outside, it LOOKS like node 3 was deleted!
+ *   (But actually, the original node 3 is still there, just with different data)
+ *
+ * ============================================================================
+ * WHY THIS WORKS:
+ * ============================================================================
+ *
+ *   Before: ... -> [2] -> [3] -> [4] -> [5] -> ...
+ *                          ^
+ *                      we have this
+ *
+ *   After:  ... -> [2] -> [4] -> [5] -> ...
+ *                          ^
+ *                   same memory location, different value!
+ *
+ *   The node at the original [3] position now contains [4]'s data.
+ *   The original [4] node is freed.
+ *   Net effect: The list looks like [3] was removed.
+ *
+ * ============================================================================
+ * LIMITATION: Cannot delete the LAST node
+ * ============================================================================
+ *
+ *   [1] --> [2] --> [3] --> NULL
+ *                    ^
+ *                  node (last node)
+ *
+ *   - node->next is NULL
+ *   - No next node to copy data from!
+ *   - Even if we could "delete" it, [2] would still point to [3] (dangling!)
+ *   - We CAN'T update [2]->next to NULL because we don't have access to [2]
+ *
+ * ============================================================================
+ */
+
 // Note: Cannot delete the LAST node with this approach
 void delete_node(Node* node) {
     // Say: "I can't access previous node, so I copy next node's data into this one"

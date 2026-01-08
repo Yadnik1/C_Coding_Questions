@@ -117,6 +117,118 @@ void print_list(Node* head) {
 
 /* ==================== SOLUTION ==================== */
 
+/*
+ * ============================================================================
+ * DRY-RUN DIAGRAM: Remove Duplicates from Sorted Linked List
+ * ============================================================================
+ *
+ * INPUT: 1 -> 1 -> 2 -> 3 -> 3 -> 3 -> 4 -> NULL
+ *
+ * INITIAL STATE:
+ *
+ *   curr
+ *    |
+ *    v
+ *   [1] --> [1] --> [2] --> [3] --> [3] --> [3] --> [4] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 1: curr->data (1) == curr->next->data (1)? YES - DUPLICATE!
+ * ----------------------------------------------------------------------------
+ *   Skip the duplicate:
+ *   duplicate = curr->next (node with value 1)
+ *   curr->next = curr->next->next
+ *   free(duplicate)
+ *
+ *   DO NOT advance curr (check new next node)
+ *
+ *   curr
+ *    |
+ *    v
+ *   [1] --> [2] --> [3] --> [3] --> [3] --> [4] --> NULL
+ *            ^
+ *       new next (was curr->next->next)
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 2: curr->data (1) == curr->next->data (2)? NO - DIFFERENT
+ * ----------------------------------------------------------------------------
+ *   Advance curr:
+ *   curr = curr->next (move to 2)
+ *
+ *           curr
+ *            |
+ *            v
+ *   [1] --> [2] --> [3] --> [3] --> [3] --> [4] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 3: curr->data (2) == curr->next->data (3)? NO - DIFFERENT
+ * ----------------------------------------------------------------------------
+ *   Advance curr:
+ *   curr = curr->next (move to 3)
+ *
+ *                   curr
+ *                    |
+ *                    v
+ *   [1] --> [2] --> [3] --> [3] --> [3] --> [4] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 4: curr->data (3) == curr->next->data (3)? YES - DUPLICATE!
+ * ----------------------------------------------------------------------------
+ *   Skip the duplicate:
+ *   curr->next = curr->next->next
+ *
+ *   DO NOT advance curr
+ *
+ *                   curr
+ *                    |
+ *                    v
+ *   [1] --> [2] --> [3] --> [3] --> [4] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 5: curr->data (3) == curr->next->data (3)? YES - DUPLICATE!
+ * ----------------------------------------------------------------------------
+ *   Skip the duplicate:
+ *   curr->next = curr->next->next
+ *
+ *   DO NOT advance curr
+ *
+ *                   curr
+ *                    |
+ *                    v
+ *   [1] --> [2] --> [3] --> [4] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 6: curr->data (3) == curr->next->data (4)? NO - DIFFERENT
+ * ----------------------------------------------------------------------------
+ *   Advance curr:
+ *   curr = curr->next (move to 4)
+ *
+ *                           curr
+ *                            |
+ *                            v
+ *   [1] --> [2] --> [3] --> [4] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * LOOP EXITS: curr->next == NULL
+ * ----------------------------------------------------------------------------
+ *
+ *   FINAL RESULT: 1 -> 2 -> 3 -> 4 -> NULL
+ *
+ * ============================================================================
+ * KEY INSIGHT: Why we DON'T advance after deletion
+ * ============================================================================
+ *
+ *   Consider: [1] --> [1] --> [1] --> [2]
+ *
+ *   If we advance after deleting:
+ *   - Delete first duplicate: [1] --> [1] --> [2], advance to second [1]
+ *   - Now we skip comparing first [1] with new second [1]
+ *   - BUG: We'd end up with [1] --> [1] --> [2]
+ *
+ *   By NOT advancing, we re-check the same curr against its new next!
+ *
+ * ============================================================================
+ */
+
 // Keep first occurrence of each value
 Node* remove_duplicates(Node* head) {
     // Say: "I iterate with single pointer, skipping duplicate next nodes"

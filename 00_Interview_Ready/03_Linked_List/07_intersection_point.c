@@ -123,6 +123,106 @@ int get_length(Node* head) {
     return len;
 }
 
+/*
+ * ============================================================================
+ * DRY-RUN DIAGRAM: Find Intersection Point of Two Linked Lists
+ * ============================================================================
+ *
+ * EXAMPLE:
+ *   List A: [1] --> [2] --\
+ *                          \
+ *                           --> [6] --> [7] --> [8] --> NULL
+ *                          /
+ *   List B: [3] --> [4] --> [5] --/
+ *
+ *   lenA = 5 (nodes: 1, 2, 6, 7, 8)
+ *   lenB = 6 (nodes: 3, 4, 5, 6, 7, 8)
+ *   Difference = 1 (B is longer)
+ *
+ * ============================================================================
+ * PHASE 1: Calculate lengths
+ * ============================================================================
+ *
+ *   lenA = 5, lenB = 6
+ *   Difference = 6 - 5 = 1
+ *
+ * ============================================================================
+ * PHASE 2: Align starting points (advance longer list by difference)
+ * ============================================================================
+ *
+ *   List B is longer by 1, so advance headB by 1:
+ *
+ *   headA: [1] --> [2] --> [6] --> [7] --> [8] --> NULL
+ *           ^
+ *         headA
+ *
+ *   headB: [3] --> [4] --> [5] --> [6] --> [7] --> [8] --> NULL
+ *                   ^
+ *                 headB (advanced by 1)
+ *
+ *   Now both have 5 nodes remaining to traverse!
+ *
+ * ============================================================================
+ * PHASE 3: Move both pointers together until they meet
+ * ============================================================================
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 1:
+ * ----------------------------------------------------------------------------
+ *   headA points to [1], headB points to [4]
+ *   headA != headB (different nodes)
+ *   headA = headA->next (move to 2)
+ *   headB = headB->next (move to 5)
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 2:
+ * ----------------------------------------------------------------------------
+ *   headA points to [2], headB points to [5]
+ *   headA != headB
+ *   headA = headA->next (move to 6)
+ *   headB = headB->next (move to 6)
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 3:
+ * ----------------------------------------------------------------------------
+ *   headA points to [6], headB points to [6]
+ *   headA == headB (SAME NODE! Same memory address!)
+ *
+ *   LOOP EXITS
+ *
+ *   Return headA = [6] (the intersection point!)
+ *
+ * ============================================================================
+ * WHY IT WORKS:
+ * ============================================================================
+ *
+ *   By aligning the starting points:
+ *   - Both pointers have the same distance to the intersection
+ *   - When we move both together, they reach intersection simultaneously
+ *
+ *   headA path: [1] --> [2] --> [6] (3 steps)
+ *   headB path: [4] --> [5] --> [6] (3 steps)
+ *                              ^^^
+ *                         They meet here!
+ *
+ * ============================================================================
+ * NO INTERSECTION CASE:
+ * ============================================================================
+ *
+ *   List A: [1] --> [2] --> NULL
+ *   List B: [3] --> [4] --> NULL
+ *
+ *   After alignment (same length, no advance needed):
+ *
+ *   Iteration 1: headA=[1], headB=[3] -> different
+ *   Iteration 2: headA=[2], headB=[4] -> different
+ *   Iteration 3: headA=NULL, headB=NULL -> SAME (both NULL)
+ *
+ *   Return NULL (no intersection)
+ *
+ * ============================================================================
+ */
+
 Node* find_intersection(Node* headA, Node* headB) {
     // Say: "First, calculate lengths of both lists"
     int lenA = get_length(headA);

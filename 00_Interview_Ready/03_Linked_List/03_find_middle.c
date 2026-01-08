@@ -111,6 +111,128 @@ void print_list(Node* head) {
 
 /* ==================== SOLUTION ==================== */
 
+/*
+ * ============================================================================
+ * DRY-RUN DIAGRAM: Find Middle of Linked List
+ * ============================================================================
+ *
+ * EXAMPLE 1: Odd Length (5 nodes): 1 -> 2 -> 3 -> 4 -> 5
+ * ======================================================
+ *
+ * INITIAL STATE:
+ *
+ *   slow, fast
+ *       |
+ *       v
+ *      [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 1:
+ * ----------------------------------------------------------------------------
+ *   Check: fast != NULL (true) && fast->next != NULL (true) -> enter loop
+ *   slow = slow->next (move to 2)
+ *   fast = fast->next->next (move to 3)
+ *
+ *              slow          fast
+ *               |             |
+ *               v             v
+ *      [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 2:
+ * ----------------------------------------------------------------------------
+ *   Check: fast != NULL (true) && fast->next != NULL (true) -> enter loop
+ *   slow = slow->next (move to 3)
+ *   fast = fast->next->next (move to 5)
+ *
+ *                      slow            fast
+ *                       |               |
+ *                       v               v
+ *      [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 3:
+ * ----------------------------------------------------------------------------
+ *   Check: fast != NULL (true) && fast->next != NULL (false - 5->next is NULL)
+ *   LOOP EXITS
+ *
+ *   slow is at [3] -> Return slow (middle node!)
+ *
+ *                      slow
+ *                       |
+ *                       v
+ *      [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+ *                       ^
+ *                    MIDDLE!
+ *
+ * ============================================================================
+ * EXAMPLE 2: Even Length (6 nodes): 1 -> 2 -> 3 -> 4 -> 5 -> 6
+ * ============================================================
+ *
+ * INITIAL STATE:
+ *
+ *   slow, fast
+ *       |
+ *       v
+ *      [1] --> [2] --> [3] --> [4] --> [5] --> [6] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 1:
+ * ----------------------------------------------------------------------------
+ *   slow = slow->next (move to 2)
+ *   fast = fast->next->next (move to 3)
+ *
+ *              slow          fast
+ *               |             |
+ *               v             v
+ *      [1] --> [2] --> [3] --> [4] --> [5] --> [6] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 2:
+ * ----------------------------------------------------------------------------
+ *   slow = slow->next (move to 3)
+ *   fast = fast->next->next (move to 5)
+ *
+ *                      slow            fast
+ *                       |               |
+ *                       v               v
+ *      [1] --> [2] --> [3] --> [4] --> [5] --> [6] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 3:
+ * ----------------------------------------------------------------------------
+ *   slow = slow->next (move to 4)
+ *   fast = fast->next->next (move to NULL - past end)
+ *
+ *                              slow                    fast
+ *                               |                       |
+ *                               v                       v
+ *      [1] --> [2] --> [3] --> [4] --> [5] --> [6] --> NULL
+ *
+ *   Check: fast != NULL (false) -> LOOP EXITS
+ *
+ *   slow is at [4] -> Return slow (SECOND middle!)
+ *
+ *      [1] --> [2] --> [3] --> [4] --> [5] --> [6] --> NULL
+ *                       ^       ^
+ *                    1st mid  2nd mid (returned)
+ *
+ * ============================================================================
+ * WHY IT WORKS:
+ * ============================================================================
+ *
+ *   - fast moves at 2x the speed of slow
+ *   - When fast reaches the end:
+ *     - fast has traveled n nodes
+ *     - slow has traveled n/2 nodes
+ *   - slow is at the middle!
+ *
+ *   For n=5: fast at position 5 (end), slow at position 3 (middle)
+ *   For n=6: fast at position NULL (past end), slow at position 4 (2nd middle)
+ *
+ * ============================================================================
+ */
+
 // Returns second middle for even-length lists
 Node* find_middle(Node* head) {
     // Say: "I use slow/fast pointers - when fast reaches end, slow is at middle"

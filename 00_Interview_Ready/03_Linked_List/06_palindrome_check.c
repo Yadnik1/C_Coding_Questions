@@ -128,6 +128,119 @@ Node* reverse_list(Node* head) {
     return prev;
 }
 
+/*
+ * ============================================================================
+ * DRY-RUN DIAGRAM: Check if Linked List is Palindrome
+ * ============================================================================
+ *
+ * EXAMPLE: 1 -> 2 -> 3 -> 2 -> 1 (odd length palindrome)
+ *
+ * ============================================================================
+ * STEP 1: Find Middle using slow/fast pointers
+ * ============================================================================
+ *
+ * INITIAL STATE:
+ *
+ *   slow, fast
+ *       |
+ *       v
+ *      [1] --> [2] --> [3] --> [2] --> [1] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 1:
+ * ----------------------------------------------------------------------------
+ *   Check: fast->next != NULL (true) && fast->next->next != NULL (true)
+ *   slow = slow->next (move to 2)
+ *   fast = fast->next->next (move to 3)
+ *
+ *              slow          fast
+ *               |             |
+ *               v             v
+ *      [1] --> [2] --> [3] --> [2] --> [1] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * ITERATION 2:
+ * ----------------------------------------------------------------------------
+ *   Check: fast->next != NULL (true) && fast->next->next != NULL (false)
+ *   LOOP EXITS
+ *
+ *   slow is at [2] (first middle for odd length)
+ *
+ *              slow
+ *               |
+ *               v
+ *      [1] --> [2] --> [3] --> [2] --> [1] --> NULL
+ *
+ * ============================================================================
+ * STEP 2: Reverse second half (after slow)
+ * ============================================================================
+ *
+ *   second_half = reverse_list(slow->next) = reverse_list([3])
+ *
+ *   Before reverse:  [3] --> [2] --> [1] --> NULL
+ *   After reverse:   [1] --> [2] --> [3] --> NULL
+ *
+ *   Now we have:
+ *   First half:  [1] --> [2] --> [3]  (slow->next now broken)
+ *   Second half: [1] --> [2] --> [3] --> NULL (reversed!)
+ *
+ * ============================================================================
+ * STEP 3: Compare first and second halves
+ * ============================================================================
+ *
+ *   first_half = head = [1]
+ *   second_ptr = second_half = [1] (reversed second half)
+ *
+ *   First half:  [1] --> [2] --> ...
+ *   Second half: [1] --> [2] --> [3] --> NULL
+ *
+ * ----------------------------------------------------------------------------
+ * Comparison 1:
+ * ----------------------------------------------------------------------------
+ *   first_half->data (1) == second_ptr->data (1) -> MATCH!
+ *   first_half = first_half->next (move to 2)
+ *   second_ptr = second_ptr->next (move to 2)
+ *
+ * ----------------------------------------------------------------------------
+ * Comparison 2:
+ * ----------------------------------------------------------------------------
+ *   first_half->data (2) == second_ptr->data (2) -> MATCH!
+ *   first_half = first_half->next (move to 3)
+ *   second_ptr = second_ptr->next (move to 3)
+ *
+ * ----------------------------------------------------------------------------
+ * Comparison 3:
+ * ----------------------------------------------------------------------------
+ *   second_ptr->next == NULL -> LOOP EXITS
+ *
+ *   All comparisons passed! result = true
+ *
+ * ============================================================================
+ * STEP 4: Restore the list (optional but good practice)
+ * ============================================================================
+ *
+ *   slow->next = reverse_list(second_half)
+ *   Reverse [1] --> [2] --> [3] back to [3] --> [2] --> [1]
+ *
+ *   Restored: [1] --> [2] --> [3] --> [2] --> [1] --> NULL
+ *
+ *   Return true (IS PALINDROME!)
+ *
+ * ============================================================================
+ * EXAMPLE 2: 1 -> 2 -> 3 -> 4 (NOT a palindrome)
+ * ============================================================================
+ *
+ *   After finding middle and reversing:
+ *   First half:  [1] --> [2] --> ...
+ *   Second half: [4] --> [3] --> NULL
+ *
+ *   Comparison 1: 1 != 4 -> MISMATCH! result = false
+ *
+ *   Return false (NOT PALINDROME)
+ *
+ * ============================================================================
+ */
+
 bool is_palindrome(Node* head) {
     // Say: "Empty or single node is a palindrome"
     if (head == NULL || head->next == NULL) {
