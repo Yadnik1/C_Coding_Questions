@@ -93,26 +93,48 @@
 
 /* ==================== HELPER FUNCTIONS ==================== */
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - Line by Line Explanation
+ * ============================================================================
+ * Say: "A Node has two parts - data stores the value, next is a pointer
+ *       to the next node in the list"
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
+    int data;               // Say: "The value this node holds"
+    struct Node* next;      // Say: "Address of the next node in the chain"
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This function allocates memory for a new node and initializes it"
+ * ============================================================================
+ */
 Node* create_node(int data) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node->data = data;
-    node->next = NULL;
-    return node;
+    Node* node = (Node*)malloc(sizeof(Node));   // Allocate on heap
+    node->data = data;                          // Store the value
+    node->next = NULL;                          // Initialize link to NULL
+    return node;                                // Return address of new node
 }
 
+/*
+ * ============================================================================
+ * PRINT LIST FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This traverses the list from head to end, printing each value"
+ * ============================================================================
+ */
 void print_list(Node* head) {
-    printf("[");
-    while (head) {
-        printf("%d", head->data);
-        if (head->next) printf(" -> ");
-        head = head->next;
+    printf("[");                            // Start output
+    while (head) {                          // Until we reach NULL
+        printf("%d", head->data);           // Print current value
+        if (head->next) printf(" -> ");     // Arrow if not last node
+        head = head->next;                  // Move to next node
     }
-    printf("]\n");
+    printf("]\n");                          // End output
 }
 
 /* ==================== SOLUTION ==================== */
@@ -229,61 +251,222 @@ void print_list(Node* head) {
  * ============================================================================
  */
 
-// Keep first occurrence of each value
+/*
+ * ============================================================================
+ * REMOVE_DUPLICATES FUNCTION - Line by Line Explanation
+ * ============================================================================
+ *
+ * STRATEGY: Skip adjacent duplicates (works because list is SORTED!)
+ *   - For each node, check if next node has same value
+ *   - If same: skip the next node (delete it)
+ *   - If different: move to next node
+ *
+ * KEY INSIGHT: Since list is SORTED, all duplicates are ADJACENT!
+ *   [1, 1, 2, 3, 3, 3, 4] - duplicates are next to each other
+ *   So we only need to compare current with next, not search entire list.
+ *
+ * IMPORTANT: After deleting, DON'T advance! The new next might also be duplicate.
+ *
+ * ============================================================================
+ */
 Node* remove_duplicates(Node* head) {
-    // Say: "I iterate with single pointer, skipping duplicate next nodes"
+    /*
+     * NULL CHECK
+     * -----------
+     * Say: "Empty list has no duplicates to remove"
+     */
     if (head == NULL) {
-        return NULL;
+        return NULL;  // Say: "Nothing to process"
     }
 
-    Node* current = head;
+    /*
+     * INITIALIZE TRAVERSAL POINTER
+     * -----------------------------
+     * Say: "Start at head, will iterate through the list"
+     */
+    Node* current = head;  // Say: "current tracks our position"
 
+    /*
+     * MAIN LOOP: Process each node
+     * -----------------------------
+     * Say: "Continue while current and next both exist"
+     *
+     * Condition: current != NULL && current->next != NULL
+     *   - current != NULL: We're not past the end
+     *   - current->next != NULL: There's a next node to compare with
+     */
     while (current != NULL && current->next != NULL) {
-        // Say: "If next value equals current, skip it"
+        /*
+         * DUPLICATE CHECK
+         * ----------------
+         * Say: "Compare current value with next value"
+         *
+         * If equal: next is a duplicate, remove it
+         * If different: move to next node
+         */
         if (current->data == current->next->data) {
-            Node* duplicate = current->next;
-            current->next = current->next->next;
-            free(duplicate);
-            // Say: "Don't advance current - check new next node"
+            /*
+             * FOUND DUPLICATE - Remove the next node
+             * ---------------------------------------
+             * Say: "Next node is duplicate, skip over it"
+             *
+             * Steps:
+             * 1. Save pointer to duplicate (to free memory)
+             * 2. Link current to skip over duplicate
+             * 3. Free the duplicate node's memory
+             */
+            Node* duplicate = current->next;     // Say: "Save pointer to duplicate"
+            current->next = current->next->next; // Say: "Skip over duplicate"
+            free(duplicate);                     // Say: "Free duplicate's memory"
+
+            /*
+             * IMPORTANT: DON'T advance current!
+             * -----------------------------------
+             * Say: "Stay at current to check new next node"
+             *
+             * Why? The new next might ALSO be a duplicate!
+             * Example: 1 -> 1 -> 1 -> 2
+             *          ^
+             *       current
+             *
+             * After removing first duplicate: 1 -> 1 -> 2
+             *                                  ^
+             *                               current
+             *
+             * We need to check again! 1 == 1, another duplicate!
+             */
         } else {
-            // Say: "Different value, move to next"
-            current = current->next;
+            /*
+             * NO DUPLICATE - Move to next node
+             * ---------------------------------
+             * Say: "Values differ, advance to next"
+             *
+             * Only advance when current and next are different.
+             */
+            current = current->next;  // Say: "Move to next node"
         }
     }
 
-    return head;
+    return head;  // Say: "Return head of de-duplicated list"
 }
 
-// Variant: Remove ALL nodes that have duplicates (keep only unique)
+/*
+ * ============================================================================
+ * REMOVE_ALL_DUPLICATES FUNCTION - Line by Line (Harder Variant!)
+ * ============================================================================
+ *
+ * DIFFERENT PROBLEM: Remove ALL occurrences of duplicated values!
+ *   Input:  1 -> 1 -> 2 -> 3 -> 3 -> 4
+ *   Output: 2 -> 4  (only values that appear ONCE)
+ *
+ * WHY IS THIS HARDER?
+ *   - Head might be removed (if head value is duplicated)
+ *   - Need to track if ANY duplicates were found for a value
+ *   - Need prev pointer to reconnect after removing all copies
+ *
+ * STRATEGY:
+ *   1. Use dummy node (head might be removed)
+ *   2. For each value, delete ALL adjacent duplicates
+ *   3. If any duplicates found, delete the first occurrence too
+ *   4. Use prev pointer to maintain list connectivity
+ *
+ * ============================================================================
+ */
 Node* remove_all_duplicates(Node* head) {
-    // Say: "Use dummy node to handle head being a duplicate"
-    Node dummy;
-    dummy.next = head;
-    Node* prev = &dummy;
-    Node* current = head;
+    /*
+     * DUMMY NODE SETUP
+     * -----------------
+     * Say: "Dummy node handles case where head is removed"
+     *
+     * Problem: If head value (1) is duplicated, we need to remove head!
+     * Solution: Create dummy node that points to head.
+     *           At the end, return dummy.next (new head).
+     *
+     * MEMORY NOTE:
+     *   Node dummy;        <- Stack-allocated struct (use '.')
+     *   Node* prev = &dummy; <- Pointer to dummy (use '->')
+     */
+    Node dummy;            // Say: "Stack struct, NOT a pointer!"
+    dummy.next = head;     // Say: "Use '.' because dummy IS the struct"
+    Node* prev = &dummy;   // Say: "prev POINTS TO dummy, use '->'"
+    Node* current = head;  // Say: "current traverses the list"
 
+    /*
+     * MAIN LOOP: Process each unique value
+     * -------------------------------------
+     * Say: "Continue until we've checked all nodes"
+     */
     while (current != NULL) {
-        // Check if current has duplicates
-        bool has_duplicate = false;
-        while (current->next != NULL && current->data == current->next->data) {
-            has_duplicate = true;
-            Node* temp = current->next;
-            current->next = current->next->next;
-            free(temp);
-        }
+        /*
+         * PHASE 1: Remove all adjacent duplicates of current value
+         * ----------------------------------------------------------
+         * Say: "Delete any nodes with same value as current"
+         *
+         * has_duplicate tracks if we found ANY duplicates.
+         * If true, we must also delete current itself later.
+         */
+        bool has_duplicate = false;  // Say: "Track if duplicates found"
 
+        /*
+         * Inner loop: Delete adjacent duplicates
+         * ---------------------------------------
+         * Say: "While next exists and has same value, delete it"
+         */
+        while (current->next != NULL && current->data == current->next->data) {
+            has_duplicate = true;  // Say: "Found at least one duplicate"
+
+            /*
+             * DELETE THE DUPLICATE
+             * ---------------------
+             * Same as remove_duplicates: save, skip, free
+             */
+            Node* temp = current->next;         // Say: "Save duplicate"
+            current->next = current->next->next; // Say: "Skip duplicate"
+            free(temp);                          // Say: "Free memory"
+        }
+        // Say: "All adjacent duplicates of current value removed"
+
+        /*
+         * PHASE 2: Handle current node itself
+         * ------------------------------------
+         */
         if (has_duplicate) {
-            // Say: "Current itself is a duplicate, remove it"
-            prev->next = current->next;
-            free(current);
-            current = prev->next;
+            /*
+             * CURRENT IS ALSO DUPLICATE - Remove it!
+             * ---------------------------------------
+             * Say: "Current's value appeared multiple times, remove it too"
+             *
+             * prev->next skips over current to current->next
+             *
+             * Example: After phase 1, we have:
+             *   prev -> [1] -> [2] -> ...
+             *            ^
+             *         current (value 1 had duplicates)
+             *
+             * After: prev -> [2] -> ...
+             */
+            prev->next = current->next;  // Say: "prev skips over current"
+            free(current);               // Say: "Free current node"
+            current = prev->next;        // Say: "Move to next value"
+            // Say: "DON'T advance prev! It already points to next section"
         } else {
-            // Say: "Current is unique, advance both pointers"
-            prev = current;
-            current = current->next;
+            /*
+             * CURRENT IS UNIQUE - Keep it!
+             * -----------------------------
+             * Say: "No duplicates, advance both pointers"
+             */
+            prev = current;           // Say: "prev moves to current"
+            current = current->next;  // Say: "current moves forward"
         }
     }
 
+    /*
+     * RETURN NEW HEAD
+     * -----------------
+     * Say: "dummy.next is the new head (might be different from original!)"
+     *
+     * Use '.' because dummy is a struct, not a pointer.
+     */
     return dummy.next;
 }
 

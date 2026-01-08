@@ -88,26 +88,48 @@
 
 /* ==================== HELPER FUNCTIONS ==================== */
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - Line by Line Explanation
+ * ============================================================================
+ * Say: "A Node has two parts - data stores the value, next is a pointer
+ *       to the next node in the list"
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
+    int data;               // Say: "The value this node holds"
+    struct Node* next;      // Say: "Address of the next node in the chain"
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This function allocates memory for a new node and initializes it"
+ * ============================================================================
+ */
 Node* create_node(int data) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node->data = data;
-    node->next = NULL;
-    return node;
+    Node* node = (Node*)malloc(sizeof(Node));   // Allocate on heap
+    node->data = data;                          // Store the value
+    node->next = NULL;                          // Initialize link to NULL
+    return node;                                // Return address of new node
 }
 
+/*
+ * ============================================================================
+ * PRINT LIST FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This traverses the list from head to end, printing each value"
+ * ============================================================================
+ */
 void print_list(Node* head) {
-    printf("[");
-    while (head) {
-        printf("%d", head->data);
-        if (head->next) printf(" -> ");
-        head = head->next;
+    printf("[");                            // Start output
+    while (head) {                          // Until we reach NULL
+        printf("%d", head->data);           // Print current value
+        if (head->next) printf(" -> ");     // Arrow if not last node
+        head = head->next;                  // Move to next node
     }
-    printf("]\n");
+    printf("]\n");                          // End output
 }
 
 /* ==================== SOLUTION ==================== */
@@ -222,35 +244,199 @@ void print_list(Node* head) {
  * ============================================================================
  */
 
+/*
+ * ============================================================================
+ * REMOVE NTH FROM END FUNCTION - Line by Line Explanation
+ * ============================================================================
+ */
 Node* remove_nth_from_end(Node* head, int n) {
-    // Say: "I use a dummy node to handle edge case of removing head"
+    /*
+     * Say: "I use a dummy node to handle edge case of removing head"
+     *
+     * WHY DUMMY NODE?
+     * - If we need to remove the HEAD (nth from end = list length)
+     * - Without dummy, we'd need special case logic
+     * - With dummy, slow stops at dummy when removing head
+     * - dummy->next = head->next skips the old head cleanly
+     */
+
     Node dummy;
+    /*    ^^^^^^^^^
+     *    STACK-ALLOCATED struct (NOT a pointer!)
+     *    Lives on the stack, no malloc needed
+     *    We use '.' to access its members
+     *
+     *    WHY "Node dummy" and not "Node* dummy"?
+     *    - We want an actual struct on the stack, not a pointer
+     *    - Stack allocation is automatic (no malloc/free needed)
+     *    - The struct lives until this function returns
+     */
+
     dummy.next = head;
+    /*    ^^^^^^^^^^^
+     *    Use '.' because dummy IS the struct (not a pointer)
+     *    dummy.next now points to the actual head of the list
+     *
+     *    Visualization:
+     *    dummy --> [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+     *
+     *    REMEMBER: '.' for struct, '->' for pointer
+     *    - Node x;    -> use x.member
+     *    - Node* x;   -> use x->member
+     */
 
     Node* fast = &dummy;
+    /*    ^^^^^^^^^^^^^^
+     *    fast is a POINTER to the dummy struct
+     *    &dummy = "address of dummy" (the & operator gets the address)
+     *
+     *    Now fast holds the memory address where dummy lives
+     *    We can use fast-> because fast IS a pointer
+     *
+     *    fast
+     *     |
+     *     v
+     *    dummy --> [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+     */
+
     Node* slow = &dummy;
+    /*    ^^^^^^^^^^^^^^
+     *    slow is ALSO a pointer to the dummy struct
+     *    Both start at the same position (dummy)
+     *
+     *    slow, fast
+     *        |
+     *        v
+     *       dummy --> [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+     */
 
-    // Say: "First, move fast pointer n+1 steps ahead"
     for (int i = 0; i <= n; i++) {
+        /*    ^^^^^^^^^^^^^^^^^
+         *    Say: "First, move fast pointer n+1 steps ahead"
+         *
+         *    WHY n+1 STEPS (i <= n means n+1 iterations)?
+         *    - We need slow to stop at the node BEFORE the one to delete
+         *    - To delete node X, we need access to node X-1
+         *    - Gap of n+1 ensures slow lands at the predecessor
+         *
+         *    For n=2 (remove 2nd from end):
+         *    - i=0: fast moves to [1]
+         *    - i=1: fast moves to [2]
+         *    - i=2: fast moves to [3]
+         *    Now there's a gap of 3 between slow and fast
+         */
+
         if (fast == NULL) {
-            return head;  // n is larger than list length
+            /*    ^^^^^^^^^^^^
+             *    Edge case: n is larger than list length
+             *    fast went off the end before finishing n+1 steps
+             *    Return original head unchanged (invalid n)
+             */
+            return head;
         }
-        fast = fast->next;
-    }
 
-    // Say: "Now move both until fast reaches end"
-    // Say: "The gap ensures slow stops at node BEFORE the one to delete"
+        fast = fast->next;
+        /*    ^^^^^^^^^^^^^
+         *    Move fast one step forward
+         *    Use '->' because fast is a POINTER
+         *
+         *    fast->next means:
+         *    "go to the node fast points to, get its 'next' field"
+         */
+    }
+    /*
+     * After the loop, fast is n+1 steps ahead of slow:
+     *
+     * For n=2 (remove 2nd from end) in list [1,2,3,4,5]:
+     *
+     *    slow                    fast
+     *     |                        |
+     *     v                        v
+     *    dummy --> [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+     *
+     *    Gap = 3 nodes (dummy, 1, 2) between slow and fast
+     */
+
     while (fast != NULL) {
-        fast = fast->next;
-        slow = slow->next;
-    }
+        /*    ^^^^^^^^^^^^^
+         *    Say: "Now move both until fast reaches end"
+         *    Say: "The gap ensures slow stops at node BEFORE the one to delete"
+         *
+         *    Move both pointers together, maintaining the gap
+         *    When fast hits NULL, slow will be at the predecessor of target
+         */
 
-    // Say: "slow->next is the node to remove"
+        fast = fast->next;
+        /*    ^^^^^^^^^^^^^
+         *    Move fast one step forward
+         */
+
+        slow = slow->next;
+        /*    ^^^^^^^^^^^^^
+         *    Move slow one step forward
+         *    The gap between them stays constant!
+         */
+    }
+    /*
+     * After the loop (for n=2):
+     *
+     *                              slow            fast
+     *                               |               |
+     *                               v               v
+     *    dummy --> [1] --> [2] --> [3] --> [4] --> [5] --> NULL
+     *                                       ^
+     *                                 This is the target (2nd from end)
+     *                                 slow->next points to it!
+     */
+
     Node* to_delete = slow->next;
+    /*    ^^^^^^^^^^^^^^^^^^^^^^^^
+     *    Say: "slow->next is the node to remove"
+     *
+     *    Save pointer to the node we're about to remove
+     *    We need this to free() its memory later
+     *
+     *    to_delete points to [4] (the 2nd from end)
+     */
+
     slow->next = slow->next->next;
+    /*    ^^^^^^^^^^^^^^^^^^^^^^^^^
+     *    Skip over the node to delete!
+     *
+     *    slow->next = slow->next->next means:
+     *    - slow->next was pointing to [4]
+     *    - slow->next->next is [5]
+     *    - Now slow->next points directly to [5], skipping [4]
+     *
+     *    Before: [3] --> [4] --> [5]
+     *    After:  [3] ----------> [5]
+     *                     ^
+     *                  [4] is now orphaned (will be freed)
+     */
+
     free(to_delete);
+    /*    ^^^^^^^^^^^^^
+     *    Release the memory of the deleted node
+     *    Prevents memory leak!
+     *
+     *    IMPORTANT: Always free dynamically allocated memory
+     *    when you're done with it
+     */
 
     return dummy.next;
+    /*     ^^^^^^^^^^
+     *     Return the new head of the list
+     *     Use '.' because dummy is a struct, not a pointer
+     *
+     *     Why dummy.next and not just head?
+     *     - If we removed the original head, head is now invalid (freed)
+     *     - dummy.next correctly points to the new head
+     *
+     *     Example: Remove 5th from end in [1,2,3,4,5] (remove head):
+     *     - dummy.next was [1]
+     *     - After deletion, dummy.next is [2]
+     *     - Return [2] as new head (not the old head [1] which is freed!)
+     */
 }
 
 /* ==================== TEST ==================== */

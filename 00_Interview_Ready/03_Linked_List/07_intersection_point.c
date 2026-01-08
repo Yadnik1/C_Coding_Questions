@@ -89,26 +89,48 @@
 
 /* ==================== HELPER FUNCTIONS ==================== */
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - Line by Line Explanation
+ * ============================================================================
+ * Say: "A Node has two parts - data stores the value, next is a pointer
+ *       to the next node in the list"
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
+    int data;               // Say: "The value this node holds"
+    struct Node* next;      // Say: "Address of the next node in the chain"
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This function allocates memory for a new node and initializes it"
+ * ============================================================================
+ */
 Node* create_node(int data) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node->data = data;
-    node->next = NULL;
-    return node;
+    Node* node = (Node*)malloc(sizeof(Node));   // Allocate on heap
+    node->data = data;                          // Store the value
+    node->next = NULL;                          // Initialize link to NULL
+    return node;                                // Return address of new node
 }
 
+/*
+ * ============================================================================
+ * PRINT LIST FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This traverses the list from head to end, printing each value"
+ * ============================================================================
+ */
 void print_list(Node* head) {
-    printf("[");
-    while (head) {
-        printf("%d", head->data);
-        if (head->next) printf(" -> ");
-        head = head->next;
+    printf("[");                            // Start output
+    while (head) {                          // Until we reach NULL
+        printf("%d", head->data);           // Print current value
+        if (head->next) printf(" -> ");     // Arrow if not last node
+        head = head->next;                  // Move to next node
     }
-    printf("]\n");
+    printf("]\n");                          // End output
 }
 
 /* ==================== SOLUTION ==================== */
@@ -223,48 +245,181 @@ int get_length(Node* head) {
  * ============================================================================
  */
 
+/*
+ * ============================================================================
+ * FIND_INTERSECTION FUNCTION - Line by Line Explanation (Length Method)
+ * ============================================================================
+ *
+ * STRATEGY: Length Alignment
+ *   1. Calculate lengths of both lists
+ *   2. Advance the longer list's pointer by the difference
+ *   3. Move both pointers together until they meet
+ *
+ * WHY THIS WORKS:
+ *   By aligning start points, both pointers have EQUAL distance
+ *   to the intersection point. They'll meet there!
+ *
+ *   A: 1 -> 2 --------\
+ *                      -> 6 -> 7 -> 8  (lenA = 5)
+ *   B: 3 -> 4 -> 5 --/                  (lenB = 6)
+ *
+ *   Advance B by 1: Start B at node 4
+ *   Now both have 4 steps to intersection!
+ *
+ * ============================================================================
+ */
 Node* find_intersection(Node* headA, Node* headB) {
-    // Say: "First, calculate lengths of both lists"
-    int lenA = get_length(headA);
-    int lenB = get_length(headB);
+    /*
+     * STEP 1: CALCULATE LENGTHS
+     * --------------------------
+     * Say: "First, I need to know how long each list is"
+     *
+     * get_length() traverses the list and counts nodes.
+     * We need this to figure out the length difference.
+     */
+    int lenA = get_length(headA);  // Say: "Count nodes in list A"
+    int lenB = get_length(headB);  // Say: "Count nodes in list B"
 
-    // Say: "Align the starting points by advancing the longer list"
+    /*
+     * STEP 2: ALIGN STARTING POINTS
+     * ------------------------------
+     * Say: "Advance the longer list by the difference"
+     *
+     * If A is longer: move headA forward by (lenA - lenB)
+     * If B is longer: move headB forward by (lenB - lenA)
+     *
+     * After this, both pointers have EQUAL remaining distance
+     * to traverse before reaching the intersection (or end).
+     *
+     * Example: lenA=5, lenB=6, diff=1
+     *   Advance headB by 1
+     *   Now both have 5 nodes remaining
+     */
     while (lenA > lenB) {
-        headA = headA->next;
-        lenA--;
+        headA = headA->next;  // Say: "A is longer, advance A"
+        lenA--;               // Say: "Decrease remaining length"
     }
     while (lenB > lenA) {
-        headB = headB->next;
-        lenB--;
+        headB = headB->next;  // Say: "B is longer, advance B"
+        lenB--;               // Say: "Decrease remaining length"
     }
+    // Say: "Now both pointers have equal distance to intersection/end"
 
-    // Say: "Now traverse both together until they meet"
+    /*
+     * STEP 3: MOVE TOGETHER UNTIL MEETING
+     * ------------------------------------
+     * Say: "Move both pointers one step at a time until they meet"
+     *
+     * Since both pointers have equal remaining distance:
+     *   - If lists intersect: They meet at the intersection node
+     *   - If no intersection: Both reach NULL at the same time
+     *
+     * IMPORTANT: We compare POINTERS (memory addresses), not VALUES!
+     * headA == headB means they point to the SAME node in memory.
+     */
     while (headA != headB) {
-        headA = headA->next;
-        headB = headB->next;
+        headA = headA->next;  // Say: "Move A one step"
+        headB = headB->next;  // Say: "Move B one step"
     }
+    // Say: "Loop exits when pointers are equal (same node or both NULL)"
 
-    // Say: "headA is intersection point (or NULL if no intersection)"
-    return headA;
+    /*
+     * RETURN RESULT
+     * --------------
+     * Say: "Return the intersection node (or NULL if none)"
+     *
+     * If lists intersect: headA points to the intersection node
+     * If no intersection: headA is NULL (both reached end)
+     */
+    return headA;  // Say: "This is the intersection point"
 }
 
-// Alternative: Two-pointer cycle method (elegant, same complexity)
+/*
+ * ============================================================================
+ * FIND_INTERSECTION_ELEGANT - Line by Line (Two-Pointer Cycle Method)
+ * ============================================================================
+ *
+ * STRATEGY: Each pointer traverses BOTH lists
+ *   - ptrA: traverses A, then B
+ *   - ptrB: traverses B, then A
+ *   - Both travel same total distance: lenA + lenB
+ *   - They meet at intersection!
+ *
+ * WHY THIS WORKS (MATHEMATICAL PROOF):
+ *   Let a = length of A before intersection
+ *   Let b = length of B before intersection
+ *   Let c = length of common part after intersection
+ *
+ *   ptrA travels: a + c + b (A, then B up to intersection)
+ *   ptrB travels: b + c + a (B, then A up to intersection)
+ *
+ *   Both travel a + b + c steps to meet at intersection!
+ *
+ *   If no intersection (c=0):
+ *   ptrA travels: lenA + lenB (reaches end of B = NULL)
+ *   ptrB travels: lenB + lenA (reaches end of A = NULL)
+ *   Both become NULL simultaneously -> return NULL
+ *
+ * ============================================================================
+ */
 Node* find_intersection_elegant(Node* headA, Node* headB) {
-    // Say: "Two pointers, switch lists when reaching end"
+    /*
+     * NULL CHECK
+     * -----------
+     * Say: "If either list is empty, no intersection possible"
+     */
     if (headA == NULL || headB == NULL) {
-        return NULL;
+        return NULL;  // Say: "Nothing to intersect"
     }
 
-    Node* ptrA = headA;
-    Node* ptrB = headB;
+    /*
+     * INITIALIZE TWO POINTERS
+     * ------------------------
+     * Say: "Start each pointer at its respective list's head"
+     */
+    Node* ptrA = headA;  // Say: "ptrA starts at head of list A"
+    Node* ptrB = headB;  // Say: "ptrB starts at head of list B"
 
-    // Say: "Each pointer traverses both lists - they meet at intersection"
+    /*
+     * TRAVERSE BOTH LISTS
+     * --------------------
+     * Say: "Move pointers until they meet (intersection or both NULL)"
+     *
+     * The magic: When a pointer reaches NULL, redirect it to OTHER list's head!
+     *
+     * This ensures both pointers travel the same total distance:
+     *   ptrA: lenA + lenB
+     *   ptrB: lenB + lenA
+     *
+     * They'll sync up at the intersection point!
+     */
     while (ptrA != ptrB) {
-        // When reaching end, switch to other list's head
+        /*
+         * MOVE OR SWITCH LIST
+         * --------------------
+         * Say: "If at end, jump to other list's head; else move forward"
+         *
+         * ptrA == NULL means we finished list A, now start list B
+         * ptrB == NULL means we finished list B, now start list A
+         *
+         * (condition) ? value_if_true : value_if_false
+         */
         ptrA = (ptrA == NULL) ? headB : ptrA->next;
-        ptrB = (ptrB == NULL) ? headA : ptrB->next;
-    }
+        // Say: "ptrA finished A? Start B. Otherwise, advance."
 
+        ptrB = (ptrB == NULL) ? headA : ptrB->next;
+        // Say: "ptrB finished B? Start A. Otherwise, advance."
+    }
+    // Say: "Loop exits when ptrA == ptrB (same node or both NULL)"
+
+    /*
+     * RETURN RESULT
+     * --------------
+     * Say: "ptrA is the intersection (or NULL if lists don't intersect)"
+     *
+     * If intersection exists: ptrA == ptrB == intersection node
+     * If no intersection: ptrA == ptrB == NULL
+     */
     return ptrA;
 }
 

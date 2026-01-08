@@ -93,26 +93,48 @@
 
 /* ==================== HELPER FUNCTIONS ==================== */
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - Line by Line Explanation
+ * ============================================================================
+ * Say: "A Node has two parts - data stores the value, next is a pointer
+ *       to the next node in the list"
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
+    int data;               // Say: "The value this node holds"
+    struct Node* next;      // Say: "Address of the next node in the chain"
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This function allocates memory for a new node and initializes it"
+ * ============================================================================
+ */
 Node* create_node(int data) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node->data = data;
-    node->next = NULL;
-    return node;
+    Node* node = (Node*)malloc(sizeof(Node));   // Allocate on heap
+    node->data = data;                          // Store the value
+    node->next = NULL;                          // Initialize link to NULL
+    return node;                                // Return address of new node
 }
 
+/*
+ * ============================================================================
+ * PRINT LIST FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This traverses the list from head to end, printing each value"
+ * ============================================================================
+ */
 void print_list(Node* head) {
-    printf("[");
-    while (head) {
-        printf("%d", head->data);
-        if (head->next) printf(" -> ");
-        head = head->next;
+    printf("[");                            // Start output
+    while (head) {                          // Until we reach NULL
+        printf("%d", head->data);           // Print current value
+        if (head->next) printf(" -> ");     // Arrow if not last node
+        head = head->next;                  // Move to next node
     }
-    printf("]\n");
+    printf("]\n");                          // End output
 }
 
 /* ==================== SOLUTION ==================== */
@@ -210,27 +232,119 @@ void print_list(Node* head) {
  * ============================================================================
  */
 
-// Note: Cannot delete the LAST node with this approach
+/*
+ * ============================================================================
+ * DELETE_NODE FUNCTION - Line by Line Explanation (The Trick!)
+ * ============================================================================
+ *
+ * THE PROBLEM:
+ *   - We only have access to the node to delete (not the head!)
+ *   - In singly linked list, to delete a node, we normally need PREVIOUS node
+ *   - But we can't traverse backwards to find previous!
+ *
+ * THE TRICK: Copy and Delete Next
+ *   Instead of actually deleting this node, we:
+ *   1. Copy the NEXT node's data into this node
+ *   2. Delete the NEXT node (which we CAN access)
+ *   3. From outside, it LOOKS like this node was deleted!
+ *
+ * VISUAL:
+ *   Want to "delete" node with value 3:
+ *
+ *   Before: 1 -> 2 -> [3] -> 4 -> 5
+ *                      ^
+ *                   given node
+ *
+ *   Step 1: Copy next's data (4) into current
+ *           1 -> 2 -> [4] -> 4 -> 5
+ *
+ *   Step 2: Skip over next node
+ *           1 -> 2 -> [4] -----> 5
+ *
+ *   Result: 1 -> 2 -> 4 -> 5  (looks like 3 was deleted!)
+ *
+ * LIMITATION: Cannot delete the LAST node!
+ *   - No next node to copy from
+ *   - Would leave dangling pointer from previous
+ *
+ * ============================================================================
+ */
 void delete_node(Node* node) {
-    // Say: "I can't access previous node, so I copy next node's data into this one"
-
-    // Say: "This trick only works if node is NOT the last node"
+    /*
+     * VALIDATION CHECK
+     * -----------------
+     * Say: "Can't use this trick if node is NULL or is the last node"
+     *
+     * Why can't delete last node?
+     *   - node->next is NULL, no data to copy
+     *   - Previous node still points to us (dangling!)
+     *   - We can't update previous->next without access to previous
+     */
     if (node == NULL || node->next == NULL) {
-        // Can't delete last node without head access
-        return;
+        return;  // Say: "Cannot delete last node with this trick"
     }
 
-    // Say: "Copy the next node's data to current node"
-    Node* next_node = node->next;
-    node->data = next_node->data;
+    /*
+     * STEP 1: SAVE POINTER TO NEXT NODE
+     * -----------------------------------
+     * Say: "Save reference to next node (we'll delete it later)"
+     *
+     * We need this pointer to:
+     *   1. Access next's data
+     *   2. Link past next to next->next
+     *   3. Free next's memory
+     */
+    Node* next_node = node->next;  // Say: "next_node = node after given node"
 
-    // Say: "Point current to skip over next node"
-    node->next = next_node->next;
+    /*
+     * STEP 2: COPY NEXT NODE'S DATA
+     * ------------------------------
+     * Say: "Copy next node's value into current node"
+     *
+     * This is the KEY step! We're making current node
+     * "become" the next node by copying its data.
+     *
+     * Before: [3].data = 3, [4].data = 4
+     * After:  [3].data = 4  (now contains 4!)
+     */
+    node->data = next_node->data;  // Say: "Current now has next's value"
 
-    // Say: "Free the old next node"
-    free(next_node);
+    /*
+     * STEP 3: SKIP OVER NEXT NODE
+     * ----------------------------
+     * Say: "Link current node to skip over the old next"
+     *
+     * Before: current -> next -> next_next
+     * After:  current ---------> next_next
+     *
+     * The 'next' node is now orphaned (not in the list).
+     */
+    node->next = next_node->next;  // Say: "Skip over the old next node"
 
-    // Say: "Effectively, we deleted next but made current look like next"
+    /*
+     * STEP 4: FREE THE OLD NEXT NODE
+     * -------------------------------
+     * Say: "Release memory of the node we skipped"
+     *
+     * The old next node is no longer in the list.
+     * We must free it to avoid memory leak.
+     *
+     * Note: We're freeing the memory at next_node's address,
+     * but logically we "deleted" the current node's original value.
+     */
+    free(next_node);  // Say: "Free memory of skipped node"
+
+    /*
+     * RESULT:
+     * --------
+     * The list now looks like 'node' was deleted:
+     *   - node contains what was in node->next
+     *   - node->next is what was in node->next->next
+     *   - Original next node is freed
+     *
+     * From external perspective: node with original value is "gone"
+     * Reality: node still exists, but with different data
+     */
 }
 
 /* ==================== TEST ==================== */

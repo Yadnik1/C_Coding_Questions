@@ -95,26 +95,193 @@
 
 /* ==================== HELPER FUNCTIONS ==================== */
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - Line by Line Explanation
+ * ============================================================================
+ *
+ * typedef struct Node {
+ *     ^^^^^^
+ *     typedef = "type definition" - creates an alias so we can write
+ *               "Node" instead of "struct Node" everywhere
+ *
+ *     struct Node {
+ *     ^^^^^^
+ *     struct = keyword to define a composite data type that groups
+ *              multiple variables together under one name
+ *
+ *     int data;
+ *         ^^^^
+ *         data = the actual VALUE stored in this node (the payload)
+ *                In this case, an integer. Could be any type.
+ *
+ *     struct Node* next;
+ *     ^^^^^^^^^^^^
+ *     struct Node* = pointer TO another Node
+ *                    This is what LINKS nodes together!
+ *                    Points to the next node in the list (or NULL if last)
+ *
+ *     Why "struct Node*" and not just "Node*"?
+ *     - Inside the struct definition, "Node" alias doesn't exist yet
+ *     - The typedef completes AFTER the struct definition
+ *     - So we must use "struct Node*" for the self-reference
+ *
+ * } Node;
+ *   ^^^^
+ *   Node = the alias name created by typedef
+ *          Now we can use "Node" instead of "struct Node"
+ *
+ * MEMORY LAYOUT:
+ * +--------+--------+
+ * |  data  |  next  |
+ * | (4 B)  | (8 B)  |  <- on 64-bit system, pointer is 8 bytes
+ * +--------+--------+
+ *
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
+    int data;               // The value stored in this node
+    struct Node* next;      // Pointer to the next node (NULL if last)
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - Line by Line Explanation
+ * ============================================================================
+ *
+ * Node* create_node(int data) {
+ * ^^^^^
+ * Node* = return type is a POINTER to a Node
+ *         We return an address, not the struct itself
+ *
+ *     Node* node = (Node*)malloc(sizeof(Node));
+ *           ^^^^   ^^^^^^ ^^^^^^ ^^^^^^
+ *           |      |      |      |
+ *           |      |      |      sizeof(Node) = how many bytes a Node takes
+ *           |      |      |                     (typically 12-16 bytes)
+ *           |      |      |
+ *           |      |      malloc() = allocates that many bytes on the HEAP
+ *           |      |                 returns void* (generic pointer)
+ *           |      |                 memory persists until free() is called
+ *           |      |
+ *           |      (Node*) = cast the void* to Node*
+ *           |                tells compiler "treat this address as Node"
+ *           |
+ *           node = local variable storing the address malloc returned
+ *
+ *     Why malloc (heap) instead of local variable (stack)?
+ *     - Stack: Node node; <- Dies when function returns! Can't return it.
+ *     - Heap:  malloc()   <- Lives until free(). Can return pointer safely.
+ *
+ *     node->data = data;
+ *     ^^^^
+ *     node->data = equivalent to (*node).data
+ *                  -> is the "arrow operator" for accessing members through pointer
+ *                  node is a POINTER, so we use -> (not .)
+ *
+ *     node->next = NULL;
+ *                  ^^^^
+ *                  NULL = this node doesn't point to anything yet
+ *                         It's a "dead end" until we link it
+ *
+ *     return node;
+ *            ^^^^
+ *            Returns the ADDRESS of the newly created node
+ *            The actual data lives on heap, we just pass the address
+ *
+ * MEMORY VISUALIZATION:
+ *
+ *   Stack (function scope)     Heap (persists)
+ *   +--------+                 +--------+--------+
+ *   | node   | ------------->  |  data  |  NULL  |
+ *   | 0x1234 |                 +--------+--------+
+ *   +--------+                 Address: 0x1234
+ *
+ *   When function returns, 'node' variable dies (stack cleaned up)
+ *   But the heap memory at 0x1234 survives!
+ *   We return 0x1234 so caller can access the Node.
+ *
+ * ============================================================================
+ */
 Node* create_node(int data) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node->data = data;
-    node->next = NULL;
-    return node;
+    Node* node = (Node*)malloc(sizeof(Node));   // Allocate memory on heap
+    node->data = data;                          // Set the value
+    node->next = NULL;                          // Initialize next to NULL (no link yet)
+    return node;                                // Return address of new node
 }
 
+/*
+ * ============================================================================
+ * PRINT LIST FUNCTION - Line by Line Explanation
+ * ============================================================================
+ *
+ * void print_list(Node* head) {
+ * ^^^^            ^^^^^
+ * void = returns nothing, just prints
+ * Node* head = we receive a POINTER to the first node
+ *              "head" is the conventional name for the start of a list
+ *
+ *     printf("[");
+ *     Start the visual representation with opening bracket
+ *
+ *     while (head) {
+ *            ^^^^
+ *     while (head) is shorthand for while (head != NULL)
+ *     In C, NULL is 0, and 0 is "false" in boolean context
+ *     Any non-NULL pointer is "true"
+ *     Loop continues until we hit the end of the list (NULL)
+ *
+ *         printf("%d", head->data);
+ *                      ^^^^^^^^^^
+ *         head->data = access the 'data' field through the pointer
+ *         Print the value stored in current node
+ *
+ *         if (head->next) printf(" -> ");
+ *             ^^^^^^^^^^
+ *         If there's a next node, print arrow separator
+ *         Only print arrow if NOT the last node (cleaner output)
+ *
+ *         head = head->next;
+ *         ^^^^^^^^^^^^^^^^^
+ *         MOVE to the next node!
+ *         head now points to whatever the current node's 'next' pointed to
+ *         This is how we TRAVERSE a linked list
+ *
+ *         IMPORTANT: We're modifying the LOCAL COPY of head
+ *         The original pointer in main() is unchanged
+ *         (Parameters are passed by value in C)
+ *
+ *     printf("]\n");
+ *     Close the bracket and newline
+ *
+ * TRAVERSAL VISUALIZATION:
+ *
+ *   Initial: head -> [1] -> [2] -> [3] -> NULL
+ *                     ^
+ *                   head points here
+ *
+ *   After head = head->next:
+ *            head -> [1] -> [2] -> [3] -> NULL
+ *                            ^
+ *                          head points here now
+ *
+ *   After another head = head->next:
+ *            head -> [1] -> [2] -> [3] -> NULL
+ *                                   ^
+ *                                 head points here
+ *
+ *   After another: head = NULL -> loop exits
+ *
+ * ============================================================================
+ */
 void print_list(Node* head) {
-    printf("[");
-    while (head) {
-        printf("%d", head->data);
-        if (head->next) printf(" -> ");
-        head = head->next;
+    printf("[");                            // Start output
+    while (head) {                          // While not at end (head != NULL)
+        printf("%d", head->data);           // Print current node's value
+        if (head->next) printf(" -> ");     // Print arrow if more nodes follow
+        head = head->next;                  // Move to next node
     }
-    printf("]\n");
+    printf("]\n");                          // End output with newline
 }
 
 /* ==================== SOLUTION ==================== */
@@ -243,23 +410,140 @@ void print_list(Node* head) {
  * ============================================================================
  */
 
+/*
+ * ============================================================================
+ * REVERSE LIST FUNCTION - Line by Line Explanation
+ * ============================================================================
+ */
 Node* reverse_list(Node* head) {
-    // Say: "I use three pointers: prev, curr, and next"
+    /*
+     * Say: "I use three pointers: prev, curr, and next"
+     *
+     * WHY THREE POINTERS?
+     * - prev: Keeps track of the already-reversed portion
+     * - curr: The node we're currently processing
+     * - next: Saves the next node BEFORE we break the link
+     *         (If we reverse curr->next first, we lose access to the rest!)
+     */
+
     Node* prev = NULL;
+    /*    ^^^^^^^^^^^
+     *    prev = NULL because the first node (after reversal) should point to NULL
+     *           It will become the LAST node, and last nodes point to NULL
+     *
+     *    Visualization:
+     *    prev
+     *     |
+     *     v
+     *    NULL    [1] -> [2] -> [3] -> NULL
+     */
+
     Node* curr = head;
+    /*    ^^^^^^^^^^^
+     *    curr = head means we start processing from the first node
+     *
+     *    Visualization:
+     *    prev    curr
+     *     |       |
+     *     v       v
+     *    NULL    [1] -> [2] -> [3] -> NULL
+     */
+
     Node* next = NULL;
+    /*    ^^^^^^^^^^^
+     *    next = NULL for now, we'll set it inside the loop
+     *    It's declared here to avoid declaring inside loop (style preference)
+     */
 
-    // Say: "I iterate through, reversing each link"
     while (curr != NULL) {
-        // Say: "Save next, reverse link, move prev and curr forward"
-        next = curr->next;      // Save next node
-        curr->next = prev;      // Reverse the link
-        prev = curr;            // Move prev forward
-        curr = next;            // Move curr forward
-    }
+        /*    ^^^^^^^^^^^^
+         *    Continue until we've processed ALL nodes
+         *    When curr becomes NULL, we've reached past the end
+         */
 
-    // Say: "When curr becomes NULL, prev points to new head"
+        next = curr->next;
+        /*    ^^^^^^^^^^^^^
+         *    STEP 1: SAVE the next node before we break the link!
+         *
+         *    WHY? Because in the next step, we change curr->next to point
+         *    backwards. If we don't save it, we lose access to the rest of the list!
+         *
+         *    Example at first iteration:
+         *    prev    curr    next
+         *     |       |       |
+         *     v       v       v
+         *    NULL    [1] --> [2] -> [3] -> NULL
+         *
+         *    next now holds address of [2]
+         */
+
+        curr->next = prev;
+        /*    ^^^^^^^^^^^^^
+         *    STEP 2: REVERSE the link!
+         *
+         *    Before: curr (node 1) points to node 2
+         *    After:  curr (node 1) points to prev (NULL)
+         *
+         *    This is the actual reversal - we're changing where the arrow points!
+         *
+         *    prev    curr    next
+         *     |       |       |
+         *     v       v       v
+         *    NULL <--[1]     [2] -> [3] -> NULL
+         *         ^^^^
+         *         Link reversed! Node 1 now points backwards
+         */
+
+        prev = curr;
+        /*    ^^^^^^^^^
+         *    STEP 3: Move prev forward to current position
+         *
+         *    prev is now at node 1 (the node we just processed)
+         *    This becomes the "previous" node for the next iteration
+         *
+         *           prev    next
+         *            |       |
+         *            v       v
+         *    NULL <--[1]     [2] -> [3] -> NULL
+         */
+
+        curr = next;
+        /*    ^^^^^^^^^
+         *    STEP 4: Move curr forward to the next unprocessed node
+         *
+         *    curr is now at node 2 (the node we saved earlier)
+         *    Ready to process the next node in the next iteration
+         *
+         *           prev    curr
+         *            |       |
+         *            v       v
+         *    NULL <--[1]     [2] -> [3] -> NULL
+         *
+         *    Loop continues with node 2...
+         */
+    }
+    /*
+     * When loop ends, curr = NULL (we've gone past the last node)
+     * prev points to what WAS the last node (now the FIRST node of reversed list)
+     *
+     *                                      prev    curr
+     *                                       |       |
+     *                                       v       v
+     *    NULL <-- [1] <-- [2] <-- [3]              NULL
+     *                             ^^^
+     *                            NEW HEAD!
+     */
+
     return prev;
+    /*     ^^^^
+     *     Return prev because it points to the new head
+     *     (The old last node, which is now the first node)
+     *
+     *     Original: 1 -> 2 -> 3 -> NULL
+     *     Reversed: 3 -> 2 -> 1 -> NULL
+     *               ^
+     *              prev (returned as new head)
+     */
 }
 
 /* ==================== TEST ==================== */

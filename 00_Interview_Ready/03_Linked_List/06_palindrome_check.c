@@ -91,26 +91,48 @@
 
 /* ==================== HELPER FUNCTIONS ==================== */
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - Line by Line Explanation
+ * ============================================================================
+ * Say: "A Node has two parts - data stores the value, next is a pointer
+ *       to the next node in the list"
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
+    int data;               // Say: "The value this node holds"
+    struct Node* next;      // Say: "Address of the next node in the chain"
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This function allocates memory for a new node and initializes it"
+ * ============================================================================
+ */
 Node* create_node(int data) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node->data = data;
-    node->next = NULL;
-    return node;
+    Node* node = (Node*)malloc(sizeof(Node));   // Allocate on heap
+    node->data = data;                          // Store the value
+    node->next = NULL;                          // Initialize link to NULL
+    return node;                                // Return address of new node
 }
 
+/*
+ * ============================================================================
+ * PRINT LIST FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This traverses the list from head to end, printing each value"
+ * ============================================================================
+ */
 void print_list(Node* head) {
-    printf("[");
-    while (head) {
-        printf("%d", head->data);
-        if (head->next) printf(" -> ");
-        head = head->next;
+    printf("[");                            // Start output
+    while (head) {                          // Until we reach NULL
+        printf("%d", head->data);           // Print current value
+        if (head->next) printf(" -> ");     // Arrow if not last node
+        head = head->next;                  // Move to next node
     }
-    printf("]\n");
+    printf("]\n");                          // End output
 }
 
 /* ==================== SOLUTION ==================== */
@@ -241,43 +263,155 @@ Node* reverse_list(Node* head) {
  * ============================================================================
  */
 
+/*
+ * ============================================================================
+ * IS_PALINDROME FUNCTION - Line by Line Explanation
+ * ============================================================================
+ *
+ * STRATEGY: Three-step process
+ *   1. Find the middle of the list (slow/fast pointers)
+ *   2. Reverse the second half of the list
+ *   3. Compare first half with reversed second half
+ *   4. (Optional) Restore the list
+ *
+ * WHY THIS WORKS:
+ *   A palindrome reads the same forwards and backwards.
+ *   If we reverse the second half and it matches the first half,
+ *   the list is a palindrome!
+ *
+ *   Example: 1 -> 2 -> 3 -> 2 -> 1
+ *   First half:  1 -> 2
+ *   Second half: 2 -> 1  (reversed becomes 1 -> 2)
+ *   Compare: 1==1, 2==2 -> PALINDROME!
+ *
+ * ============================================================================
+ */
 bool is_palindrome(Node* head) {
-    // Say: "Empty or single node is a palindrome"
+    /*
+     * BASE CASE CHECK
+     * ----------------
+     * Say: "Empty list or single node is always a palindrome"
+     *
+     * - NULL list: vacuously true (nothing to compare)
+     * - Single node: [1] reads same forwards and backwards
+     */
     if (head == NULL || head->next == NULL) {
-        return true;
+        return true;  // Say: "Nothing to compare, trivially palindrome"
     }
 
-    // Say: "Step 1: Find middle using slow/fast pointers"
-    Node* slow = head;
-    Node* fast = head;
+    /*
+     * STEP 1: FIND MIDDLE (Slow/Fast Pointer Technique)
+     * --------------------------------------------------
+     * Say: "I use two pointers - slow moves 1 step, fast moves 2 steps"
+     *
+     * When fast reaches the end, slow is at the middle!
+     *
+     * Why? Fast travels 2x speed, so when fast finishes,
+     * slow has traveled half the distance.
+     */
+    Node* slow = head;  // Say: "Slow pointer starts at head"
+    Node* fast = head;  // Say: "Fast pointer also starts at head"
 
+    /*
+     * LOOP: Move slow by 1, fast by 2
+     * --------------------------------
+     * Say: "Keep moving until fast can't take 2 more steps"
+     *
+     * Condition: fast->next != NULL && fast->next->next != NULL
+     *   - fast->next != NULL: There's at least one more node
+     *   - fast->next->next != NULL: There's at least two more nodes
+     *
+     * We check fast->next->next (not fast->next) because fast moves 2 steps.
+     *
+     * Example: 1 -> 2 -> 3 -> 2 -> 1
+     *   Start:     slow=1, fast=1
+     *   After 1:   slow=2, fast=3
+     *   After 2:   fast->next->next is NULL, STOP
+     *   slow is at 2 (the node BEFORE middle for odd-length)
+     */
     while (fast->next != NULL && fast->next->next != NULL) {
-        slow = slow->next;
-        fast = fast->next->next;
+        slow = slow->next;        // Say: "Slow takes 1 step"
+        fast = fast->next->next;  // Say: "Fast takes 2 steps"
     }
-    // Say: "slow is now at first middle (for even) or exact middle (for odd)"
+    // Say: "Now slow is at the end of first half"
+    // For 1->2->3->2->1: slow points to node with value 2
+    // For 1->2->2->1: slow points to first node with value 2
 
-    // Say: "Step 2: Reverse the second half"
+    /*
+     * STEP 2: REVERSE THE SECOND HALF
+     * --------------------------------
+     * Say: "Now I reverse everything after slow"
+     *
+     * slow->next is the start of the second half.
+     * We reverse from slow->next onwards.
+     *
+     * Before: 1 -> 2 -> [3 -> 2 -> 1]  (brackets = second half)
+     * After:  1 -> 2    [1 -> 2 -> 3]  (second half reversed!)
+     *
+     * Note: slow->next now points to reversed list's head
+     */
     Node* second_half = reverse_list(slow->next);
+    // Say: "second_half now points to the HEAD of reversed second half"
 
-    // Say: "Step 3: Compare first and second halves"
-    Node* first_half = head;
-    Node* second_ptr = second_half;
-    bool result = true;
+    /*
+     * STEP 3: COMPARE FIRST AND SECOND HALVES
+     * ----------------------------------------
+     * Say: "Compare node by node from start of each half"
+     *
+     * first_half: starts from head, goes forward
+     * second_ptr: starts from reversed second half's head
+     *
+     * For palindrome 1->2->3->2->1:
+     *   first_half:  1 -> 2 -> 3 -> ...
+     *   second_half: 1 -> 2 -> 3 -> NULL (reversed!)
+     *   Compare: 1==1 ✓, 2==2 ✓, then second_ptr becomes NULL, STOP
+     */
+    Node* first_half = head;        // Say: "Start comparing from head"
+    Node* second_ptr = second_half; // Say: "Start from reversed second half"
+    bool result = true;             // Say: "Assume palindrome until mismatch"
 
+    /*
+     * COMPARISON LOOP
+     * ----------------
+     * Say: "Compare until second half ends"
+     *
+     * Why stop when second_ptr is NULL?
+     *   - Second half is always <= first half in length
+     *   - For odd length: first half has the middle, second doesn't
+     *   - For even length: both halves equal length
+     */
     while (second_ptr != NULL) {
+        /*
+         * MISMATCH CHECK
+         * ---------------
+         * Say: "If values differ, NOT a palindrome"
+         */
         if (first_half->data != second_ptr->data) {
-            result = false;
-            break;
+            result = false;  // Say: "Mismatch found!"
+            break;           // Say: "No need to check further"
         }
-        first_half = first_half->next;
-        second_ptr = second_ptr->next;
+        first_half = first_half->next;  // Say: "Move to next in first half"
+        second_ptr = second_ptr->next;  // Say: "Move to next in second half"
     }
 
-    // Say: "Step 4: Restore the list (good practice, optional)"
+    /*
+     * STEP 4: RESTORE THE LIST (Good Practice)
+     * -----------------------------------------
+     * Say: "Reverse second half back to original order"
+     *
+     * This restores the original list structure.
+     * Important because:
+     *   - Don't modify input data unexpectedly
+     *   - Caller might use the list again
+     *   - Shows attention to side effects in interviews
+     *
+     * Before restore: 1 -> 2 -> (broken)   1 -> 2 -> 3
+     * After restore:  1 -> 2 -> 3 -> 2 -> 1 (original!)
+     */
     slow->next = reverse_list(second_half);
+    // Say: "List is now back to original order"
 
-    return result;
+    return result;  // Say: "Return true if palindrome, false otherwise"
 }
 
 /* ==================== TEST ==================== */

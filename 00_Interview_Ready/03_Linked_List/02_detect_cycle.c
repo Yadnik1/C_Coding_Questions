@@ -98,26 +98,92 @@
 
 /* ==================== HELPER FUNCTIONS ==================== */
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - Line by Line Explanation
+ * ============================================================================
+ * Say: "A Node has two parts - data stores the value, next is a pointer
+ *       to the next node in the list"
+ *
+ * typedef struct Node {
+ *     int data;           <- The payload/value stored in this node
+ *     struct Node* next;  <- Pointer to the next node (creates the "link")
+ * } Node;                 <- 'Node' is now an alias for 'struct Node'
+ *
+ * Memory layout:
+ * +--------+--------+
+ * |  data  |  next  |----> points to another Node (or NULL)
+ * +--------+--------+
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
+    int data;               // Say: "The value this node holds"
+    struct Node* next;      // Say: "Address of the next node in the chain"
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This function allocates memory for a new node and initializes it"
+ *
+ * Node* create_node(int data) {
+ * ^^^^^                       <- Returns a POINTER to the new node
+ *
+ *     Node* node = (Node*)malloc(sizeof(Node));
+ *                  ^^^^^^ ^^^^^^ ^^^^^^^^^^^^
+ *                  |      |      |
+ *                  |      |      sizeof(Node) = bytes needed for one Node
+ *                  |      malloc = allocate memory on heap (survives function return)
+ *                  (Node*) = cast void* to Node* (tell compiler it's a Node)
+ *
+ *     node->data = data;   <- Set the value (-> because node is a pointer)
+ *     node->next = NULL;   <- No next node yet (NULL = end of chain)
+ *     return node;         <- Return the address of the new node
+ *
+ * Say: "We use malloc because stack variables die when function returns,
+ *       but heap memory persists until we free() it"
+ * ============================================================================
+ */
 Node* create_node(int data) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node->data = data;
-    node->next = NULL;
-    return node;
+    Node* node = (Node*)malloc(sizeof(Node));   // Allocate on heap
+    node->data = data;                          // Store the value
+    node->next = NULL;                          // Initialize link to NULL
+    return node;                                // Return address of new node
 }
 
+/*
+ * ============================================================================
+ * PRINT LIST FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This traverses the list from head to end, printing each value"
+ *
+ * void print_list(Node* head) {
+ * ^^^^                       <- Returns nothing, just prints
+ *      Node* head            <- Receives pointer to first node
+ *
+ *     while (head) {         <- while (head != NULL) - continue until end
+ *         printf("%d", head->data);  <- Print current node's value
+ *         if (head->next) printf(" -> ");  <- Arrow if more nodes follow
+ *         head = head->next; <- Move to next node (traverse the link)
+ *     }
+ *
+ * Say: "We keep following the 'next' pointers until we hit NULL"
+ *
+ * Traversal visualization:
+ *   head -> [1] -> [2] -> [3] -> NULL
+ *            ^
+ *          start here, print 1, move to [2], print 2, etc.
+ * ============================================================================
+ */
 void print_list(Node* head) {
-    printf("[");
-    while (head) {
-        printf("%d", head->data);
-        if (head->next) printf(" -> ");
-        head = head->next;
+    printf("[");                            // Start output
+    while (head) {                          // Until we reach NULL
+        printf("%d", head->data);           // Print current value
+        if (head->next) printf(" -> ");     // Arrow if not last node
+        head = head->next;                  // Move to next node
     }
-    printf("]\n");
+    printf("]\n");                          // End output
 }
 
 /* ==================== SOLUTION ==================== */
@@ -247,28 +313,130 @@ void print_list(Node* head) {
  * ============================================================================
  */
 
+/*
+ * ============================================================================
+ * HAS_CYCLE FUNCTION - Line by Line Explanation
+ * ============================================================================
+ */
 bool has_cycle(Node* head) {
-    // Say: "I use Floyd's algorithm with slow and fast pointers"
+    /*
+     * Say: "I use Floyd's algorithm with slow and fast pointers"
+     *
+     * FLOYD'S ALGORITHM CONCEPT:
+     * - Two pointers start at head
+     * - Slow moves 1 step per iteration
+     * - Fast moves 2 steps per iteration
+     * - If there's a cycle, fast will eventually "lap" slow and they'll meet
+     * - If no cycle, fast reaches NULL (end of list)
+     */
+
     if (head == NULL || head->next == NULL) {
+        /*
+         * head == NULL: Empty list, no nodes, no cycle possible
+         * head->next == NULL: Only one node, and it points to NULL, no cycle
+         *
+         * Say: "Edge case - empty or single node without self-loop has no cycle"
+         */
         return false;
     }
 
     Node* slow = head;
+    /*    ^^^^^^^^^^^^
+     *    slow = "tortoise" pointer, starts at head
+     *    Will move 1 step at a time
+     *
+     *    Visualization:
+     *    slow
+     *     |
+     *     v
+     *    [1] -> [2] -> [3] -> ...
+     */
+
     Node* fast = head;
+    /*    ^^^^^^^^^^^^
+     *    fast = "hare" pointer, also starts at head
+     *    Will move 2 steps at a time
+     *
+     *    Visualization:
+     *    slow, fast
+     *        |
+     *        v
+     *       [1] -> [2] -> [3] -> ...
+     */
 
-    // Say: "Slow moves 1 step, fast moves 2 steps"
     while (fast != NULL && fast->next != NULL) {
-        slow = slow->next;          // Move slow by 1
-        fast = fast->next->next;    // Move fast by 2
+        /*    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         *    WHY TWO CONDITIONS?
+         *
+         *    fast != NULL:
+         *    - Check fast hasn't gone past the end
+         *    - If fast is NULL, we've reached end, no cycle
+         *
+         *    fast->next != NULL:
+         *    - Check we can safely move fast TWO steps
+         *    - We're about to do fast->next->next
+         *    - If fast->next is NULL, we can't do another ->next
+         *
+         *    Say: "We check both because fast moves 2 steps - need both steps valid"
+         */
 
-        // Say: "If they meet, there's a cycle"
+        slow = slow->next;
+        /*    ^^^^^^^^^^^^^
+         *    MOVE SLOW BY 1 STEP
+         *
+         *    slow now points to what was slow->next
+         *    Like taking 1 step forward
+         *
+         *    Before: slow at [1]
+         *    After:  slow at [2]
+         */
+
+        fast = fast->next->next;
+        /*    ^^^^^^^^^^^^^^^^^^
+         *    MOVE FAST BY 2 STEPS
+         *
+         *    fast->next = first step
+         *    fast->next->next = second step
+         *    fast now points 2 nodes ahead
+         *
+         *    Before: fast at [1]
+         *    After:  fast at [3]
+         *
+         *    WHY FAST MOVES 2x:
+         *    - If there's a cycle, fast gains 1 node per iteration
+         *    - Eventually fast "catches up" to slow from behind
+         *    - They MUST meet if there's a cycle
+         */
+
         if (slow == fast) {
+            /*    ^^^^^^^^^^^
+             *    THEY MEET = CYCLE EXISTS!
+             *
+             *    We're comparing ADDRESSES, not values
+             *    slow == fast means they point to the SAME NODE in memory
+             *
+             *    Why they meet in a cycle:
+             *    - In the cycle, fast gains 1 node per iteration (2-1=1)
+             *    - Gap between them decreases by 1 each step
+             *    - They MUST meet within cycle_length iterations
+             *
+             *    Say: "If slow and fast point to the same node, there's a cycle"
+             */
             return true;
         }
     }
+    /*
+     * Loop ended because fast reached NULL or fast->next is NULL
+     * This means fast ran off the end of the list
+     * If there was a cycle, fast would never reach NULL!
+     *
+     * Say: "Fast reached the end, so no cycle exists"
+     */
 
-    // Say: "If fast reaches NULL, no cycle exists"
     return false;
+    /*     ^^^^^
+     *     No cycle found - the list has an end (terminates at NULL)
+     */
 }
 
 // BONUS: Find the start of the cycle

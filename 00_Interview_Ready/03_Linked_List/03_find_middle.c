@@ -87,26 +87,48 @@
 
 /* ==================== HELPER FUNCTIONS ==================== */
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - Line by Line Explanation
+ * ============================================================================
+ * Say: "A Node has two parts - data stores the value, next is a pointer
+ *       to the next node in the list"
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
+    int data;               // Say: "The value this node holds"
+    struct Node* next;      // Say: "Address of the next node in the chain"
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This function allocates memory for a new node and initializes it"
+ * ============================================================================
+ */
 Node* create_node(int data) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node->data = data;
-    node->next = NULL;
-    return node;
+    Node* node = (Node*)malloc(sizeof(Node));   // Allocate on heap
+    node->data = data;                          // Store the value
+    node->next = NULL;                          // Initialize link to NULL
+    return node;                                // Return address of new node
 }
 
+/*
+ * ============================================================================
+ * PRINT LIST FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This traverses the list from head to end, printing each value"
+ * ============================================================================
+ */
 void print_list(Node* head) {
-    printf("[");
-    while (head) {
-        printf("%d", head->data);
-        if (head->next) printf(" -> ");
-        head = head->next;
+    printf("[");                            // Start output
+    while (head) {                          // Until we reach NULL
+        printf("%d", head->data);           // Print current value
+        if (head->next) printf(" -> ");     // Arrow if not last node
+        head = head->next;                  // Move to next node
     }
-    printf("]\n");
+    printf("]\n");                          // End output
 }
 
 /* ==================== SOLUTION ==================== */
@@ -233,24 +255,125 @@ void print_list(Node* head) {
  * ============================================================================
  */
 
-// Returns second middle for even-length lists
+/*
+ * ============================================================================
+ * FIND MIDDLE FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Returns SECOND middle for even-length lists
+ * ============================================================================
+ */
 Node* find_middle(Node* head) {
-    // Say: "I use slow/fast pointers - when fast reaches end, slow is at middle"
+    /*
+     * Say: "I use slow/fast pointers - when fast reaches end, slow is at middle"
+     *
+     * CONCEPT:
+     * - slow moves 1 step per iteration
+     * - fast moves 2 steps per iteration
+     * - When fast reaches end, slow has traveled half the distance
+     * - Therefore slow is at the middle!
+     */
+
     if (head == NULL) {
+        /*
+         * Edge case: empty list has no middle
+         * Say: "Empty list, return NULL"
+         */
         return NULL;
     }
 
     Node* slow = head;
+    /*    ^^^^^^^^^^^^
+     *    slow = "tortoise" pointer, starts at head
+     *    This will end up at the middle
+     *
+     *    slow
+     *     |
+     *     v
+     *    [1] -> [2] -> [3] -> [4] -> [5] -> NULL
+     */
+
     Node* fast = head;
+    /*    ^^^^^^^^^^^^
+     *    fast = "hare" pointer, also starts at head
+     *    This will reach the end when slow reaches middle
+     *
+     *    slow, fast
+     *        |
+     *        v
+     *       [1] -> [2] -> [3] -> [4] -> [5] -> NULL
+     */
 
-    // Say: "Fast moves 2x speed of slow"
     while (fast != NULL && fast->next != NULL) {
-        slow = slow->next;          // Move slow by 1
-        fast = fast->next->next;    // Move fast by 2
-    }
+        /*    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         *    Say: "Fast moves 2x speed of slow"
+         *
+         *    fast != NULL:
+         *    - Check fast hasn't gone past the end
+         *    - Needed for even-length lists where fast lands on NULL
+         *
+         *    fast->next != NULL:
+         *    - Check we can safely move fast 2 steps
+         *    - If fast->next is NULL, we can't do another step
+         *    - Needed for odd-length lists where fast lands on last node
+         *
+         *    WHY BOTH CONDITIONS:
+         *    - Odd length (5 nodes): fast lands on node 5, fast->next is NULL
+         *    - Even length (6 nodes): fast lands on NULL itself
+         *    - We need to handle both cases
+         */
 
-    // Say: "Slow is now at middle (second middle for even length)"
+        slow = slow->next;
+        /*    ^^^^^^^^^^^^^
+         *    MOVE SLOW BY 1 STEP
+         *
+         *    slow now points to the next node
+         *
+         *    Before: slow at [1]
+         *    After:  slow at [2]
+         */
+
+        fast = fast->next->next;
+        /*    ^^^^^^^^^^^^^^^^^^
+         *    MOVE FAST BY 2 STEPS
+         *
+         *    fast->next = first step
+         *    fast->next->next = second step
+         *
+         *    Before: fast at [1]
+         *    After:  fast at [3]
+         *
+         *    WHY 2x SPEED WORKS:
+         *    - If fast travels n nodes, slow travels n/2 nodes
+         *    - When fast reaches end (n nodes), slow is at middle (n/2)
+         */
+    }
+    /*
+     * Loop exits when fast reaches end:
+     *
+     * ODD LENGTH (5 nodes): fast at [5], fast->next is NULL
+     *              slow          fast
+     *               |             |
+     *               v             v
+     *    [1] -> [2] -> [3] -> [4] -> [5] -> NULL
+     *                   ^
+     *                 MIDDLE (node 3)
+     *
+     * EVEN LENGTH (6 nodes): fast is NULL
+     *                              slow            fast
+     *                               |               |
+     *                               v               v
+     *    [1] -> [2] -> [3] -> [4] -> [5] -> [6] -> NULL
+     *                          ^
+     *                    SECOND MIDDLE (node 4)
+     */
+
     return slow;
+    /*     ^^^^
+     *     Say: "Slow is now at middle (second middle for even length)"
+     *
+     *     Return the node slow is pointing to
+     *     This IS the middle node (or second middle for even length)
+     */
 }
 
 // Variant: Returns first middle for even-length lists

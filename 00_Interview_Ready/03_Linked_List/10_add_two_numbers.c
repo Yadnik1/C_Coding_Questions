@@ -98,26 +98,48 @@
 
 /* ==================== HELPER FUNCTIONS ==================== */
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - Line by Line Explanation
+ * ============================================================================
+ * Say: "A Node has two parts - data stores the value, next is a pointer
+ *       to the next node in the list"
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
+    int data;               // Say: "The value this node holds"
+    struct Node* next;      // Say: "Address of the next node in the chain"
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This function allocates memory for a new node and initializes it"
+ * ============================================================================
+ */
 Node* create_node(int data) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node->data = data;
-    node->next = NULL;
-    return node;
+    Node* node = (Node*)malloc(sizeof(Node));   // Allocate on heap
+    node->data = data;                          // Store the value
+    node->next = NULL;                          // Initialize link to NULL
+    return node;                                // Return address of new node
 }
 
+/*
+ * ============================================================================
+ * PRINT LIST FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This traverses the list from head to end, printing each value"
+ * ============================================================================
+ */
 void print_list(Node* head) {
-    printf("[");
-    while (head) {
-        printf("%d", head->data);
-        if (head->next) printf(" -> ");
-        head = head->next;
+    printf("[");                            // Start output
+    while (head) {                          // Until we reach NULL
+        printf("%d", head->data);           // Print current value
+        if (head->next) printf(" -> ");     // Arrow if not last node
+        head = head->next;                  // Move to next node
     }
-    printf("]\n");
+    printf("]\n");                          // End output
 }
 
 /* ==================== SOLUTION ==================== */
@@ -242,36 +264,149 @@ void print_list(Node* head) {
  * ============================================================================
  */
 
-// Numbers are stored in REVERSE order (least significant digit first)
-// Example: 342 is stored as 2 -> 4 -> 3
+/*
+ * ============================================================================
+ * ADD_TWO_NUMBERS FUNCTION - Line by Line Explanation
+ * ============================================================================
+ *
+ * PROBLEM: Add two numbers represented as linked lists.
+ *   - Digits stored in REVERSE order (least significant first)
+ *   - Example: 342 is stored as 2 -> 4 -> 3
+ *
+ * WHY REVERSE ORDER?
+ *   - Addition starts from least significant digit (ones place)
+ *   - Reverse order = head is ones place = perfect for addition!
+ *   - No need to traverse to end first
+ *
+ * STRATEGY: Grade-school addition with carry
+ *   - Add corresponding digits + carry from previous
+ *   - digit = sum % 10 (result digit)
+ *   - carry = sum / 10 (0 or 1 for next position)
+ *   - Continue while digits OR carry remain
+ *
+ * VISUAL:
+ *   342 + 465:
+ *   l1: 2 -> 4 -> 3
+ *   l2: 5 -> 6 -> 4
+ *
+ *   2+5=7, carry=0  -> 7
+ *   4+6=10, carry=1 -> 0
+ *   3+4+1=8, carry=0 -> 8
+ *
+ *   Result: 7 -> 0 -> 8 (represents 807)
+ *
+ * ============================================================================
+ */
 Node* add_two_numbers(Node* l1, Node* l2) {
-    // Say: "I use a dummy head and process digit by digit with carry"
-    Node dummy;
-    dummy.next = NULL;
-    Node* tail = &dummy;
-    int carry = 0;
+    /*
+     * DUMMY NODE SETUP
+     * -----------------
+     * Say: "Use dummy node to simplify building result list"
+     *
+     * MEMORY PATTERN (. vs -> explained):
+     *   Node dummy;        <- Stack struct, use '.' to access
+     *   Node* tail = &dummy; <- Pointer to dummy, use '->' to access
+     *
+     * dummy is the struct itself, tail POINTS to that struct.
+     */
+    Node dummy;            // Say: "Stack-allocated struct, NOT pointer"
+    dummy.next = NULL;     // Say: "Use '.' because dummy IS the struct"
+    Node* tail = &dummy;   // Say: "tail POINTS TO dummy, will use '->'"
+    int carry = 0;         // Say: "Carry from addition, starts at 0"
 
-    // Say: "Continue while there are digits or carry remaining"
+    /*
+     * MAIN LOOP: Process digits until done
+     * -------------------------------------
+     * Say: "Continue while there are digits OR carry to process"
+     *
+     * Condition: l1 != NULL || l2 != NULL || carry != 0
+     *   - l1 != NULL: Still digits in first number
+     *   - l2 != NULL: Still digits in second number
+     *   - carry != 0: Carry needs to become a new digit
+     *
+     * IMPORTANT: The carry check handles cases like 99 + 1 = 100
+     *   After processing 9+1 and 9+0+1, both lists empty but carry=1
+     *   Need one more iteration to add the final 1!
+     */
     while (l1 != NULL || l2 != NULL || carry != 0) {
-        // Say: "Get current digits (0 if list ended)"
-        int val1 = (l1 != NULL) ? l1->data : 0;
-        int val2 = (l2 != NULL) ? l2->data : 0;
+        /*
+         * GET CURRENT DIGITS
+         * -------------------
+         * Say: "Get digit from each list, or 0 if list exhausted"
+         *
+         * Ternary operator: (condition) ? value_if_true : value_if_false
+         *
+         * If l1 exists, use l1->data; otherwise use 0
+         * This handles different length numbers!
+         * Example: 1234 + 56 -> 56 becomes 0056 virtually
+         */
+        int val1 = (l1 != NULL) ? l1->data : 0;  // Say: "Digit from l1, or 0"
+        int val2 = (l2 != NULL) ? l2->data : 0;  // Say: "Digit from l2, or 0"
 
-        // Say: "Add digits and carry"
-        int sum = val1 + val2 + carry;
-        carry = sum / 10;           // New carry
-        int digit = sum % 10;       // Current digit
+        /*
+         * PERFORM ADDITION
+         * -----------------
+         * Say: "Add the two digits plus any carry from previous"
+         *
+         * sum can be 0-19:
+         *   - Min: 0 + 0 + 0 = 0
+         *   - Max: 9 + 9 + 1 = 19
+         */
+        int sum = val1 + val2 + carry;  // Say: "Sum of digits plus carry"
 
-        // Say: "Create new node with digit"
-        tail->next = create_node(digit);
-        tail = tail->next;
+        /*
+         * EXTRACT DIGIT AND NEW CARRY
+         * ----------------------------
+         * Say: "Separate sum into current digit and carry for next"
+         *
+         * sum / 10 = carry (0 if sum<10, 1 if sum>=10)
+         * sum % 10 = digit (the ones place of sum)
+         *
+         * Example: sum = 15
+         *   carry = 15 / 10 = 1
+         *   digit = 15 % 10 = 5
+         */
+        carry = sum / 10;         // Say: "New carry for next position"
+        int digit = sum % 10;     // Say: "Current digit to store"
 
-        // Say: "Advance pointers if not NULL"
-        if (l1 != NULL) l1 = l1->next;
-        if (l2 != NULL) l2 = l2->next;
+        /*
+         * ADD DIGIT TO RESULT LIST
+         * --------------------------
+         * Say: "Create new node with digit and append to result"
+         *
+         * tail->next = create_node(digit)
+         *   - tail is a POINTER, so use '->'
+         *   - Links new node to end of result list
+         *
+         * tail = tail->next
+         *   - Move tail to point to new last node
+         *   - Ready for next digit to be appended
+         */
+        tail->next = create_node(digit);  // Say: "Append new digit node"
+        tail = tail->next;                // Say: "Move tail to new end"
+
+        /*
+         * ADVANCE INPUT POINTERS
+         * ------------------------
+         * Say: "Move to next digit in each list (if exists)"
+         *
+         * Only advance if list is not exhausted.
+         * Once a list hits NULL, val becomes 0 (handled above).
+         */
+        if (l1 != NULL) l1 = l1->next;  // Say: "Move to next digit in l1"
+        if (l2 != NULL) l2 = l2->next;  // Say: "Move to next digit in l2"
     }
+    // Say: "Loop exits when all digits processed and no carry"
 
-    return dummy.next;
+    /*
+     * RETURN RESULT
+     * --------------
+     * Say: "Return head of result list (skip dummy node)"
+     *
+     * dummy.next points to first actual digit.
+     * Use '.' because dummy is struct, not pointer.
+     */
+    return dummy.next;  // Say: "Head of the sum list"
 }
 
 // Helper: Create list from number (reverse order)

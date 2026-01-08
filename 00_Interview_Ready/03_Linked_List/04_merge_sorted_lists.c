@@ -94,26 +94,48 @@
 
 /* ==================== HELPER FUNCTIONS ==================== */
 
+/*
+ * ============================================================================
+ * NODE STRUCTURE - Line by Line Explanation
+ * ============================================================================
+ * Say: "A Node has two parts - data stores the value, next is a pointer
+ *       to the next node in the list"
+ * ============================================================================
+ */
 typedef struct Node {
-    int data;
-    struct Node* next;
+    int data;               // Say: "The value this node holds"
+    struct Node* next;      // Say: "Address of the next node in the chain"
 } Node;
 
+/*
+ * ============================================================================
+ * CREATE NODE FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This function allocates memory for a new node and initializes it"
+ * ============================================================================
+ */
 Node* create_node(int data) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node->data = data;
-    node->next = NULL;
-    return node;
+    Node* node = (Node*)malloc(sizeof(Node));   // Allocate on heap
+    node->data = data;                          // Store the value
+    node->next = NULL;                          // Initialize link to NULL
+    return node;                                // Return address of new node
 }
 
+/*
+ * ============================================================================
+ * PRINT LIST FUNCTION - Line by Line Explanation
+ * ============================================================================
+ * Say: "This traverses the list from head to end, printing each value"
+ * ============================================================================
+ */
 void print_list(Node* head) {
-    printf("[");
-    while (head) {
-        printf("%d", head->data);
-        if (head->next) printf(" -> ");
-        head = head->next;
+    printf("[");                            // Start output
+    while (head) {                          // Until we reach NULL
+        printf("%d", head->data);           // Print current value
+        if (head->next) printf(" -> ");     // Arrow if not last node
+        head = head->next;                  // Move to next node
     }
-    printf("]\n");
+    printf("]\n");                          // End output
 }
 
 /* ==================== SOLUTION ==================== */
@@ -228,35 +250,159 @@ void print_list(Node* head) {
  * ============================================================================
  */
 
+/*
+ * ============================================================================
+ * MERGE SORTED LISTS FUNCTION - Line by Line Explanation
+ * ============================================================================
+ */
 Node* merge_sorted_lists(Node* l1, Node* l2) {
-    // Say: "I use a dummy head to simplify edge cases"
+    /*
+     * Say: "I use a dummy head to simplify edge cases"
+     *
+     * WHY DUMMY NODE?
+     * - Eliminates special case for "first node"
+     * - No need to check "is merged list empty?" before appending
+     * - tail->next always valid because tail starts at dummy
+     */
+
     Node dummy;
+    /*    ^^^^^^^^^
+     *    STACK-ALLOCATED struct (NOT a pointer!)
+     *    Lives on the stack, no malloc needed
+     *    We use '.' to access members because dummy IS the struct
+     *
+     *    Memory:
+     *    Stack: [dummy: {data: garbage, next: ?}]
+     */
+
     dummy.next = NULL;
+    /*    ^^^^^^^^^^
+     *    Use '.' because dummy is a STRUCT, not a pointer
+     *    Initialize the merged list as empty (next = NULL)
+     *
+     *    dummy --> NULL
+     *
+     *    IMPORTANT: We use '.' here because:
+     *    - dummy is declared as "Node dummy" (a struct)
+     *    - NOT as "Node* dummy" (a pointer to struct)
+     *    - '.' accesses members of a struct directly
+     *    - '->' accesses members through a pointer
+     */
+
     Node* tail = &dummy;
+    /*    ^^^^^^^^^^^^^^
+     *    tail is a POINTER that points to dummy
+     *    &dummy = "address of dummy" (gives us a pointer to the struct)
+     *
+     *    tail = &dummy means:
+     *    tail holds the memory address where dummy lives
+     *
+     *    Now we can use tail-> because tail IS a pointer
+     *    tail->next is same as dummy.next (they refer to same memory)
+     *
+     *    Visualization:
+     *    Stack:
+     *    +-------+
+     *    | dummy |  <-- tail points here
+     *    | .next |---> NULL
+     *    +-------+
+     *        ^
+     *        |
+     *       tail
+     *
+     *    Say: "tail tracks where to append the next node"
+     */
 
-    // Say: "Compare heads, attach smaller one, advance that pointer"
     while (l1 != NULL && l2 != NULL) {
-        if (l1->data <= l2->data) {
-            // Say: "l1 is smaller, attach it"
-            tail->next = l1;
-            l1 = l1->next;
-        } else {
-            // Say: "l2 is smaller, attach it"
-            tail->next = l2;
-            l2 = l2->next;
-        }
-        tail = tail->next;
-    }
+        /*    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+         *    Say: "Compare heads, attach smaller one, advance that pointer"
+         *
+         *    Continue while BOTH lists have nodes remaining
+         *    When one becomes NULL, we exit and attach the rest
+         */
 
-    // Say: "Attach remaining nodes (one list might be longer)"
+        if (l1->data <= l2->data) {
+            /*    ^^^^^^^^^^^^^^^^^^^
+             *    Compare current heads of both lists
+             *    <= ensures stable merge (equal elements keep original order)
+             */
+
+            tail->next = l1;
+            /*    ^^^^^^^^^^^^^
+             *    Say: "l1 is smaller (or equal), attach it"
+             *
+             *    tail->next = l1 means:
+             *    - Go to where tail points (dummy initially)
+             *    - Set its 'next' field to point to l1's current node
+             *
+             *    Use '->' because tail is a POINTER
+             *
+             *    Before: tail -> [dummy] --> NULL
+             *    After:  tail -> [dummy] --> [l1's node]
+             */
+
+            l1 = l1->next;
+            /*    ^^^^^^^^^^^
+             *    Advance l1 to its next node
+             *    We've "consumed" this node, move to the next
+             */
+        } else {
+            tail->next = l2;
+            /*    ^^^^^^^^^^^^^
+             *    Say: "l2 is smaller, attach it"
+             *    Same logic, just from the other list
+             */
+
+            l2 = l2->next;
+            /*    ^^^^^^^^^^^
+             *    Advance l2 to its next node
+             */
+        }
+
+        tail = tail->next;
+        /*    ^^^^^^^^^^^^^^^
+         *    Move tail forward to the node we just attached
+         *    tail always points to the LAST node of merged list
+         *    This keeps us ready to append the next node
+         *
+         *    Say: "Move tail to track end of merged list"
+         */
+    }
+    /*
+     * Loop exits when one list is exhausted (l1 == NULL or l2 == NULL)
+     * The other list might still have remaining nodes
+     */
+
     if (l1 != NULL) {
         tail->next = l1;
+        /*    ^^^^^^^^^^^^^
+         *    Say: "Attach remaining l1 nodes"
+         *
+         *    l2 is exhausted, but l1 still has nodes
+         *    Just link the rest of l1 (already sorted!)
+         */
     } else {
         tail->next = l2;
+        /*    ^^^^^^^^^^^^^
+         *    Say: "Attach remaining l2 nodes (or NULL if both exhausted)"
+         *
+         *    Either l1 is exhausted and l2 has nodes remaining
+         *    Or both are NULL (merged list already complete)
+         */
     }
 
-    // Say: "Return dummy.next, which is the real head"
     return dummy.next;
+    /*     ^^^^^^^^^^
+     *     Say: "Return dummy.next, which is the real head"
+     *
+     *     Use '.' because dummy is a struct, not a pointer
+     *     dummy.next points to the first REAL node of merged list
+     *     dummy itself was just a helper, we don't return it
+     *
+     *     dummy --> [1] --> [2] --> [3] --> ...
+     *               ^^^
+     *              This is what we return (skip dummy)
+     */
 }
 
 /* ==================== TEST ==================== */
