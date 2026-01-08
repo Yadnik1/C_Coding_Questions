@@ -1,3 +1,69 @@
+/*
+ * ============================================================================
+ * PROBLEM: Ring Buffer (Circular Buffer)
+ * ============================================================================
+ *
+ * WHAT IS THIS?
+ * A ring buffer is a fixed-size FIFO (First-In-First-Out) queue that uses
+ * circular indexing. When the end of the buffer is reached, it wraps around
+ * to the beginning, creating a "ring" or circular structure. Data is written
+ * at the HEAD and read from the TAIL.
+ *
+ * WHY IS THIS CRITICAL FOR EMBEDDED SYSTEMS?
+ * - UART/Serial Buffers: ISR receives bytes faster than main loop processes
+ * - SPI/I2C Data: Buffer incoming sensor data for batch processing
+ * - ADC Sampling: Store continuous samples without memory reallocation
+ * - Audio Streaming: Buffer audio samples between producer and consumer
+ * - Command Queues: Queue commands from ISR for main loop processing
+ * - DMA Transfers: Circular buffers work seamlessly with DMA
+ *
+ * EXAMPLES:
+ * UART Reception:
+ *   - Baud rate: 115200 bps = ~11520 bytes/sec
+ *   - ISR fires every 87us, main loop may be busy for 10ms
+ *   - Without buffer: data lost. With 256-byte ring buffer: 22ms of slack
+ *
+ * Sensor Logging:
+ *   - ADC samples at 1kHz, radio transmits at 100Hz
+ *   - Ring buffer accumulates 10 samples, transmit batch
+ *
+ * KEY CONCEPT:
+ * Circular Indexing with Modulo Operation:
+ *   next_index = (current_index + 1) % BUFFER_SIZE
+ * For power-of-2 sizes, use faster bitwise AND:
+ *   next_index = (current_index + 1) & (BUFFER_SIZE - 1)
+ *
+ * VISUAL:
+ *
+ *   Initial (empty):           After writing A,B,C,D:    After reading A,B:
+ *
+ *       HEAD=0                    HEAD=4                     HEAD=4
+ *         v                         v                          v
+ *   +---+---+---+---+---+     +---+---+---+---+---+      +---+---+---+---+---+
+ *   |   |   |   |   |   |     | A | B | C | D |   |      |   |   | C | D |   |
+ *   +---+---+---+---+---+     +---+---+---+---+---+      +---+---+---+---+---+
+ *         ^                         ^                              ^
+ *       TAIL=0                    TAIL=0                         TAIL=2
+ *
+ *   After writing E,F (wrap):   Full buffer view:
+ *
+ *       HEAD=1                   RING VISUALIZATION:
+ *         v
+ *   +---+---+---+---+---+              +---+
+ *   | F |   | C | D | E |         +--> | 0 | <-- TAIL (read here)
+ *   +---+---+---+---+---+         |    +---+
+ *             ^                   |    | 1 |
+ *           TAIL=2                |    +---+
+ *                                 |    | 2 |
+ *   Data wraps around!            |    +---+
+ *                                 |    | 3 |
+ *                                 |    +---+
+ *                                 +--- | 4 | <-- HEAD (write here)
+ *                                      +---+
+ *
+ * ============================================================================
+ */
+
 // Ring Buffer / Circular Buffer - ESSENTIAL for embedded UART/SPI buffers
 // Time: O(1) for all operations, Space: O(n)
 

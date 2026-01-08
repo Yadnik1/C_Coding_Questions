@@ -1,3 +1,99 @@
+/*
+ * ============================================================================
+ * PROBLEM: Merge Sort
+ * ============================================================================
+ *
+ * WHAT IS THIS ALGORITHM?
+ * Merge Sort is a stable, divide-and-conquer sorting algorithm that guarantees
+ * O(n log n) time complexity in ALL cases. It works by dividing the array into
+ * two halves, recursively sorting each half, and then merging the two sorted
+ * halves back together. The key operation is the "merge" - combining two sorted
+ * arrays into one sorted array.
+ *
+ * EXAMPLES:
+ * - Input:  [38, 27, 43, 3, 9, 82, 10]
+ *
+ * - Divide Phase:
+ *   [38, 27, 43, 3, 9, 82, 10]
+ *         /              \
+ *   [38, 27, 43, 3]    [9, 82, 10]
+ *      /      \          /      \
+ *   [38, 27]  [43, 3]  [9, 82]  [10]
+ *    /   \    /   \    /   \
+ *  [38] [27] [43] [3] [9] [82]  [10]
+ *
+ * - Merge Phase (combine sorted subarrays):
+ *  [27, 38] [3, 43]  [9, 82]  [10]
+ *      \      /          \    /
+ *   [3, 27, 38, 43]   [9, 10, 82]
+ *          \              /
+ *    [3, 9, 10, 27, 38, 43, 82]
+ *
+ * - Output: [3, 9, 10, 27, 38, 43, 82]
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Guaranteed O(n log n) - no worst case degradation like Quick Sort
+ * - Tests understanding of divide-and-conquer paradigm
+ * - Merge operation is a common interview question on its own
+ * - Stable sort - important when order of equal elements matters
+ * - Best choice for sorting linked lists (O(1) extra space)
+ * - Foundation for external sorting (sorting files larger than RAM)
+ *
+ * KEY CONCEPT:
+ * Divide and Merge - split array in half until single elements (trivially
+ * sorted), then merge sorted halves using two-pointer technique. The merge
+ * operation is O(n) and maintains stability.
+ *
+ * VISUAL:
+ *
+ * Sorting [38, 27, 43, 3]
+ *
+ * DIVIDE PHASE (split until single elements):
+ *
+ *          [38, 27, 43, 3]
+ *               /    \
+ *        [38, 27]    [43, 3]
+ *          /  \        /  \
+ *       [38]  [27]  [43]  [3]
+ *
+ * MERGE PHASE (combine sorted subarrays):
+ *
+ * Merge [38] and [27]:
+ * L: [38]  R: [27]  Result: []
+ *     ^        ^
+ * 27 < 38, take 27 -> Result: [27]
+ * L: [38]  R: []
+ *     ^
+ * Take remaining 38 -> Result: [27, 38]
+ *
+ * Merge [43] and [3]:
+ * L: [43]  R: [3]   Result: []
+ *     ^        ^
+ * 3 < 43, take 3 -> Result: [3]
+ * L: [43]  R: []
+ *     ^
+ * Take remaining 43 -> Result: [3, 43]
+ *
+ * Merge [27, 38] and [3, 43]:
+ * L: [27, 38]  R: [3, 43]  Result: []
+ *      ^            ^
+ * 3 < 27, take 3   -> [3]
+ * 27 < 43, take 27 -> [3, 27]
+ * 38 < 43, take 38 -> [3, 27, 38]
+ * take 43          -> [3, 27, 38, 43]
+ *
+ * Final: [3, 27, 38, 43]
+ *
+ * TIME COMPLEXITY:
+ * - Best:    O(n log n) - Always divides and merges
+ * - Average: O(n log n) - Same for all inputs
+ * - Worst:   O(n log n) - Guaranteed performance!
+ *
+ * SPACE COMPLEXITY: O(n) - Needs temporary arrays for merging
+ *
+ * ============================================================================
+ */
+
 // Merge Sort - Stable O(n log n) sorting algorithm
 // Time: O(n log n) always, Space: O(n)
 

@@ -1,3 +1,83 @@
+/*
+ * ============================================================================
+ * PROBLEM: Bubble Sort
+ * ============================================================================
+ *
+ * WHAT IS THIS ALGORITHM?
+ * Bubble Sort is the simplest sorting algorithm. It repeatedly steps through
+ * the array, compares adjacent elements, and swaps them if they are in the
+ * wrong order. The largest unsorted element "bubbles up" to its correct
+ * position at the end of each pass, like bubbles rising in water.
+ *
+ * EXAMPLES:
+ * - Input:  [64, 34, 25, 12, 22]
+ *
+ * - Pass 1: Compare adjacent pairs, swap if needed
+ *   [64, 34, 25, 12, 22] -> [34, 64, 25, 12, 22] (swap 64,34)
+ *   [34, 64, 25, 12, 22] -> [34, 25, 64, 12, 22] (swap 64,25)
+ *   [34, 25, 64, 12, 22] -> [34, 25, 12, 64, 22] (swap 64,12)
+ *   [34, 25, 12, 64, 22] -> [34, 25, 12, 22, 64] (swap 64,22)
+ *   64 is now in final position!
+ *
+ * - Pass 2: [34, 25, 12, 22, 64] -> [25, 12, 22, 34, 64]
+ * - Pass 3: [25, 12, 22, 34, 64] -> [12, 22, 25, 34, 64]
+ * - Pass 4: [12, 22, 25, 34, 64] -> [12, 22, 25, 34, 64] (no swaps!)
+ *
+ * - Output: [12, 22, 25, 34, 64]
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Tests basic algorithm understanding and loop logic
+ * - Great for explaining time complexity (why O(n^2) is bad)
+ * - Demonstrates optimization thinking (swapped flag for early exit)
+ * - Foundation to compare against better algorithms
+ * - Shows understanding of in-place sorting
+ *
+ * KEY CONCEPT:
+ * Adjacent Comparison and Swap - compare neighbors, bubble largest to end.
+ * The "swapped" flag optimization makes best case O(n) for sorted arrays.
+ *
+ * VISUAL:
+ *
+ * Pass 1: Bubble 64 to the end
+ * [64, 34, 25, 12, 22]
+ *  ^^  ^^
+ *  64 > 34? Yes, SWAP
+ *
+ * [34, 64, 25, 12, 22]
+ *      ^^  ^^
+ *      64 > 25? Yes, SWAP
+ *
+ * [34, 25, 64, 12, 22]
+ *          ^^  ^^
+ *          64 > 12? Yes, SWAP
+ *
+ * [34, 25, 12, 64, 22]
+ *              ^^  ^^
+ *              64 > 22? Yes, SWAP
+ *
+ * [34, 25, 12, 22, 64]  <- 64 is now sorted!
+ *                  ~~
+ *
+ * Pass 2: Bubble 34 to position 3
+ * [34, 25, 12, 22, 64]
+ *  ^^  ^^
+ * [25, 34, 12, 22, 64]
+ *      ^^  ^^
+ * [25, 12, 34, 22, 64]
+ *          ^^  ^^
+ * [25, 12, 22, 34, 64]  <- 34 is now sorted!
+ *              ~~  ~~
+ *
+ * TIME COMPLEXITY:
+ * - Best:    O(n)   - Array already sorted (with swapped flag optimization)
+ * - Average: O(n^2) - Random order
+ * - Worst:   O(n^2) - Reverse sorted
+ *
+ * SPACE COMPLEXITY: O(1) - In-place sorting
+ *
+ * ============================================================================
+ */
+
 // Bubble Sort - Simple sorting algorithm (know for interviews)
 // Time: O(n²), Space: O(1)
 

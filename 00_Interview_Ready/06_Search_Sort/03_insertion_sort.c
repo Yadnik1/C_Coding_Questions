@@ -1,3 +1,96 @@
+/*
+ * ============================================================================
+ * PROBLEM: Insertion Sort
+ * ============================================================================
+ *
+ * WHAT IS THIS ALGORITHM?
+ * Insertion Sort builds a sorted array one element at a time. Think of sorting
+ * playing cards in your hand - you pick up each card and insert it into its
+ * correct position among the already-sorted cards. The array is virtually
+ * split into a sorted portion (left) and unsorted portion (right).
+ *
+ * EXAMPLES:
+ * - Input:  [64, 34, 25, 12]
+ *
+ * - Initial: [64 | 34, 25, 12]  (64 is trivially sorted)
+ *             ~~   ^^ pick this
+ *
+ * - Step 1: Insert 34 into sorted portion
+ *   [64 | 34, 25, 12]  -> 34 < 64, shift 64 right
+ *   [34, 64 | 25, 12]  -> 34 inserted at position 0
+ *    ~~~~~
+ *
+ * - Step 2: Insert 25 into sorted portion
+ *   [34, 64 | 25, 12]  -> 25 < 64, shift 64 right
+ *                        -> 25 < 34, shift 34 right
+ *   [25, 34, 64 | 12]  -> 25 inserted at position 0
+ *    ~~~~~~~~
+ *
+ * - Step 3: Insert 12 into sorted portion
+ *   [25, 34, 64 | 12]  -> 12 < 64, shift 64 right
+ *                        -> 12 < 34, shift 34 right
+ *                        -> 12 < 25, shift 25 right
+ *   [12, 25, 34, 64]   -> 12 inserted at position 0
+ *    ~~~~~~~~~~~~~~~
+ *
+ * - Output: [12, 25, 34, 64]
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Best algorithm for small arrays (used in hybrid sorts like TimSort)
+ * - Shows understanding of adaptive algorithms (O(n) for nearly sorted)
+ * - Tests ability to explain real-world analogy (card sorting)
+ * - Foundation for Shell Sort
+ * - Important for embedded systems with small data sets
+ *
+ * KEY CONCEPT:
+ * Build sorted portion incrementally - take next unsorted element, shift
+ * larger elements right, insert at correct position. It's an "online"
+ * algorithm that can sort data as it arrives.
+ *
+ * VISUAL:
+ *
+ * Sorting [64, 34, 25, 12, 22]
+ *
+ * Step 1: key = 34
+ * SORTED    | UNSORTED
+ * [64]      | [34, 25, 12, 22]
+ *            ^
+ * Compare: 34 < 64? Yes, shift 64 right
+ * [__, 64]  | [25, 12, 22]      (blank spot created)
+ *  ^^
+ * Insert 34 at blank spot
+ * [34, 64]  | [25, 12, 22]
+ *
+ * Step 2: key = 25
+ * [34, 64]  | [25, 12, 22]
+ *            ^
+ * 25 < 64? Yes, shift 64 -> [34, __, 64]
+ * 25 < 34? Yes, shift 34 -> [__, 34, 64]
+ * Insert 25
+ * [25, 34, 64] | [12, 22]
+ *
+ * Step 3: key = 12
+ * [25, 34, 64] | [12, 22]
+ *               ^
+ * Shift all (12 < all), insert at front
+ * [12, 25, 34, 64] | [22]
+ *
+ * Step 4: key = 22
+ * [12, 25, 34, 64] | [22]
+ *                   ^
+ * 22 < 64? Shift -> 22 < 34? Shift -> 22 < 25? Shift -> 22 > 12? Insert!
+ * [12, 22, 25, 34, 64]
+ *
+ * TIME COMPLEXITY:
+ * - Best:    O(n)   - Array already sorted (no shifts needed)
+ * - Average: O(n^2) - Random order
+ * - Worst:   O(n^2) - Reverse sorted (maximum shifts)
+ *
+ * SPACE COMPLEXITY: O(1) - In-place sorting
+ *
+ * ============================================================================
+ */
+
 // Insertion Sort - Best for small/nearly sorted arrays
 // Time: O(n²) worst, O(n) best, Space: O(1)
 

@@ -1,3 +1,71 @@
+/*
+ * ============================================================================
+ * PROBLEM: Binary Search
+ * ============================================================================
+ *
+ * WHAT IS THIS ALGORITHM?
+ * Binary Search is an efficient algorithm to find a target value in a SORTED
+ * array. Instead of checking every element (like linear search), it repeatedly
+ * divides the search space in half by comparing the target with the middle
+ * element. If the target is smaller, search the left half; if larger, search
+ * the right half. This "divide and conquer" approach makes it extremely fast.
+ *
+ * EXAMPLES:
+ * - Input: arr = [2, 5, 8, 12, 16, 23, 38], target = 23
+ * - Step 1: left=0, right=6, mid=3 -> arr[3]=12 < 23, search right
+ * - Step 2: left=4, right=6, mid=5 -> arr[5]=23 == 23, FOUND!
+ * - Output: Index 5
+ *
+ * - Input: arr = [2, 5, 8, 12, 16], target = 10
+ * - Step 1: left=0, right=4, mid=2 -> arr[2]=8 < 10, search right
+ * - Step 2: left=3, right=4, mid=3 -> arr[3]=12 > 10, search left
+ * - Step 3: left=3, right=2 -> left > right, NOT FOUND
+ * - Output: -1
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Tests understanding of logarithmic time complexity
+ * - Foundation for many advanced algorithms (lower/upper bound, rotated array)
+ * - Common edge cases: empty array, single element, target not found
+ * - Integer overflow bug: (left + right) / 2 vs left + (right - left) / 2
+ * - Essential for embedded systems with sorted lookup tables
+ *
+ * KEY CONCEPT:
+ * Divide and Conquer - eliminate half the search space with each comparison.
+ * PREREQUISITE: Array MUST be sorted! Binary search on unsorted data gives
+ * wrong results.
+ *
+ * VISUAL:
+ *
+ * Array: [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]  Target: 23
+ *         ^                              ^
+ *        left                          right
+ *
+ * Step 1: mid = (0+9)/2 = 4
+ *         [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+ *          L           M                    R
+ *         arr[4]=16 < 23, so search RIGHT half
+ *
+ * Step 2: left = 5, right = 9, mid = 7
+ *         [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+ *                          L       M        R
+ *         arr[7]=56 > 23, so search LEFT half
+ *
+ * Step 3: left = 5, right = 6, mid = 5
+ *         [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+ *                          L   R
+ *                          M
+ *         arr[5]=23 == 23, FOUND at index 5!
+ *
+ * TIME COMPLEXITY:
+ * - Best:    O(1)     - Target is at middle
+ * - Average: O(log n) - Halving search space each time
+ * - Worst:   O(log n) - Target at end or not present
+ *
+ * SPACE COMPLEXITY: O(1) iterative, O(log n) recursive (stack)
+ *
+ * ============================================================================
+ */
+
 // Binary Search - ESSENTIAL algorithm for sorted arrays
 // Time: O(log n), Space: O(1)
 

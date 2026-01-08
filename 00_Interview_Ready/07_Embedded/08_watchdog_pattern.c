@@ -1,3 +1,125 @@
+/*
+ * ============================================================================
+ * PROBLEM: Watchdog Timer Pattern
+ * ============================================================================
+ *
+ * WHAT IS THIS?
+ * A watchdog timer (WDT) is a hardware timer that resets the system if not
+ * periodically "fed" (reset) by software. If the software hangs, crashes, or
+ * enters an infinite loop, the watchdog expires and forces a system reset,
+ * allowing recovery from fault conditions.
+ *
+ * WHY IS THIS CRITICAL FOR EMBEDDED SYSTEMS?
+ * - System Recovery: Automatic reset from software hangs or crashes
+ * - Safety Critical: Medical devices, automotive, aerospace require watchdog
+ * - Remote Systems: Unattended devices (sensors, IoT) can self-recover
+ * - Fault Detection: Detects deadlocks, infinite loops, stack overflows
+ * - Certification: Safety standards (IEC 61508, ISO 26262) require watchdog
+ * - Reliability: 24/7 operation without manual intervention
+ *
+ * EXAMPLES:
+ * Simple Watchdog:
+ *   while(1) {
+ *     read_sensors();
+ *     process_data();
+ *     send_results();
+ *     watchdog_feed();  // Must reach here within timeout!
+ *   }
+ *
+ * Task Monitoring:
+ *   Each RTOS task checks in periodically
+ *   Monitor task only feeds watchdog if ALL tasks checked in
+ *   Single hung task -> watchdog reset
+ *
+ * KEY CONCEPT:
+ * Three patterns:
+ * 1. Simple: Feed at end of main loop
+ * 2. Task Monitoring: Multiple tasks must all check in
+ * 3. Window Watchdog: Must feed within time window (not too early OR late)
+ *
+ * VISUAL:
+ *
+ *   BASIC WATCHDOG OPERATION:
+ *
+ *   Time:    0    100   200   300   400   500   600ms
+ *            |     |     |     |     |     |     |
+ *   Counter: 500   400   300   200   100   500   400  (counts down)
+ *                                    ^     ^
+ *                                    |     Feed! Counter reset
+ *                                    |
+ *                             Would reset if not fed!
+ *
+ *   Normal Operation:
+ *   +------+------+------+------+------+------+
+ *   | Loop | Loop | Loop | Loop | Loop | Loop |
+ *   | FEED | FEED | FEED | FEED | FEED | FEED |
+ *   +------+------+------+------+------+------+
+ *   Counter never reaches zero -> No reset
+ *
+ *   Hung System:
+ *   +------+------+----------------HUNG---------------
+ *   | Loop | Loop | Infinite loop...
+ *   | FEED | FEED | (no feed)
+ *   +------+------+-----------------------------------
+ *   Counter: 500   400   300   200   100    0 -> RESET!
+ *
+ *
+ *   TASK MONITORING PATTERN:
+ *
+ *   Task 1        Task 2        Task 3       Monitor       Watchdog
+ *   ------        ------        ------       -------       --------
+ *   [check in] -> [ check in] -> [check in] -> All OK? -> [FEED]
+ *       |             |              |            |
+ *       v             v              v            v
+ *   +-------+    +-------+      +-------+    +--------+
+ *   |Sensor |    |Comms  |      |Motor  |    |Check   |
+ *   |Task   |    |Task   |      |Task   |    |all live|
+ *   +-------+    +-------+      +-------+    +--------+
+ *       |             |              |            |
+ *       +-------------+--------------+            |
+ *                     |                           v
+ *                  Shared                    Only feed if
+ *                  check-in                  ALL checked in!
+ *                  flags
+ *
+ *   If Task 2 hangs: Monitor sees Task 2 timeout -> No feed -> Reset!
+ *
+ *
+ *   WINDOW WATCHDOG:
+ *
+ *   Time:     0      50      100     150     200
+ *             |-------|-------|-------|-------|
+ *             | Early |  VALID WINDOW | Late  |
+ *             | Zone  |    (OK here)  | Zone  |
+ *             |-------|-------|-------|-------|
+ *                     ^               ^
+ *                     |               |
+ *             Window opens     Window closes
+ *
+ *   Feed at 30ms:  ERROR! (too early - loop too fast)
+ *   Feed at 80ms:  OK! (within window)
+ *   Feed at 180ms: ERROR! (too late - loop too slow)
+ *
+ *   Detects BOTH stuck code AND runaway code!
+ *
+ *
+ *   WRONG VS RIGHT USAGE:
+ *
+ *   WRONG (defeats purpose):        RIGHT (catches hangs):
+ *   +-------------------+           +-------------------+
+ *   | void Timer_ISR(){ |           | while(1) {        |
+ *   |   WDT_Feed();     | <-BAD!    |   read_sensors(); |
+ *   | }                 |           |   process();      |
+ *   +-------------------+           |   communicate();  |
+ *   ISR always feeds,               |   WDT_Feed();     | <-GOOD!
+ *   main loop could                 | }                 |
+ *   be completely hung!             +-------------------+
+ *                                   Only feeds after ALL
+ *                                   tasks complete!
+ *
+ * ============================================================================
+ */
+
 // Watchdog Timer Pattern - ESSENTIAL for embedded system reliability
 // Prevents system lockup, ensures recovery from faults
 

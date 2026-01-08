@@ -1,3 +1,65 @@
+/*
+ * ============================================================================
+ * PROBLEM: Implement Stack using Array
+ * ============================================================================
+ *
+ * WHAT IS A STACK?
+ * A Stack is a linear data structure that follows the LIFO (Last In, First Out)
+ * principle. Think of it like a stack of plates - you can only add or remove
+ * plates from the top. The last plate you put on is the first one you take off.
+ *
+ * Key operations:
+ * - push(x): Add element x to the top
+ * - pop(): Remove and return the top element
+ * - peek()/top(): Return the top element without removing it
+ * - isEmpty(): Check if stack is empty
+ * - size(): Return number of elements
+ *
+ * WHAT IS THIS PROBLEM?
+ * Design and implement a stack data structure using a fixed-size array. You need
+ * to handle all basic operations efficiently and manage edge cases like overflow
+ * (pushing when full) and underflow (popping when empty).
+ *
+ * EXAMPLES:
+ * - push(10), push(20), push(30) -> Stack: [10, 20, 30] (30 is top)
+ * - pop() -> Returns 30, Stack: [10, 20]
+ * - peek() -> Returns 20, Stack unchanged: [10, 20]
+ * - isEmpty() -> Returns false
+ * - size() -> Returns 2
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Foundation for many advanced algorithms (DFS, backtracking, expression parsing)
+ * - Tests understanding of data structure internals vs just using library functions
+ * - Common in embedded systems where dynamic memory allocation is avoided
+ * - Shows ability to handle edge cases (overflow/underflow)
+ * - Gateway to harder problems like Min Stack, stack-based parsing
+ *
+ * KEY CONCEPT:
+ * Use an array with a 'top' index that tracks the position of the topmost element.
+ * - top = -1 means empty stack
+ * - top = MAX_SIZE - 1 means full stack
+ * - Push: Increment top, then store element
+ * - Pop: Get element at top, then decrement top
+ *
+ * VISUAL:
+ *
+ *   Initial         After push      After push      After pop
+ *   (empty)         push(10)        push(20)        pop() -> 20
+ *
+ *   +-----+         +-----+         +-----+         +-----+
+ *   |     | top=-1  |     |         | 20  | <-top   |     |
+ *   +-----+         +-----+         +-----+         +-----+
+ *   |     |         | 10  | <-top   | 10  |         | 10  | <-top
+ *   +-----+         +-----+         +-----+         +-----+
+ *   |     |         |     |         |     |         |     |
+ *   +-----+         +-----+         +-----+         +-----+
+ *
+ *   top index:       top=0           top=1           top=0
+ *   size:            size=1          size=2          size=1
+ *
+ * ============================================================================
+ */
+
 // Implement Stack using Array - ESSENTIAL data structure
 // Time: O(1) for push/pop/peek, Space: O(n)
 

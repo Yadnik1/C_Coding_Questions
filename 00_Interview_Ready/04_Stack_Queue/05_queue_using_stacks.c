@@ -1,3 +1,88 @@
+/*
+ * ============================================================================
+ * PROBLEM: Implement Queue using Two Stacks
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Implement a FIFO (First-In-First-Out) queue using only two LIFO stacks.
+ * You can only use standard stack operations: push, pop, peek, isEmpty.
+ * The challenge is to achieve queue behavior (FIFO) using stack behavior (LIFO).
+ *
+ * EXAMPLES:
+ * - enqueue(1), enqueue(2), enqueue(3)
+ *   Input Stack: [1, 2, 3] (3 on top)
+ *   Output Stack: []
+ *
+ * - dequeue() -> Returns 1 (first in, first out!)
+ *   How? Transfer all to output: [3, 2, 1] (1 on top), then pop
+ *   Input Stack: []
+ *   Output Stack: [3, 2] (2 on top now)
+ *
+ * - enqueue(4)
+ *   Input Stack: [4]
+ *   Output Stack: [3, 2]
+ *
+ * - dequeue() -> Returns 2 (from output stack, no transfer needed)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Classic data structure transformation problem
+ * - Tests understanding of amortized time complexity analysis
+ * - Shows creative thinking - using constraints to achieve different behavior
+ * - Common at Google, Amazon, Meta interviews
+ * - Inverse problem (Stack using Queues) is also popular
+ * - Real application: certain systems only provide stack-like interfaces
+ *
+ * KEY CONCEPT:
+ * Use two stacks: "input" for enqueue, "output" for dequeue.
+ * - Enqueue: Always push to input stack - O(1)
+ * - Dequeue: Pop from output stack. If output is empty, transfer ALL
+ *            elements from input to output first (this reverses order!)
+ *
+ * The trick: Reversing twice = original order!
+ * Input->Output reverses. Popping from Output reverses again = FIFO!
+ *
+ * Amortized O(1): Each element is pushed/popped at most twice total.
+ *
+ * VISUAL:
+ *
+ *   Step 1: enqueue(1), enqueue(2), enqueue(3)
+ *
+ *   INPUT STACK      OUTPUT STACK
+ *   +---+            +---+
+ *   | 3 | <- top     |   | (empty)
+ *   +---+            +---+
+ *   | 2 |
+ *   +---+
+ *   | 1 |
+ *   +---+
+ *
+ *   Step 2: dequeue() - output empty, so TRANSFER first
+ *
+ *   Pop 3, push to output     Pop 2, push       Pop 1, push
+ *
+ *   INPUT    OUTPUT           INPUT  OUTPUT     INPUT  OUTPUT
+ *   +---+    +---+            +---+  +---+      +---+  +---+
+ *   | 2 |    | 3 |            |   |  | 2 |      |   |  | 1 | <- pop this!
+ *   +---+    +---+            +---+  +---+      +---+  +---+
+ *   | 1 |                            | 3 |             | 2 |
+ *   +---+                            +---+             +---+
+ *                                                      | 3 |
+ *                                                      +---+
+ *
+ *   Now pop from OUTPUT -> Returns 1 (FIFO achieved!)
+ *
+ *   Step 3: enqueue(4) - just push to INPUT
+ *
+ *   INPUT      OUTPUT
+ *   +---+      +---+
+ *   | 4 |      | 2 | <- next dequeue returns 2
+ *   +---+      +---+
+ *              | 3 |
+ *              +---+
+ *
+ * ============================================================================
+ */
+
 // Implement Queue using Two Stacks - Popular interview question
 // Time: Amortized O(1) per operation, Space: O(n)
 

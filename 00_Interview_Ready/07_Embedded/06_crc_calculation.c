@@ -1,3 +1,113 @@
+/*
+ * ============================================================================
+ * PROBLEM: CRC (Cyclic Redundancy Check) Calculation
+ * ============================================================================
+ *
+ * WHAT IS THIS?
+ * CRC is an error-detection algorithm that calculates a checksum (digest) of
+ * data by treating it as a polynomial and dividing by a generator polynomial.
+ * The remainder is the CRC value. If data is corrupted during transmission/
+ * storage, the recalculated CRC won't match, detecting the error.
+ *
+ * WHY IS THIS CRITICAL FOR EMBEDDED SYSTEMS?
+ * - Communication Protocols: UART, SPI, CAN, Modbus all use CRC
+ * - Flash Memory: Verify firmware integrity after programming
+ * - OTA Updates: Ensure downloaded firmware is not corrupted
+ * - Sensor Data: Validate readings from remote sensors
+ * - SD Card/File Systems: Detect storage corruption
+ * - Boot Verification: Check bootloader/application integrity at startup
+ *
+ * EXAMPLES:
+ * UART Packet with CRC:
+ *   [Header][Length][Payload....][CRC16]
+ *   Receiver calculates CRC of Header+Length+Payload
+ *   If matches received CRC16 -> data good
+ *   If mismatch -> request retransmission
+ *
+ * Firmware Verification:
+ *   CRC32 of 256KB firmware stored at end of flash
+ *   Bootloader recalculates CRC32 at boot
+ *   Match = run app, Mismatch = stay in bootloader
+ *
+ * KEY CONCEPT:
+ * Two implementation methods:
+ * 1. Bitwise: Process each bit, slow but small code
+ * 2. Table-Lookup: Pre-computed 256-entry table, fast but uses 256-1024 bytes
+ *
+ * Core operation: XOR data with polynomial when MSB is 1, then shift
+ *
+ * VISUAL:
+ *
+ *   CRC CALCULATION CONCEPT:
+ *
+ *   Data:       1 0 1 1 0 1 0 0  (0xB4)
+ *   Polynomial: 1 0 0 0 0 0 1 1 1  (0x107, but we use 0x07 as implicit MSB)
+ *
+ *   Process each bit:
+ *   +---------+--------+------------------------------------------+
+ *   | Step    | CRC    | Operation                                |
+ *   +---------+--------+------------------------------------------+
+ *   | Init    | 00     |                                          |
+ *   | XOR B4  | B4     | CRC ^= data_byte                         |
+ *   | Bit 7=1 | 6B     | MSB=1: (CRC<<1) ^ POLY = (0x168)^07 = 6B |
+ *   | Bit 6=0 | D6     | MSB=0: CRC<<1 = D6                       |
+ *   | ...     | ...    | Continue for all 8 bits                  |
+ *   | Final   | XX     | CRC value after all bits                 |
+ *   +---------+--------+------------------------------------------+
+ *
+ *
+ *   BITWISE VS TABLE-DRIVEN:
+ *
+ *   BITWISE (slow, small):            TABLE-DRIVEN (fast, larger):
+ *   +------------------------+        +------------------------+
+ *   | for each byte:         |        | for each byte:         |
+ *   |   CRC ^= byte          |        |   index = CRC ^ byte   |
+ *   |   for 8 bits:          |        |   CRC = table[index]   |
+ *   |     if MSB set:        |        +------------------------+
+ *   |       CRC = CRC<<1^POLY|             |
+ *   |     else:              |             v
+ *   |       CRC = CRC<<1     |        +------------------------+
+ *   +------------------------+        | Table[256] precomputed |
+ *          |                          +------------------------+
+ *          v
+ *   8 iterations per byte             1 lookup per byte
+ *   ~40 cycles per byte               ~5 cycles per byte
+ *
+ *
+ *   COMMON CRC TYPES:
+ *
+ *   +--------+------+------------+------------------+------------+
+ *   | Type   | Bits | Polynomial | Init    | Final  | Use Case   |
+ *   +--------+------+------------+---------+--------+------------+
+ *   | CRC-8  |  8   | 0x07       | 0x00    | 0x00   | I2C, 1-Wire|
+ *   | CRC-16 | 16   | 0x1021     | 0xFFFF  | 0x0000 | Modbus,X.25|
+ *   | CRC-32 | 32   | 0xEDB88320 | 0xFFFF  | 0xFFFF | Ethernet   |
+ *   +--------+------+------------+---------+--------+------------+
+ *
+ *
+ *   DATA FLOW WITH CRC:
+ *
+ *   TRANSMITTER:                      RECEIVER:
+ *   +-------+                         +-------+
+ *   | Data  | -----> Calculate -----> | Data  | --+
+ *   +-------+        CRC              +-------+   |
+ *       |             |                   |       |
+ *       v             v                   v       v
+ *   +-------+-----+               +-------+-----+ |
+ *   | Data  | CRC | --transmit--> | Data  | CRC | |
+ *   +-------+-----+               +-------+-----+ |
+ *                                        |        |
+ *                                        v        v
+ *                                   Calculate   Compare
+ *                                      CRC    <----+
+ *                                        |
+ *                                        v
+ *                                   Match? Good!
+ *                                   Mismatch? Error!
+ *
+ * ============================================================================
+ */
+
 // CRC Calculation - ESSENTIAL for embedded data integrity
 // Time: O(n) for n bytes, Space: O(1) for bitwise, O(256) for table
 

@@ -1,3 +1,78 @@
+/*
+ * ============================================================================
+ * PROBLEM: Implement Queue using Circular Array
+ * ============================================================================
+ *
+ * WHAT IS A QUEUE?
+ * A Queue is a linear data structure that follows the FIFO (First In, First Out)
+ * principle. Think of it like a line at a store - the first person to join the
+ * line is the first person to be served. Elements are added at the rear (back)
+ * and removed from the front.
+ *
+ * Key operations:
+ * - enqueue(x): Add element x to the rear
+ * - dequeue(): Remove and return the front element
+ * - peek()/front(): Return the front element without removing it
+ * - isEmpty(): Check if queue is empty
+ * - size(): Return number of elements
+ *
+ * WHAT IS THIS PROBLEM?
+ * Design and implement a queue using a circular array. A circular array wraps
+ * around when indices reach the end, allowing efficient reuse of space after
+ * dequeue operations. Without circular implementation, dequeuing wastes space
+ * at the beginning of the array.
+ *
+ * EXAMPLES:
+ * - enqueue(10), enqueue(20), enqueue(30) -> Queue: [10, 20, 30] (10 is front, 30 is rear)
+ * - dequeue() -> Returns 10, Queue: [20, 30]
+ * - enqueue(40) -> Queue: [20, 30, 40]
+ * - peek() -> Returns 20, Queue unchanged
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Foundation for BFS traversal, task scheduling, buffering
+ * - Critical in embedded systems (UART buffers, DMA, ISR communication)
+ * - Tests understanding of circular/ring buffer concept (modulo arithmetic)
+ * - Common in RTOS for ready queues and message passing
+ * - Shows ability to optimize space utilization
+ *
+ * KEY CONCEPT:
+ * Use modulo operation to wrap array indices:
+ * - next_index = (current_index + 1) % MAX_SIZE
+ * - Use a 'count' variable to distinguish full vs empty (both have front == rear)
+ *
+ * VISUAL:
+ *
+ *   CIRCULAR ARRAY CONCEPT:
+ *
+ *   Linear view:   [_, _, _, _, _]  (5 slots, indices 0-4)
+ *                   ^front    ^rear
+ *
+ *   Circular view:
+ *                    0
+ *                  /   \
+ *                4       1
+ *                |       |
+ *                3 ----- 2
+ *
+ *   After enqueue(10, 20, 30):
+ *
+ *   [10, 20, 30, _, _]
+ *    ^front      ^rear
+ *
+ *   After dequeue() twice:
+ *
+ *   [_, _, 30, _, _]
+ *          ^front/rear
+ *
+ *   After enqueue(40, 50, 60) - WRAP AROUND:
+ *
+ *   [60, _, 30, 40, 50]
+ *       ^   ^front
+ *       rear (wrapped to index 0)
+ *
+ * ============================================================================
+ */
+
 // Implement Queue using Circular Array - ESSENTIAL data structure
 // Time: O(1) for enqueue/dequeue, Space: O(n)
 

@@ -1,3 +1,92 @@
+/*
+ * ============================================================================
+ * PROBLEM: Quick Sort
+ * ============================================================================
+ *
+ * WHAT IS THIS ALGORITHM?
+ * Quick Sort is a highly efficient divide-and-conquer sorting algorithm.
+ * It works by selecting a "pivot" element and partitioning the array so that
+ * all elements smaller than pivot go left, and all larger elements go right.
+ * The pivot is now in its final sorted position. Recursively apply the same
+ * process to the left and right subarrays.
+ *
+ * EXAMPLES:
+ * - Input:  [10, 7, 8, 9, 1, 5]  (pivot = 5, last element)
+ *
+ * - Partition around pivot 5:
+ *   Elements < 5 go left, elements > 5 go right
+ *   [1, 5, 8, 9, 10, 7]  Wait, let's trace step by step...
+ *
+ *   Initial: [10, 7, 8, 9, 1, 5]  pivot=5, i=-1
+ *             j
+ *   j=0: 10 > 5, no swap
+ *   j=1: 7 > 5, no swap
+ *   j=2: 8 > 5, no swap
+ *   j=3: 9 > 5, no swap
+ *   j=4: 1 < 5, i++, swap arr[0] with arr[4] -> [1, 7, 8, 9, 10, 5]
+ *   Final: swap pivot with arr[i+1] -> [1, 5, 8, 9, 10, 7]
+ *          Pivot 5 is now at index 1 (its final position!)
+ *
+ * - Recursively sort: [1] and [8, 9, 10, 7]
+ * - Output: [1, 5, 7, 8, 9, 10]
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Most widely used sorting algorithm in practice (C's qsort, Java's Arrays.sort)
+ * - Tests divide-and-conquer understanding
+ * - Partition logic is tricky - common interview coding question
+ * - Discusses worst case and how to prevent it (random pivot)
+ * - In-place sorting with O(log n) space (recursion stack)
+ *
+ * KEY CONCEPT:
+ * Partition - choose a pivot, rearrange array so smaller elements are left,
+ * larger are right. Pivot ends up in its final sorted position. Recursively
+ * sort the subarrays.
+ *
+ * VISUAL:
+ *
+ * Sorting [10, 7, 8, 9, 1, 5] using Lomuto partition (pivot = last element)
+ *
+ * Step 1: Partition with pivot = 5
+ * +----+----+----+----+----+----+
+ * | 10 |  7 |  8 |  9 |  1 |  5 | <- pivot
+ * +----+----+----+----+----+----+
+ *   j                        pivot
+ *   i = -1 (boundary of "smaller" region)
+ *
+ * Scan with j, when arr[j] < pivot, expand smaller region:
+ *
+ * j=0: 10 > 5, skip
+ * j=1: 7 > 5, skip
+ * j=2: 8 > 5, skip
+ * j=3: 9 > 5, skip
+ * j=4: 1 < 5, i++, swap arr[i] with arr[j]
+ *
+ * +----+----+----+----+----+----+
+ * |  1 |  7 |  8 |  9 | 10 |  5 |
+ * +----+----+----+----+----+----+
+ *   i                        pivot
+ *
+ * Final: swap arr[i+1] with pivot
+ *
+ * +----+----+----+----+----+----+
+ * |  1 |  5 |  8 |  9 | 10 |  7 |
+ * +----+----+----+----+----+----+
+ *        ^
+ *      pivot in final position!
+ *
+ * Left:  [1]           - already sorted
+ * Right: [8, 9, 10, 7] - recursively partition
+ *
+ * TIME COMPLEXITY:
+ * - Best:    O(n log n) - Balanced partitions
+ * - Average: O(n log n) - Random data
+ * - Worst:   O(n^2)     - Already sorted (bad pivot choice)
+ *
+ * SPACE COMPLEXITY: O(log n) average (recursion stack), O(n) worst case
+ *
+ * ============================================================================
+ */
+
 // Quick Sort - Most commonly used sorting algorithm
 // Time: O(n log n) average, O(n²) worst, Space: O(log n) stack
 

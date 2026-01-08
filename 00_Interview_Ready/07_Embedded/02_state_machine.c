@@ -1,3 +1,85 @@
+/*
+ * ============================================================================
+ * PROBLEM: State Machine (Finite State Machine - FSM)
+ * ============================================================================
+ *
+ * WHAT IS THIS?
+ * A state machine is a behavioral model where a system can be in exactly one
+ * of a finite number of STATES at any time. EVENTS cause TRANSITIONS between
+ * states, and ACTIONS are executed during transitions. It provides a clean,
+ * structured way to handle complex, event-driven logic.
+ *
+ * WHY IS THIS CRITICAL FOR EMBEDDED SYSTEMS?
+ * - Protocol Parsing: Parse UART frames byte-by-byte (wait for header,
+ *   collect length, receive payload, validate CRC)
+ * - Button Handling: Distinguish tap, double-tap, long-press
+ * - Motor Control: Idle -> Starting -> Running -> Stopping sequences
+ * - Communication: Connection states (disconnected, connecting, connected)
+ * - Boot Sequence: Initialize peripherals in correct order
+ * - Power Management: Active -> Sleep -> Deep Sleep transitions
+ *
+ * EXAMPLES:
+ * UART Frame Parser States:
+ *   IDLE -> (0x55 received) -> HEADER -> (length byte) -> PAYLOAD
+ *        -> (all bytes received) -> CRC -> (valid) -> IDLE
+ *
+ * Traffic Light Controller:
+ *   GREEN --(timer)--> YELLOW --(timer)--> RED --(timer)--> GREEN
+ *                             \__(emergency)__> FLASHING
+ *
+ * KEY CONCEPT:
+ * Two main implementation approaches:
+ * 1. Switch-Case: Nested switches (outer=state, inner=event)
+ *    - Simple, readable for small FSMs
+ * 2. Table-Driven: 2D array [state][event] = {next_state, action}
+ *    - Compact, scalable for large FSMs
+ *
+ * VISUAL:
+ *
+ *   STATE DIAGRAM:
+ *
+ *           START                    TIMEOUT
+ *             |                         |
+ *             v                         v
+ *   +------+     +---------+     +------------+     +-------+
+ *   | IDLE | --> | WAITING | --> | PROCESSING | --> | IDLE  |
+ *   +------+     +---------+     +------------+     +-------+
+ *       ^              |                |              ^
+ *       |            TIMEOUT          TIMEOUT          |
+ *       |              |                |              |
+ *       |              v                v              |
+ *       |           +-------+                          |
+ *       +---------- | ERROR | <------------------------+
+ *         RESET     +-------+            RESET
+ *
+ *
+ *   SWITCH-CASE STRUCTURE:            TABLE-DRIVEN STRUCTURE:
+ *
+ *   switch (current_state) {          Event:    START  DATA   TIMEOUT  RESET
+ *     case IDLE:                      State:   +------+------+--------+------+
+ *       switch (event) {              IDLE     | WAIT |  -   |   -    | IDLE |
+ *         case START: ...             WAITING  |  -   | PROC | ERROR  | IDLE |
+ *         case RESET: ...             PROCESS  |  -   |  -   | ERROR  | IDLE |
+ *       }                             ERROR    |  -   |  -   |   -    | IDLE |
+ *     case WAITING:                            +------+------+--------+------+
+ *       switch (event) {...}
+ *   }
+ *
+ *
+ *   STATE MACHINE COMPONENTS:
+ *
+ *   +------------------+      +--------+      +-------------------+
+ *   | Current State    | ---> | EVENT  | ---> | Transition Logic  |
+ *   +------------------+      +--------+      +-------------------+
+ *           |                                          |
+ *           |                                          v
+ *           |                                 +-------------------+
+ *           +-------------------------------- | Execute Action    |
+ *                     Update State            +-------------------+
+ *
+ * ============================================================================
+ */
+
 // State Machine - ESSENTIAL pattern for embedded protocol handling
 // Time: O(1) per event, Space: O(states * events) for table
 

@@ -1,3 +1,89 @@
+/*
+ * ============================================================================
+ * PROBLEM: Next Greater Element (NGE)
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given an array of integers, find the Next Greater Element (NGE) for every
+ * element. The NGE of an element x is the first element to its RIGHT that is
+ * greater than x. If no such element exists, the answer is -1.
+ *
+ * This is a classic "Monotonic Stack" problem - a stack that maintains elements
+ * in sorted (increasing or decreasing) order.
+ *
+ * EXAMPLES:
+ * - Input:  [4, 5, 2, 10, 8]
+ *   Output: [5, 10, 10, -1, -1]
+ *
+ *   Explanation:
+ *   4  -> Next greater is 5
+ *   5  -> Next greater is 10
+ *   2  -> Next greater is 10
+ *   10 -> No greater element to the right, so -1
+ *   8  -> No greater element to the right, so -1
+ *
+ * - Input:  [6, 8, 0, 1, 3]
+ *   Output: [8, -1, 1, 3, -1]
+ *
+ * - Input:  [3, 2, 1]
+ *   Output: [-1, -1, -1]  (strictly decreasing, no NGE for any)
+ *
+ * - Input:  [1, 2, 3]
+ *   Output: [2, 3, -1]    (strictly increasing)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Introduces the powerful "Monotonic Stack" pattern
+ * - O(n) solution is non-obvious (brute force is O(n^2))
+ * - Foundation for many harder problems:
+ *   - Stock Span Problem
+ *   - Largest Rectangle in Histogram
+ *   - Daily Temperatures
+ *   - Trapping Rain Water
+ * - Tests ability to see that each element is processed at most twice
+ * - Popular at Amazon, Google, Microsoft, and Meta
+ *
+ * KEY CONCEPT:
+ * Use a Monotonic Decreasing Stack (elements decrease from bottom to top).
+ *
+ * Process RIGHT to LEFT:
+ * 1. For each element, pop all smaller elements (they can't be NGE for anyone)
+ * 2. If stack not empty, top is the NGE
+ * 3. If stack empty, no NGE exists (-1)
+ * 4. Push current element for future elements to use
+ *
+ * Why O(n)? Each element is pushed once and popped at most once = 2n operations.
+ *
+ * VISUAL:
+ *
+ *   Array: [4, 5, 2, 10, 8]
+ *   Processing RIGHT to LEFT:
+ *
+ *   i=4, val=8:  Stack=[]        -> NGE=-1,  push 8   Stack=[8]
+ *   i=3, val=10: Stack=[8]       -> 8<10, pop        Stack=[]
+ *                                -> NGE=-1,  push 10  Stack=[10]
+ *   i=2, val=2:  Stack=[10]      -> 10>2, NGE=10     Stack=[10,2]
+ *   i=1, val=5:  Stack=[10,2]    -> 2<5, pop         Stack=[10]
+ *                                -> 10>5, NGE=10     Stack=[10,5]
+ *   i=0, val=4:  Stack=[10,5]    -> 5>4, NGE=5       Stack=[10,5,4]
+ *
+ *   Result: [5, 10, 10, -1, -1]
+ *
+ *   Stack visualization (decreasing from bottom):
+ *
+ *       +----+
+ *       |  4 | <- top (smallest)
+ *       +----+
+ *       |  5 |
+ *       +----+
+ *       | 10 | <- bottom (largest)
+ *       +----+
+ *
+ *   Property: For any element, all elements below it in stack are larger,
+ *   so the immediate element below (or top after pops) is the NGE!
+ *
+ * ============================================================================
+ */
+
 // Next Greater Element using Stack - Popular monotonic stack problem
 // Time: O(n), Space: O(n)
 

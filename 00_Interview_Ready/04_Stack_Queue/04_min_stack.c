@@ -1,3 +1,78 @@
+/*
+ * ============================================================================
+ * PROBLEM: Min Stack - Get Minimum in O(1) Time
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Design a stack that supports push, pop, top, and retrieving the minimum
+ * element, ALL in constant O(1) time. The challenge is that when you pop
+ * elements, the minimum might change, so you need to track the minimum at
+ * each state of the stack.
+ *
+ * Operations to implement:
+ * - push(x): Push element x onto stack - O(1)
+ * - pop(): Remove the top element - O(1)
+ * - top(): Get the top element - O(1)
+ * - getMin(): Retrieve the minimum element - O(1)
+ *
+ * EXAMPLES:
+ * - push(5)  -> Stack: [5],       Min: 5
+ * - push(3)  -> Stack: [5,3],     Min: 3
+ * - push(7)  -> Stack: [5,3,7],   Min: 3
+ * - push(2)  -> Stack: [5,3,7,2], Min: 2
+ * - getMin() -> Returns 2
+ * - pop()    -> Stack: [5,3,7],   Min: 3
+ * - getMin() -> Returns 3 (minimum changed after pop!)
+ * - pop()    -> Stack: [5,3],     Min: 3
+ * - pop()    -> Stack: [5],       Min: 5
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Tests creative thinking about auxiliary data structures
+ * - Common pattern: trading space for time complexity
+ * - Foundation for more complex problems (Max Stack, MinQueue)
+ * - Shows understanding that stack state can be "saved" at each level
+ * - Popular at FAANG companies (Google, Amazon, Microsoft)
+ *
+ * KEY CONCEPT:
+ * Maintain TWO parallel stacks:
+ * 1. Main data stack - stores actual values
+ * 2. Min stack - stores the minimum value at each level
+ *
+ * When pushing: min[top] = minimum of (new value, previous min)
+ * When popping: both stacks shrink together, revealing previous min
+ *
+ * VISUAL:
+ *
+ *   Push sequence: 5, 3, 7, 2
+ *
+ *   Data Stack:     Min Stack:       getMin()
+ *   +---+           +---+
+ *   | 2 | <- top    | 2 | <- top     returns 2
+ *   +---+           +---+
+ *   | 7 |           | 3 |            (min at this level was 3)
+ *   +---+           +---+
+ *   | 3 |           | 3 |
+ *   +---+           +---+
+ *   | 5 |           | 5 |
+ *   +---+           +---+
+ *
+ *   After pop() - remove 2:
+ *
+ *   Data Stack:     Min Stack:       getMin()
+ *   +---+           +---+
+ *   | 7 | <- top    | 3 | <- top     returns 3 (previous min restored!)
+ *   +---+           +---+
+ *   | 3 |           | 3 |
+ *   +---+           +---+
+ *   | 5 |           | 5 |
+ *   +---+           +---+
+ *
+ *   The key insight: min[i] remembers what the minimum was
+ *   when the stack had exactly i+1 elements!
+ *
+ * ============================================================================
+ */
+
 // Min Stack - Get minimum element in O(1) time
 // Time: O(1) for all operations, Space: O(n)
 

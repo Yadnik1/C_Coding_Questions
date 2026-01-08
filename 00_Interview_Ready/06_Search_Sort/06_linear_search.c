@@ -1,3 +1,92 @@
+/*
+ * ============================================================================
+ * PROBLEM: Linear Search
+ * ============================================================================
+ *
+ * WHAT IS THIS ALGORITHM?
+ * Linear Search (also called Sequential Search) is the simplest search
+ * algorithm. It checks every element in the array one by one, from start to
+ * end, until the target is found or the array is exhausted. Unlike Binary
+ * Search, it works on UNSORTED arrays and requires no preprocessing.
+ *
+ * EXAMPLES:
+ * - Input: arr = [10, 25, 30, 15, 40], target = 15
+ * - Step 1: Check arr[0]=10, not 15, continue
+ * - Step 2: Check arr[1]=25, not 15, continue
+ * - Step 3: Check arr[2]=30, not 15, continue
+ * - Step 4: Check arr[3]=15, FOUND!
+ * - Output: Index 3
+ *
+ * - Input: arr = [10, 25, 30, 15, 40], target = 100
+ * - Step 1-5: Check all elements, none match
+ * - Output: -1 (not found)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Foundation for understanding search algorithms
+ * - Baseline to compare against Binary Search (O(n) vs O(log n))
+ * - Tests understanding of when to use which search
+ * - Sentinel optimization shows algorithmic thinking
+ * - Important when data is unsorted or searching is infrequent
+ *
+ * KEY CONCEPT:
+ * Sequential Scan - check each element from start to end. Simple but
+ * inefficient for large datasets. Best when array is unsorted, small,
+ * or you're only searching once (not worth sorting first).
+ *
+ * VISUAL:
+ *
+ * Array: [10, 25, 30, 15, 40, 50]  Target: 40
+ *
+ * Step 1: [10, 25, 30, 15, 40, 50]
+ *          ^
+ *          10 == 40? No, continue
+ *
+ * Step 2: [10, 25, 30, 15, 40, 50]
+ *              ^
+ *              25 == 40? No, continue
+ *
+ * Step 3: [10, 25, 30, 15, 40, 50]
+ *                  ^
+ *                  30 == 40? No, continue
+ *
+ * Step 4: [10, 25, 30, 15, 40, 50]
+ *                      ^
+ *                      15 == 40? No, continue
+ *
+ * Step 5: [10, 25, 30, 15, 40, 50]
+ *                          ^
+ *                          40 == 40? YES! Found at index 4
+ *
+ * SENTINEL OPTIMIZATION:
+ * +-----------------------------------------------+
+ * | Place target at end as "sentinel"             |
+ * | Eliminates bounds check (i < n) in loop       |
+ * | Array: [10, 25, 30, 15, 40] -> [10, 25, 30, 15, TARGET]
+ * | Loop: while(arr[i] != target) i++;            |
+ * | No need for i < n check - sentinel guarantees |
+ * | termination. Restore original last element.   |
+ * +-----------------------------------------------+
+ *
+ * COMPARISON: Linear vs Binary Search
+ * +---------------+------------------+------------------+
+ * | Aspect        | Linear Search    | Binary Search    |
+ * +---------------+------------------+------------------+
+ * | Time          | O(n)             | O(log n)         |
+ * | Sorted needed | No               | Yes              |
+ * | Best for      | Small/unsorted   | Large/sorted     |
+ * | Linked lists  | Works well       | Inefficient      |
+ * +---------------+------------------+------------------+
+ *
+ * TIME COMPLEXITY:
+ * - Best:    O(1) - Target is first element
+ * - Average: O(n) - Target in middle
+ * - Worst:   O(n) - Target at end or not present
+ *
+ * SPACE COMPLEXITY: O(1) - Only uses a loop counter
+ *
+ * ============================================================================
+ */
+
 // Linear Search - Basic search for unsorted arrays
 // Time: O(n), Space: O(1)
 

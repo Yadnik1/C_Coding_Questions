@@ -1,3 +1,115 @@
+/*
+ * ============================================================================
+ * PROBLEM: Memory Alignment and Struct Packing
+ * ============================================================================
+ *
+ * WHAT IS THIS?
+ * Memory alignment refers to how data is arranged in memory based on address
+ * boundaries. CPUs access memory most efficiently when data is "aligned" -
+ * meaning its address is a multiple of its size. The compiler adds "padding"
+ * bytes between struct members to ensure proper alignment, which increases
+ * struct size. "Packing" removes this padding when exact memory layout is needed.
+ *
+ * WHY IS THIS CRITICAL FOR EMBEDDED SYSTEMS?
+ * - Protocol Structures: Network/serial packets must match exact byte layout
+ * - Hardware Registers: Register maps require precise memory mapping
+ * - Memory Constraints: Padding wastes precious RAM on small MCUs
+ * - Performance: Misaligned access can be 2-10x slower or cause faults
+ * - DMA Transfers: DMA often requires aligned buffers
+ * - Inter-Processor Communication: Shared structs must have same layout
+ *
+ * EXAMPLES:
+ * Unoptimized struct (16 bytes wasted space):
+ *   struct { uint8_t a; uint32_t b; uint8_t c; uint16_t d; }; // 16 bytes!
+ *
+ * Optimized struct (8 bytes, no waste):
+ *   struct { uint32_t b; uint16_t d; uint8_t a; uint8_t c; }; // 8 bytes!
+ *
+ * Protocol packet (must be packed):
+ *   #pragma pack(1)
+ *   struct { uint8_t cmd; uint32_t addr; uint16_t len; }; // 7 bytes exact
+ *
+ * KEY CONCEPT:
+ * Alignment Rule: A variable of size N must be at address divisible by N.
+ * - uint8_t: any address (1-byte aligned)
+ * - uint16_t: even address (2-byte aligned)
+ * - uint32_t: address divisible by 4 (4-byte aligned)
+ *
+ * VISUAL:
+ *
+ *   STRUCT WITH PADDING (Default):
+ *
+ *   struct Example {
+ *       uint8_t  a;    // 1 byte
+ *       uint32_t b;    // 4 bytes
+ *       uint8_t  c;    // 1 byte
+ *       uint16_t d;    // 2 bytes
+ *   };
+ *
+ *   Memory Layout:
+ *   Offset:  0     1  2  3     4  5  6  7     8     9 10    11 12 13 14 15
+ *          +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+ *          | a | P | P | P | b | b | b | b | c | P | d | d | P | P | P | P |
+ *          +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+ *            ^   ^-------^   ^-----------^   ^   ^   ^---^   ^-----------^
+ *            |   padding     uint32_t        |  pad  uint16  struct padding
+ *          uint8_t           (4-aligned)   uint8_t  (2-aligned)
+ *
+ *   Total: 16 bytes (8 bytes padding = 50% waste!)
+ *
+ *
+ *   OPTIMIZED MEMBER ORDER:
+ *
+ *   struct Optimized {
+ *       uint32_t b;    // 4 bytes (largest first)
+ *       uint16_t d;    // 2 bytes
+ *       uint8_t  a;    // 1 byte
+ *       uint8_t  c;    // 1 byte
+ *   };
+ *
+ *   Offset:  0  1  2  3     4  5     6     7
+ *          +---+---+---+---+---+---+---+---+
+ *          | b | b | b | b | d | d | a | c |
+ *          +---+---+---+---+---+---+---+---+
+ *            ^-----------^   ^---^   ^   ^
+ *            uint32_t        uint16  u8  u8
+ *            (4-aligned)     (2-aligned)
+ *
+ *   Total: 8 bytes (0 bytes padding = 0% waste!)
+ *
+ *
+ *   PACKED STRUCT (for protocols):
+ *
+ *   #pragma pack(push, 1)
+ *   struct Packet {
+ *       uint8_t  cmd;      // 1 byte
+ *       uint32_t address;  // 4 bytes
+ *       uint16_t length;   // 2 bytes
+ *   };
+ *   #pragma pack(pop)
+ *
+ *   Memory Layout (matches wire format exactly):
+ *   Offset:  0     1  2  3  4     5  6
+ *          +---+---+---+---+---+---+---+
+ *          |cmd|  address  | length  |
+ *          +---+---+---+---+---+---+---+
+ *
+ *   Total: 7 bytes (exact protocol size)
+ *
+ *
+ *   ALIGNMENT REQUIREMENTS BY TYPE:
+ *
+ *   Type         Size    Alignment   Valid Addresses
+ *   --------     ----    ---------   ---------------
+ *   uint8_t      1       1           0, 1, 2, 3, 4, 5...
+ *   uint16_t     2       2           0, 2, 4, 6, 8...
+ *   uint32_t     4       4           0, 4, 8, 12, 16...
+ *   uint64_t     8       8           0, 8, 16, 24...
+ *   pointer      4/8     4/8         depends on arch
+ *
+ * ============================================================================
+ */
+
 // Memory Alignment & Struct Packing - ESSENTIAL for embedded
 // Understanding padding, alignment, and packed structures
 

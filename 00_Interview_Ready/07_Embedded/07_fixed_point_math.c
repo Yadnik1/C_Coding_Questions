@@ -1,3 +1,110 @@
+/*
+ * ============================================================================
+ * PROBLEM: Fixed-Point Math
+ * ============================================================================
+ *
+ * WHAT IS THIS?
+ * Fixed-point math represents fractional numbers using integers by dedicating
+ * some bits to the fractional part. For example, Q16.16 uses 16 bits for the
+ * integer part and 16 bits for the fraction, allowing representation of values
+ * like 3.14159 without using floating-point hardware.
+ *
+ * WHY IS THIS CRITICAL FOR EMBEDDED SYSTEMS?
+ * - No FPU: Many MCUs (8-bit, Cortex-M0) lack floating-point hardware
+ * - Speed: Fixed-point is 10-100x faster than software float emulation
+ * - Determinism: Execution time is predictable (no FPU exceptions)
+ * - Power: Integer ALU uses less power than FPU
+ * - DSP: Digital signal processing often uses Q15/Q31 formats
+ * - Control Loops: PID controllers need deterministic timing
+ *
+ * EXAMPLES:
+ * Temperature sensor (0.1 degree resolution):
+ *   float: 25.7f (4 bytes, slow)
+ *   Q8.8: 0x1933 = 25 + (0x33/256) = 25.199 (2 bytes, fast)
+ *
+ * Audio processing:
+ *   Q1.15: Values from -1.0 to +0.99997 with 16-bit precision
+ *   Perfect for audio samples, multiply and shift
+ *
+ * KEY CONCEPT:
+ * Q-Format: Qm.n means m integer bits, n fractional bits
+ * Conversion: fixed = float * (1 << n)
+ * Operations: Add/Sub direct; Mul requires shift; Div requires pre-shift
+ *
+ * VISUAL:
+ *
+ *   Q16.16 FORMAT (32-bit):
+ *
+ *   Bit:  31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
+ *        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+ *        |S |        INTEGER PART (15 bits)               |           FRACTIONAL PART (16 bits)        |
+ *        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+ *         ^  |<----------------- 16 bits ---------------->|<----------------- 16 bits ---------------->|
+ *        sign
+ *
+ *   Example: 3.5 in Q16.16
+ *   = 3.5 * 65536 = 229376 = 0x00038000
+ *   Integer: 0x0003 = 3
+ *   Fraction: 0x8000 = 32768/65536 = 0.5
+ *
+ *
+ *   Q8.8 FORMAT (16-bit):
+ *
+ *   Bit:  15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
+ *        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+ *        |S | INTEGER (7 bits)  |   FRACTION (8 bits)   |
+ *        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+ *
+ *   Range: -128.0 to +127.996 (resolution: 1/256 = 0.0039)
+ *
+ *
+ *   OPERATIONS:
+ *
+ *   Addition/Subtraction (same scale, direct):
+ *   Q16.16:  0x00028000 (2.5)
+ *          + 0x00018000 (1.5)
+ *          -----------
+ *            0x00040000 (4.0)  <- Just add!
+ *
+ *   Multiplication (requires shift):
+ *   Q16.16:  0x00028000 (2.5) * 0x00020000 (2.0)
+ *          = 0x0000000500000000 (64-bit intermediate)
+ *          >> 16
+ *          = 0x00050000 (5.0)  <- Shift right by n bits!
+ *
+ *   Division (requires pre-shift):
+ *   Q16.16:  (0x00050000 << 16) / 0x00020000
+ *          = 0x0005000000000000 / 0x00020000
+ *          = 0x00028000 (2.5)  <- Pre-shift numerator!
+ *
+ *
+ *   CONVERSION CHART:
+ *
+ *   Float    Q16.16 Hex    Q16.16 Dec   Operation
+ *   -----    ----------    ----------   ---------
+ *    0.0     0x00000000         0
+ *    0.5     0x00008000     32768       0.5 * 65536
+ *    1.0     0x00010000     65536       1 * 65536
+ *    2.5     0x00028000    163840       2.5 * 65536
+ *   -1.0     0xFFFF0000    -65536       signed representation
+ *
+ *
+ *   LOOKUP TABLE FOR SIN (Q15):
+ *
+ *   Angle   sin()    Q15 value
+ *   -----   ------   ---------
+ *     0     0.0000       0
+ *    30     0.5000   16384
+ *    45     0.7071   23170
+ *    60     0.8660   28378
+ *    90     1.0000   32767 (max Q15)
+ *
+ *   Use symmetry: sin(180-x) = sin(x), sin(180+x) = -sin(x)
+ *   Only need 0-90 degrees in table!
+ *
+ * ============================================================================
+ */
+
 // Fixed Point Math - ESSENTIAL for MCUs without FPU
 // When floating point is too slow or unavailable
 

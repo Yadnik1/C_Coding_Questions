@@ -1,3 +1,69 @@
+/*
+ * ============================================================================
+ * PROBLEM: Check Balanced Parentheses
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given a string containing just the characters '(', ')', '{', '}', '[' and ']',
+ * determine if the input string is valid (balanced). A string is valid if:
+ * 1. Every opening bracket has a corresponding closing bracket of the same type
+ * 2. Brackets are closed in the correct order (innermost first)
+ * 3. No unmatched brackets remain
+ *
+ * EXAMPLES:
+ * - Input: "{[()]}"  -> Output: Balanced (each opener matches correct closer)
+ * - Input: "{[(])}"  -> Output: Not Balanced (']' should come before ')')
+ * - Input: "((()))"  -> Output: Balanced
+ * - Input: "(()))"   -> Output: Not Balanced (extra closing bracket)
+ * - Input: "((())"   -> Output: Not Balanced (missing closing bracket)
+ * - Input: ""        -> Output: Balanced (empty string is valid)
+ * - Input: "{a+b*c}" -> Output: Balanced (ignore non-bracket characters)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Classic application of stack data structure
+ * - Tests understanding of LIFO principle for nested structures
+ * - Foundation for parsing compilers, IDEs, and expression evaluators
+ * - Common in text editors for bracket matching/highlighting
+ * - Shows ability to handle edge cases (empty string, only openers, only closers)
+ *
+ * KEY CONCEPT:
+ * Use a stack to track opening brackets. When you see a closing bracket, the
+ * most recent unmatched opening bracket (stack top) must be its matching pair.
+ * This works because brackets must close in reverse order of opening (LIFO).
+ *
+ * Algorithm:
+ * 1. Scan string left to right
+ * 2. Opening bracket -> Push to stack
+ * 3. Closing bracket -> Pop from stack and check if it matches
+ * 4. If mismatch or stack empty when closing found -> Invalid
+ * 5. After scan, stack must be empty (all brackets matched)
+ *
+ * VISUAL:
+ *
+ *   Processing "{[()]}" step by step:
+ *
+ *   Char    Action          Stack (top on right)    Status
+ *   ----    ------          --------------------    ------
+ *   '{'     Push            [{]                     OK
+ *   '['     Push            [{, []                  OK
+ *   '('     Push            [{, [, (]               OK
+ *   ')'     Pop '(' match   [{, []                  Match!
+ *   ']'     Pop '[' match   [{]                     Match!
+ *   '}'     Pop '{' match   []                      Match!
+ *   END     Stack empty?    [] YES                  BALANCED!
+ *
+ *   Processing "{[(])}" - INVALID:
+ *
+ *   Char    Action          Stack               Status
+ *   ----    ------          -----               ------
+ *   '{'     Push            [{]                 OK
+ *   '['     Push            [{, []              OK
+ *   '('     Push            [{, [, (]           OK
+ *   ']'     Pop '(' != ']'  MISMATCH!           NOT BALANCED!
+ *
+ * ============================================================================
+ */
+
 // Check Balanced Parentheses using Stack - Classic interview problem
 // Time: O(n), Space: O(n)
 

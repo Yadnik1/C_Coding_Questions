@@ -1,3 +1,90 @@
+/*
+ * ============================================================================
+ * PROBLEM: Button Debouncing
+ * ============================================================================
+ *
+ * WHAT IS THIS?
+ * Button debouncing is a technique to filter out the electrical noise (bounce)
+ * that occurs when a mechanical switch is pressed or released. Physical contacts
+ * bounce multiple times in 1-50ms, causing multiple false edges. Debouncing
+ * ensures one clean press/release event per physical action.
+ *
+ * WHY IS THIS CRITICAL FOR EMBEDDED SYSTEMS?
+ * - User Input: Every button, switch, rotary encoder needs debouncing
+ * - Counting Applications: Vending machines, counters - one press = one count
+ * - Menu Navigation: Prevent multiple menu jumps per button press
+ * - Safety Systems: E-stop buttons must not false-trigger or miss presses
+ * - Rotary Encoders: Debounce both A and B channels for accurate counting
+ * - Limit Switches: Motor control relies on accurate position sensing
+ *
+ * EXAMPLES:
+ * Without Debouncing (BAD):
+ *   Physical press: 1 time
+ *   Detected edges: 5-10 times (bouncing!)
+ *   Result: Counter jumps from 0 to 7 instead of 1
+ *
+ * With Debouncing (GOOD):
+ *   Physical press: 1 time
+ *   Detected edges: 1 time (clean!)
+ *   Result: Counter correctly shows 1
+ *
+ * KEY CONCEPT:
+ * Two main approaches:
+ * 1. Time-Based: Only accept state change after stable for N milliseconds
+ * 2. Shift Register: Track last N readings, accept if all same (0xFF or 0x00)
+ *
+ * VISUAL:
+ *
+ *   RAW SIGNAL (bouncing):
+ *                     Bounce zone (~10-50ms)
+ *                    |<--------->|
+ *   HIGH  ___________      _  _   ___________________________
+ *                    |    | || | |
+ *   LOW              |____|_||_|_|      (Multiple edges!)
+ *                    ^
+ *                    Button physically pressed
+ *
+ *
+ *   DEBOUNCED SIGNAL (clean):
+ *
+ *   HIGH  ___________                    ____________________
+ *                    |                  |
+ *   LOW              |__________________|   (One clean edge!)
+ *                    ^                  ^
+ *                    Detected after     Stable high
+ *                    debounce delay     detected
+ *
+ *
+ *   TIME-BASED DEBOUNCING:
+ *
+ *   Time:    0   5  10  15  20  25  30  35  40ms
+ *   Raw:     0   1   0   1   1   1   1   1   1
+ *   Timer:   -  RST RST RST  1   2   3   4   5  --> Stable! Accept change
+ *   Output:  0   0   0   0   0   0   0   0   1
+ *                                            ^
+ *                                     State change after 20ms stable
+ *
+ *
+ *   SHIFT REGISTER METHOD:
+ *
+ *   Reading:     0    1    0    1    1    1    1    1    1    1
+ *   History:  0x00 0x01 0x02 0x05 0x0B 0x17 0x2F 0x5F 0xBF 0xFF
+ *                                                           ^
+ *   State:      0    0    0    0    0    0    0    0    0    1
+ *                                                           |
+ *                                        All 8 bits = 1, change accepted!
+ *
+ *
+ *   EDGE DETECTION:
+ *
+ *   Previous:  0    0    0    1    1    1    1    0    0
+ *   Current:   0    0    1    1    1    1    0    0    0
+ *   Rising:    -    -    ^    -    -    -    -    -    -   (prev=0, curr=1)
+ *   Falling:   -    -    -    -    -    -    ^    -    -   (prev=1, curr=0)
+ *
+ * ============================================================================
+ */
+
 // Button Debounce - ESSENTIAL for embedded input handling
 // Time: O(1) per call, Space: O(1)
 
