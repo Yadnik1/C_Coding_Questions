@@ -1,3 +1,94 @@
+/*
+ * ============================================================================
+ * PROBLEM: Merge Bytes into Integer and Split Back
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Combine multiple individual bytes into a larger integer (16-bit, 32-bit),
+ * and split a larger integer back into its component bytes. Essential for
+ * parsing communication protocols and working with multi-byte sensor data.
+ *
+ * EXAMPLES (with binary/hex representation):
+ *   MERGE 4 bytes into 32-bit (Big Endian order):
+ *   Bytes: 0x12, 0x34, 0x56, 0x78
+ *
+ *   0x12 << 24 = 0x12_00_00_00   (byte at bits [31:24])
+ *   0x34 << 16 = 0x00_34_00_00   (byte at bits [23:16])
+ *   0x56 << 8  = 0x00_00_56_00   (byte at bits [15:8])
+ *   0x78 << 0  = 0x00_00_00_78   (byte at bits [7:0])
+ *   OR all:    = 0x12_34_56_78
+ *
+ *   SPLIT 0x12345678 into bytes:
+ *   (value >> 24) & 0xFF = 0x12  (MSB)
+ *   (value >> 16) & 0xFF = 0x34
+ *   (value >> 8)  & 0xFF = 0x56
+ *   (value >> 0)  & 0xFF = 0x78  (LSB)
+ *
+ *   BYTE SWAP (Little <-> Big Endian):
+ *   0x12345678 -> 0x78563412
+ *   Each byte moves to opposite position.
+ *
+ * WHY IS THIS ASKED IN EMBEDDED INTERVIEWS?
+ * - Receiving multi-byte data over UART/SPI/I2C
+ * - Parsing network packets (TCP/IP headers)
+ * - Reading sensor values (ADC, temperature, etc.)
+ * - Working with binary file formats
+ * - Endianness conversion between protocols and CPU
+ * - VERY COMMON IN REAL EMBEDDED WORK!
+ *
+ * KEY CONCEPT - SHIFT AND MASK:
+ *   MERGE:  (b3 << 24) | (b2 << 16) | (b1 << 8) | b0
+ *           Cast bytes to larger type BEFORE shifting!
+ *
+ *   SPLIT:  (value >> position) & 0xFF
+ *           Shift byte to lowest position, mask with 0xFF
+ *
+ * VISUAL:
+ *   MERGE bytes 0x12, 0x34, 0x56, 0x78:
+ *
+ *   Byte positions in 32-bit word:
+ *   +------+------+------+------+
+ *   | 0x12 | 0x34 | 0x56 | 0x78 |
+ *   +------+------+------+------+
+ *   bits 31-24  23-16  15-8   7-0
+ *        MSB                  LSB
+ *
+ *   Step 1: Shift each to position
+ *   0x12 << 24: 0001_0010 0000_0000 0000_0000 0000_0000
+ *   0x34 << 16: 0000_0000 0011_0100 0000_0000 0000_0000
+ *   0x56 << 8:  0000_0000 0000_0000 0101_0110 0000_0000
+ *   0x78 << 0:  0000_0000 0000_0000 0000_0000 0111_1000
+ *
+ *   Step 2: OR all together
+ *   Result:     0001_0010 0011_0100 0101_0110 0111_1000
+ *               = 0x12345678
+ *
+ *   -----------------------------------------------
+ *
+ *   BYTE SWAP 0x12345678 -> 0x78563412:
+ *
+ *   Before: | 12 | 34 | 56 | 78 |
+ *           pos3  pos2  pos1  pos0
+ *
+ *   After:  | 78 | 56 | 34 | 12 |
+ *           pos3  pos2  pos1  pos0
+ *
+ *   Formula:
+ *   ((val >> 24) & 0xFF) << 0   -> 0x12 to pos0
+ *   ((val >> 16) & 0xFF) << 8   -> 0x34 to pos1
+ *   ((val >> 8)  & 0xFF) << 16  -> 0x56 to pos2
+ *   ((val >> 0)  & 0xFF) << 24  -> 0x78 to pos3
+ *
+ * CRITICAL: Cast bytes to uint32_t BEFORE shifting!
+ *   WRONG: uint8_t b = 0x12; b << 24;  // overflow!
+ *   RIGHT: (uint32_t)b << 24;          // correct!
+ *
+ * TIME COMPLEXITY: O(1)
+ * SPACE COMPLEXITY: O(1)
+ *
+ * ============================================================================
+ */
+
 // Merge bytes into larger integer and split back - ESSENTIAL for protocol parsing
 // Time: O(1), Space: O(1)
 

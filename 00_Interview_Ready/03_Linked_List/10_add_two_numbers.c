@@ -1,4 +1,90 @@
 /*
+ * ============================================================================
+ * PROBLEM: Add Two Numbers Represented as Linked Lists
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Two non-negative integers are represented as linked lists, where each
+ * node contains a single digit. The digits are stored in REVERSE order
+ * (least significant digit first). Add the two numbers and return the
+ * sum as a linked list in the same reverse format.
+ *
+ * WHY REVERSE ORDER?
+ * Addition naturally starts from the least significant digit (ones place).
+ * Reverse order means the head is the ones place - perfect for addition!
+ * No need to traverse to the end first.
+ *
+ * EXAMPLES:
+ *   Input:  l1: 2 -> 4 -> 3  (represents 342)
+ *           l2: 5 -> 6 -> 4  (represents 465)
+ *   Output: 7 -> 0 -> 8      (represents 807)
+ *           Because: 342 + 465 = 807
+ *
+ *   Input:  l1: 9 -> 9       (represents 99)
+ *           l2: 1            (represents 1)
+ *   Output: 0 -> 0 -> 1      (represents 100)
+ *           Because: 99 + 1 = 100 (carry propagates!)
+ *
+ *   Input:  l1: 0            (represents 0)
+ *           l2: 0            (represents 0)
+ *   Output: 0                (represents 0)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ *   - Tests handling of carry in digit-by-digit computation
+ *   - Shows ability to handle different-length inputs
+ *   - No integer overflow issues (works with arbitrarily large numbers!)
+ *   - Common follow-up: "What if digits are in forward order?"
+ *   - Real-world: BigInteger arithmetic implementations
+ *
+ * KEY CONCEPT: Digit-by-Digit Addition with Carry
+ *   Process like grade-school addition:
+ *   - Add corresponding digits plus any carry from previous
+ *   - digit = sum % 10 (the result digit)
+ *   - carry = sum / 10 (0 or 1 to add to next position)
+ *   - Continue while there are digits OR carry remaining
+ *
+ * VISUAL:
+ *
+ *     342 + 465 = 807
+ *
+ *   l1: [2] -> [4] -> [3]
+ *        |      |      |
+ *   l2: [5] -> [6] -> [4]
+ *
+ *   Step 1: 2 + 5 + 0 (carry) = 7
+ *           digit = 7, carry = 0
+ *           result: [7]
+ *
+ *   Step 2: 4 + 6 + 0 (carry) = 10
+ *           digit = 0, carry = 1
+ *           result: [7] -> [0]
+ *
+ *   Step 3: 3 + 4 + 1 (carry) = 8
+ *           digit = 8, carry = 0
+ *           result: [7] -> [0] -> [8]
+ *
+ *   No more digits, carry = 0, done!
+ *   Result: 7 -> 0 -> 8 (represents 807)
+ *
+ * EDGE CASE: Carry at the End
+ *
+ *     99 + 1 = 100
+ *
+ *   l1: [9] -> [9]
+ *   l2: [1]
+ *
+ *   Step 1: 9 + 1 + 0 = 10, digit=0, carry=1
+ *   Step 2: 9 + 0 + 1 = 10, digit=0, carry=1
+ *   Step 3: 0 + 0 + 1 = 1,  digit=1, carry=0 (carry creates new digit!)
+ *
+ *   Result: 0 -> 0 -> 1 (represents 100)
+ *
+ *   DON'T FORGET THE FINAL CARRY!
+ *
+ * ============================================================================
+ */
+
+/*
  * ADD TWO NUMBERS (Linked List) - Digit by Digit with Carry
  *
  * Time Complexity: O(max(n, m)) - Traverse both lists once

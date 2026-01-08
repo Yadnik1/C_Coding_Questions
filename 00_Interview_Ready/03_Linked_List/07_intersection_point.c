@@ -1,4 +1,81 @@
 /*
+ * ============================================================================
+ * PROBLEM: Find Intersection Point of Two Linked Lists
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given the heads of two singly linked lists, find the node where they
+ * intersect (merge into a single list). If they don't intersect, return NULL.
+ *
+ * IMPORTANT: Intersection means the same PHYSICAL NODE (same memory address),
+ * not just nodes with the same value!
+ *
+ * EXAMPLES:
+ *   Input:
+ *         1 -> 2 \
+ *                 -> 6 -> 7 -> 8 -> NULL
+ *   3 -> 4 -> 5 /
+ *
+ *   Output: Node with value 6 (the intersection point)
+ *
+ *   Input:  List A: 1 -> 2 -> 3
+ *           List B: 4 -> 5 -> 6
+ *   Output: NULL (no intersection, completely separate lists)
+ *
+ *   Input:  List A: 1 -> 2 -> 3 -> 4
+ *           List B: same as List A (identical)
+ *   Output: Node with value 1 (intersection at head)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ *   - Tests creative thinking for O(1) space solution
+ *   - Two elegant approaches to discuss
+ *   - Shows understanding of pointer comparison vs value comparison
+ *   - Real-world: detecting shared resources, memory references
+ *   - Good follow-up: "What if there might be cycles?"
+ *
+ * KEY CONCEPT: Two Approaches
+ *
+ * APPROACH 1: Length Alignment
+ *   - Calculate lengths of both lists
+ *   - Advance the longer list's pointer by the difference
+ *   - Move both pointers together until they meet
+ *
+ * APPROACH 2: Two-Pointer Cycle (Elegant!)
+ *   - Pointer A traverses: List A, then List B
+ *   - Pointer B traverses: List B, then List A
+ *   - Both travel same total distance and meet at intersection!
+ *
+ * VISUAL (Approach 1 - Length Alignment):
+ *
+ *         A: 1 -> 2 ----\
+ *                        -> 6 -> 7 -> 8
+ *   B: 3 -> 4 -> 5 -----/
+ *
+ *   Length A = 5 (1,2,6,7,8)
+ *   Length B = 6 (3,4,5,6,7,8)
+ *   Difference = 1
+ *
+ *   Advance B by 1: Start at 4
+ *   Now both have equal distance to intersection:
+ *   A: 1 -> 2 -> 6 -> 7 -> 8  (start at 1)
+ *   B: 4 -> 5 -> 6 -> 7 -> 8  (start at 4)
+ *
+ *   Move together: 1,4 -> 2,5 -> 6,6 (MATCH!)
+ *
+ * VISUAL (Approach 2 - Two Pointer Cycle):
+ *
+ *   ptrA path: A1 -> A2 -> 6 -> 7 -> 8 -> B3 -> B4 -> B5 -> 6 (MEET!)
+ *   ptrB path: B3 -> B4 -> B5 -> 6 -> 7 -> 8 -> A1 -> A2 -> 6 (MEET!)
+ *
+ *   Both travel: lenA + lenB steps
+ *   They sync up at intersection after switching lists!
+ *
+ *   If no intersection: Both reach NULL at the same time
+ *
+ * ============================================================================
+ */
+
+/*
  * INTERSECTION POINT OF TWO LINKED LISTS - Length Alignment
  *
  * Time Complexity: O(n + m) - Calculate lengths + traverse

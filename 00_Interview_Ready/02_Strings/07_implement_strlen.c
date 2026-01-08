@@ -1,4 +1,52 @@
-// Implement strlen - count characters until null terminator
+/*
+ * ============================================================================
+ * PROBLEM: Implement strlen() - String Length Function
+ * ============================================================================
+ *
+ * WHAT IS strlen()?
+ * strlen() is a standard C library function that returns the LENGTH of a
+ * string (number of characters) NOT including the null terminator '\0'.
+ *
+ * HOW C STRINGS WORK:
+ * In C, strings are arrays of characters ending with a null terminator '\0'.
+ * The string "hello" is stored as: ['h', 'e', 'l', 'l', 'o', '\0']
+ * strlen("hello") = 5 (counts 5 characters, ignores the '\0')
+ *
+ * EXAMPLES:
+ * - strlen("hello")     -> 5
+ * - strlen("")          -> 0  (empty string, first char is '\0')
+ * - strlen("a")         -> 1
+ * - strlen("embedded")  -> 8
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Most fundamental string operation
+ * - Tests understanding of null-terminated strings (C-specific concept!)
+ * - Shows knowledge of pointer arithmetic
+ * - Foundation for implementing other string functions (strcpy, strcat, etc.)
+ * - Critical for embedded: buffer overflow prevention
+ *
+ * WHAT IS THE NULL TERMINATOR '\0'?
+ * - Special character with ASCII value 0
+ * - Marks the end of every C string
+ * - Without it, we wouldn't know where the string ends!
+ * - '\0' is different from '0' (which is ASCII 48)
+ *
+ * MEMORY LAYOUT:
+ *   "hello" in memory:
+ *   +---+---+---+---+---+----+
+ *   | h | e | l | l | o | \0 |
+ *   +---+---+---+---+---+----+
+ *     0   1   2   3   4   5    <- indices
+ *                         ^
+ *                    NULL terminator (strlen stops here, doesn't count it)
+ *
+ * TWO APPROACHES:
+ * 1. Index-based: Use a counter as array index
+ * 2. Pointer-based: Use pointer arithmetic (end - start)
+ *
+ * ============================================================================
+ */
+
 // Time: O(n), Space: O(1)
 
 #include <stdio.h>

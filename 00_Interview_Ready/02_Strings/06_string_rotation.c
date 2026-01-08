@@ -1,4 +1,60 @@
-// Check if one string is rotation of another
+/*
+ * ============================================================================
+ * PROBLEM: Check if One String is a Rotation of Another
+ * ============================================================================
+ *
+ * WHAT IS A STRING ROTATION?
+ * A rotation is when you "cut" a string at some position and move the
+ * first part to the end. It's like rotating a circular buffer.
+ *
+ * EXAMPLES:
+ * - "waterbottle" -> cut after "wat" -> "erbottle" + "wat" -> "erbottlewat" ✓
+ * - "hello"       -> cut after "hel" -> "lo" + "hel" -> "lohel" ✓
+ * - "hello"       -> cut after "he"  -> "llo" + "he" -> "llohe" ✓
+ * - "abcd" and "abdc" -> NOT a rotation (different characters arrangement)
+ *
+ * VISUAL - What is Rotation?
+ *    Original: [w a t e r b o t t l e]
+ *                    ^
+ *                 cut here
+ *
+ *    Take first part: [w a t]
+ *    Take second part: [e r b o t t l e]
+ *    Swap them: [e r b o t t l e] + [w a t] = "erbottlewat"
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Tests creative problem-solving (the concatenation trick!)
+ * - Tests knowledge of substring search (strstr function)
+ * - Shows understanding of string manipulation
+ * - Embedded use: checking if data in circular buffer matches a pattern
+ *
+ * LIBRARY FUNCTIONS USED:
+ * - strlen(str): Returns length of string
+ * - strcpy(dest, src): Copies string from src to dest
+ * - strcat(dest, src): Appends src to the end of dest
+ * - strstr(haystack, needle): Finds needle inside haystack
+ *   Returns: pointer to first occurrence, or NULL if not found
+ * - malloc(size): Allocates memory on heap
+ * - free(ptr): Frees allocated memory
+ *
+ * THE CLEVER TRICK:
+ * If str2 is a rotation of str1, then str2 will ALWAYS appear as a
+ * substring inside (str1 + str1)!
+ *
+ * PROOF:
+ * - Any rotation [B][A] where original is [A][B]
+ * - Concatenated: [A][B][A][B]
+ * - Notice [B][A] is right there in the middle!
+ *
+ * EXAMPLE:
+ * str1 = "waterbottle", str2 = "erbottlewat"
+ * str1 + str1 = "waterbottlewaterbottle"
+ *                    ^^^^^^^^^^^
+ *                    "erbottlewat" is HERE! (starting at index 3)
+ *
+ * ============================================================================
+ */
+
 // Time: O(n), Space: O(n) for concatenated string
 
 #include <stdio.h>

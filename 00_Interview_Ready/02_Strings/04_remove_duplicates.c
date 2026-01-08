@@ -1,4 +1,59 @@
-// Remove duplicate characters from string in-place
+/*
+ * ============================================================================
+ * PROBLEM: Remove Duplicate Characters from String (In-Place)
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given a string, remove all duplicate characters, keeping only the FIRST
+ * occurrence of each character.
+ *
+ * EXAMPLES:
+ * - "programming" -> "progamin"  (removes 2nd 'r', 2nd 'g', 2nd 'm')
+ * - "aabbccdd"    -> "abcd"      (removes all repeated chars)
+ * - "hello"       -> "helo"      (removes 2nd 'l')
+ * - "abcdef"      -> "abcdef"    (no duplicates, unchanged)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Tests the "read/write pointer" technique (very common pattern!)
+ * - Shows understanding of in-place array modification
+ * - Tests knowledge of using arrays as hash sets
+ * - Embedded systems often need to remove duplicates from sensor data
+ *
+ * LIBRARY FUNCTIONS USED:
+ * - stdbool.h: Provides bool, true, false
+ *
+ * KEY CONCEPT - READ/WRITE POINTERS:
+ * - READ pointer scans through entire string
+ * - WRITE pointer tracks where to put the next unique character
+ * - WRITE is always <= READ (we never overwrite unread data)
+ *
+ * VISUAL for "aabbcc":
+ *   Initial: a a b b c c
+ *            ^
+ *            R,W (both start at 0)
+ *
+ *   Step 1: 'a' is new, copy to write, advance both
+ *            a a b b c c
+ *              ^ ^
+ *              W R
+ *
+ *   Step 2: 'a' already seen, skip (only advance R)
+ *            a a b b c c
+ *              ^   ^
+ *              W   R
+ *
+ *   Step 3: 'b' is new, copy to W, advance both
+ *            a b b b c c
+ *                ^ ^
+ *                W R
+ *   ... and so on until R reaches end
+ *
+ *   Final:  a b c \0
+ *                  ^ (null terminate at W)
+ *
+ * ============================================================================
+ */
+
 // Time: O(n), Space: O(1) - using fixed size seen array
 
 #include <stdio.h>

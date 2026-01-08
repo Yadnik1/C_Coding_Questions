@@ -1,4 +1,59 @@
-// Implement memcpy and memmove - ESSENTIAL for embedded buffer handling
+/*
+ * ============================================================================
+ * PROBLEM: Implement memcpy() and memmove() - Memory Copy Functions
+ * ============================================================================
+ *
+ * WHAT ARE THESE FUNCTIONS?
+ *
+ * memcpy(dest, src, n):
+ *   Copies 'n' bytes from 'src' to 'dest'.
+ *   DOES NOT handle overlapping memory regions!
+ *   Use when: you're 100% sure src and dest don't overlap.
+ *
+ * memmove(dest, src, n):
+ *   Copies 'n' bytes from 'src' to 'dest'.
+ *   SAFELY handles overlapping memory regions!
+ *   Use when: regions might overlap, or you're not sure.
+ *
+ * FUNCTION SIGNATURES:
+ * void *memcpy(void *dest, const void *src, size_t n);
+ * void *memmove(void *dest, const void *src, size_t n);
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - ESSENTIAL for embedded systems (buffer handling, DMA, protocols)
+ * - Tests understanding of pointer arithmetic and void* casting
+ * - Tests understanding of overlapping memory regions
+ * - Shows awareness of low-level memory operations
+ *
+ * WHAT IS MEMORY OVERLAP?
+ * When src and dest point to regions that share some bytes.
+ *
+ * EXAMPLE OF OVERLAP (the tricky case):
+ *   Memory: [1][2][3][4][5][0][0]
+ *            ^src          ^dest (at offset 2)
+ *
+ *   If we copy bytes 0-4 to bytes 2-6:
+ *     - Forward copy would overwrite src[2] BEFORE we read it!
+ *     - We need to copy BACKWARDS to avoid this.
+ *
+ * VISUAL - WHY FORWARD COPY FAILS WITH OVERLAP:
+ *   Initial:     [1][2][3][4][5][0][0]
+ *   Copy 1->pos2: [1][2][1][4][5][0][0]  (OK so far)
+ *   Copy 2->pos3: [1][2][1][2][5][0][0]  (OK so far)
+ *   Copy 1->pos4: [1][2][1][2][1][0][0]  (WRONG! We wanted 3 here!)
+ *   The source data was overwritten before we could copy it!
+ *
+ * VISUAL - BACKWARD COPY WORKS:
+ *   Start from end, copy byte 5 first, then 4, 3, 2, 1
+ *   Result: [1][2][1][2][3][4][5] (CORRECT!)
+ *
+ * WHEN TO USE BACKWARD VS FORWARD:
+ * - If dest > src AND overlap: copy BACKWARD
+ * - Otherwise: copy FORWARD (safe)
+ *
+ * ============================================================================
+ */
+
 // Time: O(n), Space: O(1)
 
 #include <stdio.h>

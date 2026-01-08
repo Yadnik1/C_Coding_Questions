@@ -1,3 +1,58 @@
+/*
+ * ============================================================================
+ * PROBLEM: Circular Buffer (Ring Buffer) - Embedded Essential!
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Implement a fixed-size FIFO queue that wraps around. When the buffer
+ * reaches the end, new elements wrap to the beginning (if space available).
+ * Essential data structure for embedded systems with limited memory.
+ *
+ * EXAMPLES:
+ * - push(10), push(20), push(30)  ->  Buffer: [10, 20, 30]
+ * - pop() returns 10              ->  Buffer: [20, 30]
+ * - push(40), push(50)            ->  Buffer: [20, 30, 40, 50]
+ * - If size=5, push(60)           ->  Buffer: [20, 30, 40, 50, 60] FULL!
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - MUST-KNOW for embedded systems roles (UART, sensor data, audio)
+ * - Tests understanding of modular arithmetic
+ * - Shows practical data structure implementation skills
+ * - Common in producer-consumer scenarios (ISR to main loop)
+ *
+ * KEY CONCEPT:
+ * Modular Arithmetic for Wraparound - Use head (write) and tail (read)
+ * pointers. Advance with: head = (head + 1) % SIZE. This creates the
+ * circular behavior without special cases.
+ *
+ * VISUAL:
+ *     Buffer of size 5:
+ *
+ *     Initial (empty):
+ *     [_] [_] [_] [_] [_]
+ *      T                      T=tail (read), H=head (write)
+ *      H
+ *
+ *     After push(10), push(20), push(30):
+ *     [10] [20] [30] [_] [_]
+ *      T              H
+ *
+ *     After pop() returns 10:
+ *     [_] [20] [30] [_] [_]
+ *          T          H
+ *
+ *     After push(40), push(50), push(60) - WRAPAROUND:
+ *     [60] [20] [30] [40] [50]
+ *           T    H              <- head wrapped to index 1!
+ *
+ *     The "ring" in ring buffer:
+ *         [0] -> [1] -> [2] -> [3] -> [4]
+ *          ^                           |
+ *          |___________________________|
+ *
+ * ============================================================================
+ */
+
 // Circular Buffer (Ring Buffer) - Essential for embedded systems
 // Time: O(1) for all operations, Space: O(n) for buffer storage
 

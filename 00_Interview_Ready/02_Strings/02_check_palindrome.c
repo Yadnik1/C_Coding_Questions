@@ -1,4 +1,46 @@
-// Check if a string is a palindrome using two pointers
+/*
+ * ============================================================================
+ * PROBLEM: Check if a String is a Palindrome
+ * ============================================================================
+ *
+ * WHAT IS A PALINDROME?
+ * A palindrome is a word that reads the SAME forwards and backwards.
+ *
+ * EXAMPLES:
+ * - "radar"   -> Read forward: r-a-d-a-r, Read backward: r-a-d-a-r -> SAME! ✓
+ * - "hello"   -> Read forward: h-e-l-l-o, Read backward: o-l-l-e-h -> DIFFERENT! ✗
+ * - "madam"   -> Palindrome ✓
+ * - "racecar" -> Palindrome ✓
+ * - "a"       -> Single char is always palindrome ✓
+ * - ""        -> Empty string is palindrome ✓
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Another classic two-pointer problem
+ * - Tests understanding of symmetry in strings
+ * - Follow-up questions: case-insensitive, ignore spaces, etc.
+ * - Simple but reveals how you handle edge cases
+ *
+ * LIBRARY FUNCTIONS USED:
+ * - strlen(str): Returns length of string (not including null terminator)
+ * - stdbool.h: Provides 'bool', 'true', 'false' types in C
+ *
+ * KEY INSIGHT:
+ * Instead of reversing and comparing (O(n) space), we compare from both ends
+ * moving inward. If all pairs match, it's a palindrome.
+ *
+ * VISUAL for "radar":
+ *   Index:  0   1   2   3   4
+ *   Char:   r   a   d   a   r
+ *           ^               ^
+ *           L               R   -> 'r' == 'r' ✓
+ *               ^       ^
+ *               L       R       -> 'a' == 'a' ✓
+ *                   ^
+ *                  L=R          -> middle char, done! PALINDROME!
+ *
+ * ============================================================================
+ */
+
 // Time: O(n), Space: O(1)
 
 #include <stdio.h>

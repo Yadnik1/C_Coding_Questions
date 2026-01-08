@@ -1,4 +1,82 @@
 /*
+ * ============================================================================
+ * PROBLEM: Check if a Linked List is a Palindrome
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given the head of a singly linked list, determine if it is a palindrome.
+ * A palindrome reads the same forward and backward.
+ *
+ * Unlike arrays/strings, we can't easily access the end of a linked list
+ * or traverse backwards. This makes the O(1) space solution non-trivial!
+ *
+ * EXAMPLES:
+ *   Input:  1 -> 2 -> 3 -> 2 -> 1
+ *   Output: true (same forwards and backwards)
+ *
+ *   Input:  1 -> 2 -> 2 -> 1
+ *   Output: true (even length palindrome)
+ *
+ *   Input:  1 -> 2 -> 3 -> 4
+ *   Output: false (not a palindrome)
+ *
+ *   Input:  1
+ *   Output: true (single node is palindrome)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ *   - Combines multiple linked list techniques in one problem
+ *   - Tests: find middle, reverse list, compare lists
+ *   - Shows understanding of space-time tradeoffs
+ *   - Demonstrates ability to modify and restore data structures
+ *   - Common follow-up: "Can you do O(1) space?"
+ *
+ * KEY CONCEPT: Three-Step Process
+ *   1. FIND MIDDLE: Use slow/fast pointers
+ *   2. REVERSE second half of the list
+ *   3. COMPARE first half with reversed second half
+ *   (Optional: Restore the list to original state)
+ *
+ * VISUAL:
+ *
+ *   Input: 1 -> 2 -> 3 -> 2 -> 1
+ *
+ *   Step 1: Find middle (slow/fast pointer)
+ *   1 -> 2 -> 3 -> 2 -> 1
+ *             ^
+ *           slow (middle)
+ *
+ *   Step 2: Reverse second half (after middle)
+ *   First half:  1 -> 2 -> 3
+ *   Second half: 1 -> 2  (was 2 -> 1, now reversed!)
+ *
+ *   Step 3: Compare node by node
+ *   first:  1 -> 2 -> 3...
+ *   second: 1 -> 2 -> NULL
+ *
+ *   Compare: 1==1, 2==2, second ends -> PALINDROME!
+ *
+ *   Even length example: 1 -> 2 -> 2 -> 1
+ *
+ *   Step 1: Find middle
+ *   1 -> 2 -> 2 -> 1
+ *        ^
+ *      slow (first middle)
+ *
+ *   Step 2: Reverse from slow->next
+ *   First:  1 -> 2
+ *   Second: 1 -> 2 (was 2 -> 1)
+ *
+ *   Step 3: Compare: 1==1, 2==2 -> PALINDROME!
+ *
+ * ALTERNATIVE APPROACHES:
+ *   - Stack: Push first half, pop and compare with second (O(n) space)
+ *   - Recursion: Compare first with last recursively (O(n) space for stack)
+ *   - Copy to array: Two-pointer comparison (O(n) space)
+ *
+ * ============================================================================
+ */
+
+/*
  * PALINDROME LINKED LIST - Reverse Second Half and Compare
  *
  * Time Complexity: O(n) - Three passes: find middle, reverse, compare

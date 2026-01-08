@@ -1,3 +1,59 @@
+/*
+ * ============================================================================
+ * PROBLEM: Dutch National Flag (Three-Way Partition)
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given an array containing only 0s, 1s, and 2s, sort it in a single pass.
+ * Named after the Dutch flag (red, white, blue = three colors/values).
+ * Must be in-place with O(1) space.
+ *
+ * EXAMPLES:
+ * - Input: [2, 0, 1, 2, 1, 0]     ->  Output: [0, 0, 1, 1, 2, 2]
+ * - Input: [2, 2, 2, 0, 0, 0, 1]  ->  Output: [0, 0, 0, 1, 2, 2, 2]
+ * - Input: [1, 0, 2]              ->  Output: [0, 1, 2]
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Classic algorithm by Dijkstra (foundational CS problem)
+ * - Tests three-pointer technique mastery
+ * - Core of quicksort's three-way partition (handles duplicates)
+ * - Demonstrates single-pass optimization thinking
+ *
+ * KEY CONCEPT:
+ * Three-Way Partitioning - Maintain four regions using three pointers:
+ * [0...low-1] = 0s, [low...mid-1] = 1s, [mid...high] = unknown,
+ * [high+1...n-1] = 2s. Process unknown region until empty.
+ *
+ * VISUAL:
+ *     Array: [2, 0, 1, 2, 1, 0]
+ *     Pointers: low=0, mid=0, high=5
+ *
+ *     [2, 0, 1, 2, 1, 0]
+ *      L                 H       L=low, M=mid, H=high
+ *      M
+ *
+ *     mid=0: arr[0]=2, swap with high
+ *     [0, 0, 1, 2, 1, 2]
+ *      L              H          high--
+ *      M
+ *
+ *     mid=0: arr[0]=0, swap with low (self)
+ *     [0, 0, 1, 2, 1, 2]
+ *         L           H          low++, mid++
+ *         M
+ *
+ *     Continue until mid > high...
+ *
+ *     Final: [0, 0, 1, 1, 2, 2]
+ *             ^^^^  ^^^^  ^^^^
+ *             0s    1s    2s
+ *
+ *     KEY INSIGHT: Don't increment mid after swap with high!
+ *     (We don't know what came from high - could be 0, 1, or 2)
+ *
+ * ============================================================================
+ */
+
 // Dutch National Flag Problem - Sort array of 0s, 1s, and 2s
 // Time: O(n), Space: O(1) - Single pass with three-way partitioning
 

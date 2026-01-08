@@ -1,4 +1,52 @@
-// Implement strcmp - compare two strings character by character
+/*
+ * ============================================================================
+ * PROBLEM: Implement strcmp() - String Compare Function
+ * ============================================================================
+ *
+ * WHAT IS strcmp()?
+ * strcmp(str1, str2) compares two strings lexicographically (dictionary order)
+ * and returns:
+ *   - Negative value: if str1 < str2 (str1 comes before str2)
+ *   - Zero:           if str1 == str2 (strings are identical)
+ *   - Positive value: if str1 > str2 (str1 comes after str2)
+ *
+ * FUNCTION SIGNATURE:
+ * int strcmp(const char *str1, const char *str2);
+ *
+ * EXAMPLES:
+ * - strcmp("abc", "abc") -> 0   (equal)
+ * - strcmp("abc", "abd") -> -1  (negative, 'c' < 'd')
+ * - strcmp("abd", "abc") -> 1   (positive, 'd' > 'c')
+ * - strcmp("ab", "abc")  -> -1  (negative, shorter is "less")
+ * - strcmp("ABC", "abc") -> -32 (negative, 'A'=65 < 'a'=97)
+ *
+ * WHAT IS LEXICOGRAPHIC ORDER?
+ * Like dictionary order: compare character by character from left to right.
+ * First difference determines the result.
+ * "apple" < "banana" because 'a' < 'b' at first position.
+ * "app" < "apple" because shorter string is "less" when prefix matches.
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Fundamental string operation
+ * - Tests understanding of ASCII values and character comparison
+ * - Important for sorting, searching strings
+ * - Shows understanding of return value conventions
+ *
+ * ASCII REMINDER:
+ * - 'A' = 65, 'B' = 66, ..., 'Z' = 90
+ * - 'a' = 97, 'b' = 98, ..., 'z' = 122
+ * - '0' = 48, '1' = 49, ..., '9' = 57
+ * - Uppercase letters have LOWER ASCII values than lowercase!
+ *
+ * VISUAL EXAMPLE:
+ * strcmp("cat", "car"):
+ *   'c' == 'c' -> continue
+ *   'a' == 'a' -> continue
+ *   't' vs 'r' -> 't'(116) - 'r'(114) = 2 (positive) -> "cat" > "car"
+ *
+ * ============================================================================
+ */
+
 // Time: O(n), Space: O(1)
 
 #include <stdio.h>

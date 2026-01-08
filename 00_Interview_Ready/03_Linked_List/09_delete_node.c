@@ -1,4 +1,85 @@
 /*
+ * ============================================================================
+ * PROBLEM: Delete Node Without Head Access (The Tricky One!)
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * You are given access ONLY to the node to be deleted (not the head pointer).
+ * Delete this node from the linked list.
+ *
+ * THE CATCH: In a singly linked list, to delete a node, you normally need
+ * access to the PREVIOUS node to update its next pointer. But here you
+ * don't have the head, so you can't reach the previous node!
+ *
+ * EXAMPLES:
+ *   Input:  List: 1 -> 2 -> 3 -> 4 -> 5
+ *           Given: pointer to node with value 3
+ *   Output: 1 -> 2 -> 4 -> 5 (node 3 is "deleted")
+ *
+ *   Input:  List: 1 -> 2 -> 3
+ *           Given: pointer to node with value 2
+ *   Output: 1 -> 3
+ *
+ * LIMITATION:
+ *   - CANNOT delete the LAST node with this trick!
+ *   - The problem usually guarantees the node is not the tail.
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ *   - Tests creative/lateral thinking
+ *   - Shows you can work around constraints
+ *   - Demonstrates understanding of what "deletion" really means
+ *   - Classic "trick" question that appears frequently
+ *   - Good discussion point: limitations and edge cases
+ *
+ * KEY CONCEPT: Copy and Delete Next (The Trick!)
+ *   Since we can't access the previous node, we use a clever workaround:
+ *   1. Copy the NEXT node's data into the current node
+ *   2. Delete the NEXT node (which we CAN access)
+ *   3. From the outside, it looks like current node was deleted!
+ *
+ *   We're not actually deleting the given node - we're making it
+ *   "become" the next node, then deleting the next node.
+ *
+ * VISUAL:
+ *
+ *   Delete node with value 3:
+ *
+ *   Before: 1 -> 2 -> [3] -> 4 -> 5 -> NULL
+ *                      ^
+ *                   given (want to "delete" this)
+ *
+ *   Step 1: Copy next node's data (4) into current node
+ *           1 -> 2 -> [4] -> 4 -> 5 -> NULL
+ *                      ^     ^
+ *                   given   next (same data now)
+ *
+ *   Step 2: Skip over next node
+ *           1 -> 2 -> [4] ------> 5 -> NULL
+ *                      ^
+ *                   given->next = given->next->next
+ *
+ *   Step 3: Free the old next node (the duplicate 4)
+ *
+ *   Result: 1 -> 2 -> 4 -> 5 -> NULL
+ *           (Looks like 3 was deleted!)
+ *
+ * WHY CAN'T WE DELETE THE LAST NODE?
+ *
+ *   Before: 1 -> 2 -> [3] -> NULL
+ *                      ^
+ *                   given (last node)
+ *
+ *   - There's no next node to copy data from!
+ *   - We can't update node 2's next pointer to NULL
+ *   - Node 2 still points to node 3 (dangling reference)
+ *
+ *   The only workaround: Mark the node as "deleted" with a sentinel
+ *   value, and clean up later when you have head access.
+ *
+ * ============================================================================
+ */
+
+/*
  * DELETE NODE (Without Head Access) - Copy Next Node's Data
  *
  * Time Complexity: O(1) - Just copy and relink

@@ -1,4 +1,44 @@
-// Reverse a string in-place using two pointers
+/*
+ * ============================================================================
+ * PROBLEM: Reverse a String In-Place
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given a string like "hello", reverse it to become "olleh".
+ * "In-place" means we modify the original string without creating a new one.
+ *
+ * REAL-WORLD EXAMPLE:
+ * Input:  "embedded"
+ * Output: "deddebme"
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Tests understanding of pointers and array indexing
+ * - Classic two-pointer technique (appears in many problems)
+ * - Shows if you can do in-place modifications (important for embedded)
+ * - Tests knowledge of string representation in C (null terminator)
+ *
+ * LIBRARY FUNCTIONS USED:
+ * - strlen(str): Returns the length of string (NOT including null terminator)
+ *   Example: strlen("hello") returns 5
+ *
+ * KEY CONCEPT - TWO POINTERS:
+ * - One pointer starts at the beginning (left = 0)
+ * - One pointer starts at the end (right = length - 1)
+ * - Swap characters at both positions
+ * - Move pointers toward each other until they meet
+ *
+ * VISUAL:
+ *   "hello"
+ *    ^   ^
+ *    L   R   -> swap 'h' and 'o' -> "oellh"
+ *     ^ ^
+ *     L R    -> swap 'e' and 'l' -> "olleh"
+ *      ^
+ *     L=R    -> pointers meet, DONE!
+ *
+ * ============================================================================
+ */
+
 // Time: O(n), Space: O(1)
 
 #include <stdio.h>

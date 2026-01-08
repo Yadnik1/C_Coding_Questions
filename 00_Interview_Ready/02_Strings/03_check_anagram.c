@@ -1,4 +1,46 @@
-// Check if two strings are anagrams using character frequency count
+/*
+ * ============================================================================
+ * PROBLEM: Check if Two Strings are Anagrams
+ * ============================================================================
+ *
+ * WHAT IS AN ANAGRAM?
+ * Two strings are anagrams if they contain the SAME characters, just
+ * rearranged in a different order. They must have identical character counts.
+ *
+ * EXAMPLES:
+ * - "listen" and "silent"  -> Both have: l(1), i(1), s(1), t(1), e(1), n(1) ✓
+ * - "anagram" and "nagaram" -> Same letters, different order ✓
+ * - "hello" and "world"    -> Different letters ✗
+ * - "rat" and "car"        -> Different letters ✗
+ *
+ * REAL-WORLD USE CASE:
+ * - Word games (Scrabble, crossword helpers)
+ * - Cryptography (some ciphers are anagram-based)
+ * - Detecting plagiarism (word shuffling)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Tests understanding of character frequency counting
+ * - Shows knowledge of ASCII arithmetic ('a' - 'a' = 0)
+ * - Alternative to sorting approach (demonstrates optimization thinking)
+ * - Common pattern: use fixed-size array as hash map for characters
+ *
+ * LIBRARY FUNCTIONS USED:
+ * - strlen(str): Returns string length
+ *
+ * KEY INSIGHT - CHARACTER TO INDEX CONVERSION:
+ * In ASCII: 'a' = 97, 'b' = 98, ..., 'z' = 122
+ * So: 'a' - 'a' = 0, 'b' - 'a' = 1, ..., 'z' - 'a' = 25
+ * This maps each lowercase letter to an array index (0-25)
+ *
+ * APPROACH:
+ * 1. Create array of 26 integers (one per letter)
+ * 2. For str1: increment count for each character
+ * 3. For str2: decrement count for each character
+ * 4. If all counts are 0, they're anagrams!
+ *
+ * ============================================================================
+ */
+
 // Time: O(n), Space: O(1) - fixed size array of 26
 
 #include <stdio.h>

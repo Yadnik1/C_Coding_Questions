@@ -1,3 +1,49 @@
+/*
+ * ============================================================================
+ * PROBLEM: Maximum Subarray Sum (Kadane's Algorithm)
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given an array of integers (may include negatives), find the contiguous
+ * subarray with the largest sum. Return that maximum sum.
+ *
+ * EXAMPLES:
+ * - Input: [-2, 1, -3, 4, -1, 2, 1, -5, 4]  ->  Output: 6 (subarray [4,-1,2,1])
+ * - Input: [1, 2, 3, 4]                      ->  Output: 10 (entire array)
+ * - Input: [-1, -2, -3]                      ->  Output: -1 (least negative)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Classic dynamic programming problem
+ * - Tests optimal substructure thinking
+ * - Has real-world applications (stock prices, signal processing)
+ * - Most famous array algorithm - LeetCode #53
+ *
+ * KEY CONCEPT:
+ * Kadane's Algorithm - At each position, decide: extend current subarray
+ * or start fresh? If current sum goes negative, reset to 0 (start new).
+ * A negative prefix can never improve any future subarray.
+ *
+ * VISUAL:
+ *     Array: [-2, 1, -3, 4, -1, 2, 1, -5, 4]
+ *
+ *     i=0: curr=-2, max=-2, reset curr=0 (negative prefix useless)
+ *     i=1: curr=1,  max=1
+ *     i=2: curr=-2, max=1,  reset curr=0
+ *     i=3: curr=4,  max=4   <- Start of best subarray
+ *     i=4: curr=3,  max=4
+ *     i=5: curr=5,  max=5
+ *     i=6: curr=6,  max=6   <- Best sum found! [4,-1,2,1]=6
+ *     i=7: curr=1,  max=6
+ *     i=8: curr=5,  max=6
+ *
+ *     The key insight:
+ *     [... -3] [4, -1, 2, 1] [-5, ...]
+ *              ^^^^^^^^^^^^^^
+ *              Best subarray - negative parts on sides excluded
+ *
+ * ============================================================================
+ */
+
 // Maximum subarray sum using Kadane's Algorithm
 // Time: O(n), Space: O(1) - Single pass dynamic programming
 

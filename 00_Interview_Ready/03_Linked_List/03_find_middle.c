@@ -1,4 +1,79 @@
 /*
+ * ============================================================================
+ * PROBLEM: Find the Middle Node of a Linked List
+ * ============================================================================
+ *
+ * WHAT IS A LINKED LIST? (Quick Recap)
+ * A chain of nodes where each node contains data and a pointer to the next
+ * node. Unlike arrays, we cannot access the middle element directly - we
+ * must traverse from the head.
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given the head of a singly linked list, return the middle node.
+ * If there are two middle nodes (even length), return the SECOND middle.
+ *
+ * EXAMPLES:
+ *   Input:  1 -> 2 -> 3 -> 4 -> 5 (odd length: 5 nodes)
+ *   Output: Node with value 3
+ *                    ^
+ *                  middle
+ *
+ *   Input:  1 -> 2 -> 3 -> 4 -> 5 -> 6 (even length: 6 nodes)
+ *   Output: Node with value 4 (second middle)
+ *                       ^
+ *             first    second
+ *             middle   middle
+ *
+ *   Input:  1 (single node)
+ *   Output: Node with value 1 (it's the middle)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ *   - Foundation for many problems: merge sort, palindrome check
+ *   - Tests the elegant slow/fast pointer technique
+ *   - Simple but shows understanding of pointer manipulation
+ *   - Often combined with other operations (reverse, split)
+ *   - Interviewer may ask: "What about first middle for even length?"
+ *
+ * KEY CONCEPT: Slow/Fast Pointer (Tortoise and Hare)
+ *   Use two pointers starting at head:
+ *   - Slow: Moves 1 step per iteration
+ *   - Fast: Moves 2 steps per iteration
+ *
+ *   When fast reaches the end, slow is at the middle!
+ *   Why? Fast covers twice the distance, so slow covers half.
+ *
+ * VISUAL:
+ *
+ *   Odd length: 1 -> 2 -> 3 -> 4 -> 5
+ *
+ *   Start:  S,F at 1
+ *   Step 1: S at 2, F at 3
+ *   Step 2: S at 3, F at 5
+ *   Step 3: F->next is NULL, STOP
+ *   Result: S = 3 (middle)
+ *
+ *   Even length: 1 -> 2 -> 3 -> 4 -> 5 -> 6
+ *
+ *   Start:  S,F at 1
+ *   Step 1: S at 2, F at 3
+ *   Step 2: S at 3, F at 5
+ *   Step 3: S at 4, F at NULL (past end)
+ *   Result: S = 4 (second middle)
+ *
+ *   +---+    +---+    +---+    +---+    +---+    +---+
+ *   | 1 | -> | 2 | -> | 3 | -> | 4 | -> | 5 | -> | 6 | -> NULL
+ *   +---+    +---+    +---+    +---+    +---+    +---+
+ *                       ^        ^
+ *                    1st mid  2nd mid (returned)
+ *
+ * VARIANT: First Middle for Even Length
+ *   Change loop condition to check fast->next->next
+ *   This stops slow one position earlier
+ *
+ * ============================================================================
+ */
+
+/*
  * FIND MIDDLE OF LINKED LIST - Slow/Fast Pointer
  *
  * Time Complexity: O(n) - Single pass (fast covers n, slow covers n/2)

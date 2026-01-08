@@ -1,3 +1,94 @@
+/*
+ * ============================================================================
+ * PROBLEM: Extract and Insert Bit Fields (Masking and Shifting)
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Extract a group of consecutive bits from a value, or insert a value into
+ * specific bit positions within a register. This is ESSENTIAL for working
+ * with hardware registers where multiple fields are packed into one word.
+ *
+ * EXAMPLES (with binary representation):
+ *   Register: 0x00001234 = 0000_0000_0000_0000_0001_0010_0011_0100
+ *                                              ^^^^_^^^^_^^^^_^^^^
+ *
+ *   Layout: [31:16]=Reserved, [15:8]=Count, [7:4]=Error, [3:0]=Status
+ *
+ *   EXTRACT bits [3:0] (Status):
+ *   - Shift right by 0, mask with 0xF (4 bits)
+ *   - Result: 0x4 = 0100 (decimal 4)
+ *
+ *   EXTRACT bits [7:4] (Error):
+ *   - Shift right by 4, mask with 0xF (4 bits)
+ *   - Result: 0x3 = 0011 (decimal 3)
+ *
+ *   EXTRACT bits [15:8] (Count):
+ *   - Shift right by 8, mask with 0xFF (8 bits)
+ *   - Result: 0x12 = 0001_0010 (decimal 18)
+ *
+ *   INSERT value 0xF into bits [7:4] (Error):
+ *   - Clear bits [7:4]: reg & ~(0xF << 4) = 0x00001204
+ *   - Insert new value: 0x00001204 | (0xF << 4) = 0x000012F4
+ *
+ * WHY IS THIS ASKED IN EMBEDDED INTERVIEWS?
+ * - Hardware registers pack multiple fields into one word
+ * - GPIO configuration (mode, speed, pull-up all in one register)
+ * - Interrupt flags and enable bits
+ * - Protocol headers (pack multiple fields efficiently)
+ * - Memory-mapped I/O manipulation
+ * - THIS IS DAILY WORK FOR EMBEDDED ENGINEERS!
+ *
+ * KEY CONCEPT - EXTRACT AND INSERT:
+ *   EXTRACT: (value >> pos) & ((1 << width) - 1)
+ *            1. Shift field to position 0
+ *            2. Mask with 'width' ones
+ *
+ *   INSERT:  (target & ~(mask << pos)) | ((field & mask) << pos)
+ *            1. Clear the target bits (create hole)
+ *            2. Mask and shift new value
+ *            3. OR to insert
+ *
+ * VISUAL:
+ *   EXTRACT bits [7:4] from 0x1234:
+ *
+ *   Original:      0001_0010_0011_0100  (0x1234)
+ *                       ^^^^            bits [7:4]
+ *
+ *   Step 1: Shift right by 4
+ *   Shifted:       0000_0001_0010_0011  (0x123)
+ *                                 ^^^^  now at position [3:0]
+ *
+ *   Step 2: Mask with 0xF (4 bits)
+ *   Mask:          0000_0000_0000_1111  (0xF)
+ *   Result:        0000_0000_0000_0011  (0x3)
+ *
+ *   -----------------------------------------------
+ *
+ *   INSERT 0xF into bits [7:4]:
+ *
+ *   Original:      0001_0010_0011_0100  (0x1234)
+ *
+ *   Step 1: Create inverted mask at position
+ *   Mask << 4:     0000_0000_1111_0000  (0xF0)
+ *   Inverted:      1111_1111_0000_1111  (~0xF0)
+ *
+ *   Step 2: Clear bits [7:4]
+ *   AND result:    0001_0010_0000_0100  (0x1204)
+ *                            ^^^^       hole created
+ *
+ *   Step 3: Shift new value to position
+ *   0xF << 4:      0000_0000_1111_0000  (0xF0)
+ *
+ *   Step 4: OR to insert
+ *   Final:         0001_0010_1111_0100  (0x12F4)
+ *                            ^^^^       new value inserted!
+ *
+ * TIME COMPLEXITY: O(1)
+ * SPACE COMPLEXITY: O(1)
+ *
+ * ============================================================================
+ */
+
 // Extract/Insert bit fields - ESSENTIAL for embedded register manipulation
 // Time: O(1), Space: O(1)
 

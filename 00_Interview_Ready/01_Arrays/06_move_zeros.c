@@ -1,3 +1,50 @@
+/*
+ * ============================================================================
+ * PROBLEM: Move Zeros to End (Two-Pointer)
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given an array of integers, move all zeros to the end while maintaining
+ * the relative order of non-zero elements. Must be done in-place.
+ *
+ * EXAMPLES:
+ * - Input: [0, 1, 0, 3, 12]    ->  Output: [1, 3, 12, 0, 0]
+ * - Input: [0, 0, 1]           ->  Output: [1, 0, 0]
+ * - Input: [1, 2, 3]           ->  Output: [1, 2, 3] (no zeros)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Classic two-pointer technique demonstration
+ * - Tests in-place array manipulation skills
+ * - Foundation for partition problems (like quicksort)
+ * - Common LeetCode problem (asked at Facebook, Amazon)
+ *
+ * KEY CONCEPT:
+ * Write Pointer Technique - Use one pointer (write) to track where the
+ * next non-zero should be placed. Iterate with read pointer, moving
+ * non-zeros to write position. Fill remaining positions with zeros.
+ *
+ * VISUAL:
+ *     Array: [0, 1, 0, 3, 12]
+ *            r                    r = read pointer (iterates through all)
+ *            w                    w = write pointer (tracks placement)
+ *
+ *     Step 1: r=0, arr[0]=0 (zero), skip
+ *     Step 2: r=1, arr[1]=1 (non-zero), write to w=0, w++
+ *             [1, 1, 0, 3, 12]
+ *                 w
+ *     Step 3: r=2, arr[2]=0 (zero), skip
+ *     Step 4: r=3, arr[3]=3, write to w=1, w++
+ *             [1, 3, 0, 3, 12]
+ *                    w
+ *     Step 5: r=4, arr[4]=12, write to w=2, w++
+ *             [1, 3, 12, 3, 12]
+ *                       w
+ *     Fill zeros from w to end:
+ *             [1, 3, 12, 0, 0]
+ *
+ * ============================================================================
+ */
+
 // Move all zeros to end while maintaining order of non-zero elements
 // Time: O(n), Space: O(1) - Single pass with write pointer
 

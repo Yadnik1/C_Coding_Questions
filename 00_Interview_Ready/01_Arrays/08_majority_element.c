@@ -1,3 +1,48 @@
+/*
+ * ============================================================================
+ * PROBLEM: Majority Element (Boyer-Moore Voting Algorithm)
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given an array, find the element that appears more than n/2 times.
+ * The majority element is guaranteed to exist (in basic version).
+ * Must solve in O(n) time and O(1) space.
+ *
+ * EXAMPLES:
+ * - Input: [3, 2, 3]           ->  Output: 3 (appears 2 times, n/2 = 1)
+ * - Input: [2, 2, 1, 1, 1, 2, 2] -> Output: 2 (appears 4 times, n/2 = 3)
+ * - Input: [1, 1, 1, 1]        ->  Output: 1 (all same)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Elegant O(1) space solution (Boyer-Moore) tests algorithm knowledge
+ * - Shows creative problem-solving (voting intuition)
+ * - Common in distributed systems (leader election analogy)
+ * - Asked at Google, Amazon, Microsoft - LeetCode #169
+ *
+ * KEY CONCEPT:
+ * Boyer-Moore Voting Algorithm - Imagine each element as a vote.
+ * Maintain a candidate and count. Same element increments count,
+ * different element decrements. At 0, pick new candidate.
+ * Majority survives because it has > n/2 "votes."
+ *
+ * VISUAL:
+ *     Array: [2, 2, 1, 1, 1, 2, 2]
+ *
+ *     i=0: candidate=2, count=1
+ *     i=1: 2==2, count=2
+ *     i=2: 1!=2, count=1      <- One 2 "cancelled" by one 1
+ *     i=3: 1!=2, count=0      <- Another pair cancelled
+ *     i=4: count=0, new candidate=1, count=1
+ *     i=5: 2!=1, count=0      <- 1 cancelled by 2
+ *     i=6: count=0, new candidate=2, count=1
+ *
+ *     Result: candidate = 2 (verify with second pass if needed)
+ *
+ *     Intuition: Majority can "defeat" all others combined!
+ *
+ * ============================================================================
+ */
+
 // Find majority element (appears more than n/2 times)
 // Time: O(n), Space: O(1) - Boyer-Moore Voting Algorithm
 

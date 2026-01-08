@@ -1,3 +1,59 @@
+/*
+ * ============================================================================
+ * PROBLEM: Count Set Bits (Hamming Weight / Population Count)
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Count the number of 1s (set bits) in the binary representation of an
+ * integer. This is also called "Hamming Weight" or "Population Count".
+ *
+ * EXAMPLES (with binary representation):
+ * - Input:  5 (binary: 0000_0101)  -> Output: 2 (two 1s)
+ * - Input: 13 (binary: 0000_1101)  -> Output: 3 (three 1s)
+ * - Input: 255 (binary: 1111_1111) -> Output: 8 (all 1s)
+ * - Input: 0 (binary: 0000_0000)   -> Output: 0 (no 1s)
+ *
+ * WHY IS THIS ASKED IN EMBEDDED INTERVIEWS?
+ * - Counting active flags in a status register
+ * - Error detection (counting parity bits)
+ * - Determining number of enabled peripherals/interrupts
+ * - Calculating Hamming distance for error correction codes
+ * - Many processors have dedicated POPCNT instruction
+ *
+ * KEY CONCEPT - BRIAN KERNIGHAN'S ALGORITHM:
+ * The expression n & (n-1) clears the RIGHTMOST set bit.
+ *
+ * Why? When you subtract 1 from n:
+ * - All bits to the right of rightmost 1 become 1
+ * - The rightmost 1 becomes 0
+ * - ANDing with original zeros out that bit
+ *
+ * VISUAL:
+ *   n = 12 (decimal)
+ *
+ *   Binary:   1 1 0 0  (12)
+ *             ^rightmost 1
+ *
+ *   Step 1: n & (n-1)
+ *   n:        1 1 0 0  (12)
+ *   n-1:      1 0 1 1  (11)   <- rightmost 1 and bits after it flip
+ *   AND:      1 0 0 0  (8)    <- rightmost 1 is cleared!
+ *   count = 1
+ *
+ *   Step 2: n & (n-1)
+ *   n:        1 0 0 0  (8)
+ *   n-1:      0 1 1 1  (7)
+ *   AND:      0 0 0 0  (0)    <- rightmost 1 is cleared!
+ *   count = 2
+ *
+ *   n = 0, STOP. Answer = 2 set bits
+ *
+ * TIME COMPLEXITY: O(k) where k = number of set bits (not 32!)
+ * SPACE COMPLEXITY: O(1)
+ *
+ * ============================================================================
+ */
+
 // Count number of 1s (set bits) in an integer
 // Time: O(k) where k = number of set bits, Space: O(1)
 

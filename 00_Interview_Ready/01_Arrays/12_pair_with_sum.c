@@ -1,3 +1,54 @@
+/*
+ * ============================================================================
+ * PROBLEM: Two Sum / Pair with Given Sum
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given a sorted array, find two numbers that add up to a target sum.
+ * Return their indices or the pair itself. This is the famous "Two Sum"
+ * problem optimized for sorted input.
+ *
+ * EXAMPLES:
+ * - Input: [1, 2, 3, 4, 5], target=6  ->  Output: (1, 5) or indices (0, 4)
+ * - Input: [2, 7, 11, 15], target=9   ->  Output: (2, 7) or indices (0, 1)
+ * - Input: [1, 2, 3], target=7        ->  Output: No pair exists
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - THE most common interview question (LeetCode #1)
+ * - Tests two-pointer technique for sorted arrays
+ * - Foundation for 3Sum, 4Sum, and k-Sum problems
+ * - Shows understanding of time-space tradeoffs
+ *
+ * KEY CONCEPT:
+ * Two-Pointer from Ends - Start with pointers at both ends of sorted array.
+ * If sum < target, move left pointer right (need larger value).
+ * If sum > target, move right pointer left (need smaller value).
+ * O(n) time for sorted, O(n) with hash for unsorted.
+ *
+ * VISUAL:
+ *     Array: [1, 2, 4, 5, 7, 11], target = 9
+ *             L                 R
+ *
+ *     Step 1: 1 + 11 = 12 > 9, move R left
+ *             L              R
+ *
+ *     Step 2: 1 + 7 = 8 < 9, move L right
+ *                L           R
+ *
+ *     Step 3: 2 + 7 = 9 == target, FOUND!
+ *
+ *     Why it works:
+ *     - If sum too large: only way to reduce is smaller right element
+ *     - If sum too small: only way to increase is larger left element
+ *     - We never miss a valid pair (all possibilities explored)
+ *
+ *     For UNSORTED array (classic Two Sum):
+ *     - Use hash map: for each x, check if (target - x) exists
+ *     - O(n) time, O(n) space
+ *
+ * ============================================================================
+ */
+
 // Find pair with given sum in sorted array
 // Time: O(n), Space: O(1) - Two pointer technique
 

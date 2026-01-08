@@ -1,4 +1,55 @@
-// Implement strcpy - copy string character by character
+/*
+ * ============================================================================
+ * PROBLEM: Implement strcpy() - String Copy Function
+ * ============================================================================
+ *
+ * WHAT IS strcpy()?
+ * strcpy(dest, src) copies the string from 'src' to 'dest', including the
+ * null terminator. It returns a pointer to the destination string.
+ *
+ * FUNCTION SIGNATURE:
+ * char* strcpy(char *dest, const char *src);
+ *
+ * EXAMPLES:
+ * - strcpy(buf, "hello") -> buf now contains "hello"
+ * - strcpy(a, b)         -> copies content of b into a
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Tests understanding of null-terminated strings
+ * - Tests pointer manipulation skills
+ * - Important for embedded: no standard library may be available
+ * - Shows awareness of buffer overflow vulnerabilities
+ * - Foundation for understanding strncpy, strlcpy variants
+ *
+ * CRITICAL CONCEPT - BUFFER OVERFLOW:
+ * strcpy() does NOT check if destination has enough space!
+ * If dest is smaller than src, it will overwrite memory beyond dest.
+ * This is a MAJOR security vulnerability (buffer overflow attack).
+ *
+ * EXAMPLE OF DANGER:
+ *   char small[5];
+ *   strcpy(small, "Hello, World!");  // DANGER! Writes past small[4]
+ *
+ * WHY RETURN dest?
+ * - Matches standard C library behavior
+ * - Allows function chaining: printf("%s", strcpy(buf, "hi"))
+ *
+ * VISUAL:
+ *   Before:
+ *   src:  [H][e][l][l][o][\0]
+ *   dest: [?][?][?][?][?][?]
+ *
+ *   After strcpy(dest, src):
+ *   src:  [H][e][l][l][o][\0]
+ *   dest: [H][e][l][l][o][\0]   <- exact copy including \0
+ *
+ * VARIANTS:
+ * - strncpy(dest, src, n): Copies at most n characters (but may not null-terminate!)
+ * - strlcpy(dest, src, n): BSD function, always null-terminates, returns src length
+ *
+ * ============================================================================
+ */
+
 // Time: O(n), Space: O(1) - no extra space besides destination
 
 #include <stdio.h>

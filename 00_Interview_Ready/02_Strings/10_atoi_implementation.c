@@ -1,4 +1,56 @@
-// Implement atoi - convert string to integer
+/*
+ * ============================================================================
+ * PROBLEM: Implement atoi() - ASCII to Integer Conversion
+ * ============================================================================
+ *
+ * WHAT IS atoi()?
+ * atoi() converts a string representation of a number to an actual integer.
+ * "atoi" stands for "ASCII to Integer".
+ *
+ * FUNCTION SIGNATURE:
+ * int atoi(const char *str);
+ *
+ * EXAMPLES:
+ * - atoi("42")        -> 42
+ * - atoi("   -42")    -> -42   (handles leading whitespace and minus sign)
+ * - atoi("+123")      -> 123   (handles plus sign)
+ * - atoi("4193 text") -> 4193  (stops at first non-digit)
+ * - atoi("words 123") -> 0     (no valid digits at start)
+ * - atoi("")          -> 0     (empty string)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - EXTREMELY common interview question (LeetCode #8)
+ * - Tests attention to detail (many edge cases!)
+ * - Tests understanding of ASCII arithmetic ('5' - '0' = 5)
+ * - Tests overflow handling (what if number > INT_MAX?)
+ * - Embedded systems: parsing serial/UART input, config files
+ *
+ * KEY CONCEPT - CHARACTER TO DIGIT CONVERSION:
+ * In ASCII: '0' = 48, '1' = 49, ..., '9' = 57
+ * So: '5' - '0' = 53 - 48 = 5
+ * This converts a character digit to its numeric value!
+ *
+ * ALGORITHM:
+ * 1. Skip leading whitespace (' ', '\t', '\n')
+ * 2. Handle optional sign ('+' or '-')
+ * 3. Convert digits one by one: result = result * 10 + digit
+ * 4. Stop at first non-digit character
+ * 5. Handle overflow (clamp to INT_MAX or INT_MIN)
+ *
+ * BUILDING THE NUMBER (Example: "123"):
+ *   result = 0
+ *   See '1': result = 0 * 10 + 1 = 1
+ *   See '2': result = 1 * 10 + 2 = 12
+ *   See '3': result = 12 * 10 + 3 = 123
+ *
+ * OVERFLOW HANDLING:
+ * - INT_MAX = 2147483647, INT_MIN = -2147483648
+ * - If result would exceed these, clamp to the limit
+ * - Note: INT_MIN has larger magnitude than INT_MAX by 1!
+ *
+ * ============================================================================
+ */
+
 // Time: O(n), Space: O(1)
 
 #include <stdio.h>

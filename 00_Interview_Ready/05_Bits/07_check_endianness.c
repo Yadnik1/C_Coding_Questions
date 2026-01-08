@@ -1,3 +1,84 @@
+/*
+ * ============================================================================
+ * PROBLEM: Check System Endianness (Big vs Little Endian)
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Determine whether the system stores multi-byte values in:
+ * - LITTLE ENDIAN: Least Significant Byte (LSB) at lowest memory address
+ * - BIG ENDIAN: Most Significant Byte (MSB) at lowest memory address
+ * This is CRITICAL for embedded systems that communicate with networks
+ * or other devices!
+ *
+ * EXAMPLES (with memory layout):
+ *   Value: 0x12345678 (32-bit integer)
+ *
+ *   LITTLE ENDIAN (x86, ARM, most modern processors):
+ *   Address:  0x100  0x101  0x102  0x103
+ *   Content:  0x78   0x56   0x34   0x12
+ *             ^LSB                 ^MSB
+ *   "Little end (LSB) comes first"
+ *
+ *   BIG ENDIAN (Network byte order, some PowerPC, Motorola 68k):
+ *   Address:  0x100  0x101  0x102  0x103
+ *   Content:  0x12   0x34   0x56   0x78
+ *             ^MSB                 ^LSB
+ *   "Big end (MSB) comes first"
+ *
+ * HOW TO CHECK:
+ *   uint16_t val = 0x0102;    // High byte=0x01, Low byte=0x02
+ *   uint8_t *ptr = (uint8_t*)&val;
+ *
+ *   if (*ptr == 0x02) -> Little Endian (low byte at low address)
+ *   if (*ptr == 0x01) -> Big Endian (high byte at low address)
+ *
+ * WHY IS THIS ASKED IN EMBEDDED INTERVIEWS?
+ * - Network protocols use Big Endian (network byte order)
+ * - x86/ARM processors are Little Endian
+ * - Must convert when sending/receiving network data
+ * - Binary file formats specify endianness
+ * - Cross-platform data exchange requires awareness
+ * - Sensor data over UART/SPI may be either endian
+ * - THIS QUESTION APPEARS IN ALMOST EVERY EMBEDDED INTERVIEW!
+ *
+ * KEY CONCEPT - BYTE ORDERING:
+ * Endianness only affects multi-byte data types (int16, int32, etc.)
+ * Single bytes and bit order within bytes are NOT affected.
+ *
+ * VISUAL:
+ *   Storing 0x0102 (16-bit):
+ *
+ *   LITTLE ENDIAN:
+ *   +--------+--------+
+ *   | 0x02   | 0x01   |
+ *   +--------+--------+
+ *   addr     addr+1
+ *   ^LSB     ^MSB
+ *
+ *   BIG ENDIAN:
+ *   +--------+--------+
+ *   | 0x01   | 0x02   |
+ *   +--------+--------+
+ *   addr     addr+1
+ *   ^MSB     ^LSB
+ *
+ *   Detection using pointer:
+ *   uint16_t val = 0x0102;
+ *   uint8_t *p = (uint8_t*)&val;
+ *   *p == 0x02 ? Little : Big
+ *
+ * CONVERSION FUNCTIONS (standard library):
+ *   htons() - Host to Network Short (16-bit)
+ *   htonl() - Host to Network Long (32-bit)
+ *   ntohs() - Network to Host Short
+ *   ntohl() - Network to Host Long
+ *
+ * TIME COMPLEXITY: O(1)
+ * SPACE COMPLEXITY: O(1)
+ *
+ * ============================================================================
+ */
+
 // Check system endianness - ESSENTIAL embedded interview question
 // Time: O(1), Space: O(1)
 

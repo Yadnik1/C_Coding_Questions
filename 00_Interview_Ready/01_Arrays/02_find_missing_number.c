@@ -1,3 +1,43 @@
+/*
+ * ============================================================================
+ * PROBLEM: Find Missing Number
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given an array containing n distinct numbers from 0 to n (inclusive),
+ * find the one number that is missing from the sequence.
+ * The array has n elements but the range is 0 to n, so exactly one is missing.
+ *
+ * EXAMPLES:
+ * - Input: [0, 1, 2, 4, 5, 6]  ->  Output: 3 (missing from 0-6)
+ * - Input: [3, 0, 1]          ->  Output: 2 (missing from 0-3)
+ * - Input: [0]                ->  Output: 1 (missing from 0-1)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Tests mathematical thinking (sum formula vs brute force)
+ * - Shows awareness of XOR alternative for overflow prevention
+ * - Common in data integrity and validation scenarios
+ * - Demonstrates O(n) thinking over O(n log n) sorting approach
+ *
+ * KEY CONCEPT:
+ * Mathematical Sum Formula - Expected sum of 0 to n is n*(n+1)/2.
+ * Subtract actual sum of array elements from expected sum.
+ * The difference is the missing number.
+ *
+ * VISUAL:
+ *     Array: [0, 1, 3, 4]  (n=4 elements, range 0-4)
+ *
+ *     Expected sum (0+1+2+3+4) = 4*5/2 = 10
+ *     Actual sum   (0+1+3+4)   = 8
+ *     Missing = 10 - 8 = 2
+ *
+ *     Alternative XOR method (no overflow risk):
+ *     XOR all numbers 0 to n, then XOR with all array elements
+ *     Result = missing number (pairs cancel out)
+ *
+ * ============================================================================
+ */
+
 // Find missing number in array [0, n] with one missing
 // Time: O(n), Space: O(1)
 

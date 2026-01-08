@@ -1,4 +1,89 @@
 /*
+ * ============================================================================
+ * PROBLEM: Detect Cycle in a Linked List (Floyd's Algorithm)
+ * ============================================================================
+ *
+ * WHAT IS A LINKED LIST? (Quick Recap)
+ * A linked list is a chain of nodes where each node has:
+ *   - data: The value stored
+ *   - next: Pointer to the next node (NULL if last node)
+ *
+ * NODE STRUCTURE:
+ *   +-------+-------+
+ *   | data  | next  | ---> next node
+ *   +-------+-------+
+ *
+ * WHAT IS A CYCLE?
+ * A cycle occurs when a node's "next" pointer points back to a previous
+ * node in the list, creating an infinite loop. The list never ends!
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given the head of a linked list, determine if the list contains a cycle.
+ * A cycle exists if following the next pointers eventually leads back to
+ * a node you've already visited.
+ *
+ * EXAMPLES:
+ *   Input:  1 -> 2 -> 3 -> 4 -> 5
+ *                ^              |
+ *                |______________|  (5 points back to 3)
+ *   Output: true (cycle exists)
+ *
+ *   Input:  1 -> 2 -> 3 -> NULL
+ *   Output: false (no cycle, list ends)
+ *
+ *   Input:  1 -> (points to itself)
+ *   Output: true (self-loop is a cycle)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ *   - Tests understanding of the famous Floyd's algorithm
+ *   - O(1) space solution is non-trivial and clever
+ *   - Foundation for finding cycle start, cycle length
+ *   - Real-world application: detecting infinite loops in systems
+ *   - Shows mathematical thinking (why do they meet?)
+ *
+ * KEY CONCEPT: Floyd's Tortoise and Hare Algorithm
+ *   Use two pointers moving at different speeds:
+ *   - Slow (tortoise): Moves 1 step at a time
+ *   - Fast (hare): Moves 2 steps at a time
+ *
+ *   If there's a cycle, fast will eventually "lap" slow and they'll meet.
+ *   If no cycle, fast reaches NULL (end of list).
+ *
+ *   WHY THEY MUST MEET:
+ *   - In the cycle, fast gains 1 node per iteration (2-1=1)
+ *   - The gap between them decreases by 1 each step
+ *   - They MUST eventually meet within the cycle
+ *
+ * VISUAL:
+ *
+ *   List with cycle:
+ *   1 -> 2 -> 3 -> 4 -> 5
+ *             ^         |
+ *             |_________|
+ *
+ *   Step 0: slow=1, fast=1
+ *   Step 1: slow=2, fast=3
+ *   Step 2: slow=3, fast=5
+ *   Step 3: slow=4, fast=4  <-- THEY MEET! Cycle detected.
+ *
+ *   List without cycle:
+ *   1 -> 2 -> 3 -> 4 -> 5 -> NULL
+ *
+ *   Step 0: slow=1, fast=1
+ *   Step 1: slow=2, fast=3
+ *   Step 2: slow=3, fast=5
+ *   Step 3: fast->next is NULL, STOP. No cycle.
+ *
+ * BONUS: Finding where cycle starts (Phase 2)
+ *   After detection, reset slow to head.
+ *   Move both pointers 1 step at a time.
+ *   They meet at the cycle's starting node!
+ *   (Mathematical proof: involves cycle length equations)
+ *
+ * ============================================================================
+ */
+
+/*
  * DETECT CYCLE IN LINKED LIST - Floyd's Cycle Detection
  *
  * Time Complexity: O(n) - At most 2n steps

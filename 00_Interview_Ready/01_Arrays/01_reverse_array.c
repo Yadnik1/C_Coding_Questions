@@ -1,3 +1,41 @@
+/*
+ * ============================================================================
+ * PROBLEM: Reverse Array In-Place
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given an array, reverse all elements in-place without using extra space.
+ * The first element becomes last, second becomes second-last, and so on.
+ *
+ * EXAMPLES:
+ * - Input: [1, 2, 3, 4, 5]  ->  Output: [5, 4, 3, 2, 1]
+ * - Input: [10, 20]         ->  Output: [20, 10]
+ * - Input: [7]              ->  Output: [7] (single element unchanged)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Tests understanding of two-pointer technique (fundamental pattern)
+ * - Validates ability to modify data in-place with O(1) space
+ * - Foundation for more complex problems (rotate array, palindrome check)
+ * - Common building block in string manipulation algorithms
+ *
+ * KEY CONCEPT:
+ * Two-Pointer Technique - Use two pointers starting from opposite ends.
+ * Swap elements at both pointers, then move them toward the center.
+ * Stop when pointers meet or cross.
+ *
+ * VISUAL:
+ *     Initial:  [1] [2] [3] [4] [5]
+ *                L               R      <- L=left, R=right
+ *
+ *     Step 1:   [5] [2] [3] [4] [1]     <- swap 1 and 5
+ *                    L       R
+ *
+ *     Step 2:   [5] [4] [3] [2] [1]     <- swap 2 and 4
+ *                        LR             <- pointers meet, DONE!
+ *
+ * ============================================================================
+ */
+
 // Reverse an array in-place
 // Time: O(n), Space: O(1)
 

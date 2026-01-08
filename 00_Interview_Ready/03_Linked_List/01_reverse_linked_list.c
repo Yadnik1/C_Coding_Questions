@@ -1,4 +1,87 @@
 /*
+ * ============================================================================
+ * PROBLEM: Reverse a Singly Linked List
+ * ============================================================================
+ *
+ * WHAT IS A LINKED LIST?
+ * A linked list is a linear data structure where elements (nodes) are stored
+ * in non-contiguous memory locations. Each node contains:
+ *   1. DATA: The actual value stored
+ *   2. NEXT: A pointer to the next node in the sequence
+ *
+ * NODE STRUCTURE:
+ *   +-------+-------+
+ *   | data  | next  | ---> points to next node (or NULL)
+ *   +-------+-------+
+ *
+ * In C, we define it as:
+ *   typedef struct Node {
+ *       int data;           // Value stored in node
+ *       struct Node* next;  // Pointer to next node
+ *   } Node;
+ *
+ * LINKED LIST vs ARRAY:
+ *   - Array: Contiguous memory, O(1) access, O(n) insert/delete
+ *   - Linked List: Scattered memory, O(n) access, O(1) insert/delete (if at position)
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given the head of a singly linked list, reverse the list so that the last
+ * node becomes the first, second-to-last becomes second, and so on.
+ * Return the new head (originally the last node).
+ *
+ * EXAMPLES:
+ *   Input:  1 -> 2 -> 3 -> 4 -> 5 -> NULL
+ *   Output: 5 -> 4 -> 3 -> 2 -> 1 -> NULL
+ *
+ *   Input:  1 -> 2 -> NULL
+ *   Output: 2 -> 1 -> NULL
+ *
+ *   Input:  NULL (empty list)
+ *   Output: NULL
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ *   - Tests understanding of pointer manipulation
+ *   - Foundation for many linked list problems (palindrome check, etc.)
+ *   - Shows ability to handle edge cases (empty list, single node)
+ *   - Classic problem that every engineer should know
+ *   - Often asked as warm-up before harder linked list questions
+ *
+ * KEY CONCEPT: Three Pointer Technique
+ *   Use three pointers to reverse links one by one:
+ *   - prev: Points to the already-reversed portion (starts at NULL)
+ *   - curr: Current node being processed (starts at head)
+ *   - next: Temporarily saves the next node before we break the link
+ *
+ *   For each node: Save next, reverse link, move pointers forward
+ *
+ * VISUAL:
+ *
+ *   Initial State:
+ *   NULL    1 -> 2 -> 3 -> 4 -> 5 -> NULL
+ *    ^      ^
+ *   prev   curr
+ *
+ *   After Step 1: (reverse 1's link)
+ *   NULL <- 1    2 -> 3 -> 4 -> 5 -> NULL
+ *           ^    ^
+ *          prev curr
+ *
+ *   After Step 2: (reverse 2's link)
+ *   NULL <- 1 <- 2    3 -> 4 -> 5 -> NULL
+ *                ^    ^
+ *               prev curr
+ *
+ *   ... continue until curr is NULL ...
+ *
+ *   Final State:
+ *   NULL <- 1 <- 2 <- 3 <- 4 <- 5
+ *                               ^
+ *                              prev (NEW HEAD!)
+ *
+ * ============================================================================
+ */
+
+/*
  * REVERSE LINKED LIST - Iterative Three Pointer Approach
  *
  * Time Complexity: O(n) - Single pass through the list

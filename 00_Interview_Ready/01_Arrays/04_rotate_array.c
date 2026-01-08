@@ -1,3 +1,48 @@
+/*
+ * ============================================================================
+ * PROBLEM: Rotate Array by K Positions
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given an array, rotate all elements to the right by k positions.
+ * Elements that "fall off" the right end wrap around to the left.
+ * Must be done in-place with O(1) extra space.
+ *
+ * EXAMPLES:
+ * - Input: [1,2,3,4,5], k=2  ->  Output: [4,5,1,2,3]
+ * - Input: [1,2,3,4,5], k=3  ->  Output: [3,4,5,1,2]
+ * - Input: [1,2], k=3        ->  Output: [2,1] (k=3 mod 2 = 1)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Tests creative algorithm design (reversal trick is non-obvious)
+ * - Validates in-place manipulation skills
+ * - Shows understanding of modular arithmetic (k % n)
+ * - Foundation for circular buffer and queue implementations
+ *
+ * KEY CONCEPT:
+ * Three-Reversal Method - Clever O(n) time, O(1) space solution.
+ * 1. Reverse the entire array
+ * 2. Reverse first k elements
+ * 3. Reverse remaining n-k elements
+ *
+ * VISUAL:
+ *     Rotate [1,2,3,4,5] right by k=2:
+ *
+ *     Original:     [1] [2] [3] [4] [5]
+ *
+ *     Step 1:       [5] [4] [3] [2] [1]    <- Reverse ALL
+ *
+ *     Step 2:       [4] [5] [3] [2] [1]    <- Reverse first k=2
+ *                    ^^^^^^
+ *
+ *     Step 3:       [4] [5] [1] [2] [3]    <- Reverse rest (n-k=3)
+ *                            ^^^^^^^^^^
+ *
+ *     Result: Last 2 elements moved to front!
+ *
+ * ============================================================================
+ */
+
 // Rotate array right by k positions
 // Time: O(n), Space: O(1) - Reverse method
 

@@ -1,4 +1,80 @@
 /*
+ * ============================================================================
+ * PROBLEM: Remove Nth Node From End of List
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given the head of a linked list, remove the nth node from the END of the
+ * list and return the head. Do this in ONE PASS (not counting nodes first).
+ *
+ * EXAMPLES:
+ *   Input:  1 -> 2 -> 3 -> 4 -> 5, n = 2
+ *                          ^
+ *                    2nd from end (remove this)
+ *   Output: 1 -> 2 -> 3 -> 5
+ *
+ *   Input:  1 -> 2 -> 3, n = 3 (remove head)
+ *           ^
+ *     3rd from end
+ *   Output: 2 -> 3
+ *
+ *   Input:  1, n = 1 (single node, remove it)
+ *   Output: NULL (empty list)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ *   - Tests the "gap technique" with two pointers
+ *   - Requires careful handling of edge cases (removing head)
+ *   - Shows understanding of single-pass algorithms
+ *   - Demonstrates the power of maintaining pointer distances
+ *   - Common follow-up: "Can you do it in one pass?"
+ *
+ * KEY CONCEPT: Two Pointer with Fixed Gap
+ *   The trick: Maintain a gap of (n+1) between two pointers.
+ *   When the fast pointer reaches NULL, the slow pointer is
+ *   right BEFORE the node to delete (so we can update next pointer).
+ *
+ *   Why n+1 gap? We need slow to stop at the PREVIOUS node
+ *   to be able to do: slow->next = slow->next->next
+ *
+ * VISUAL:
+ *
+ *   Remove 2nd from end in: 1 -> 2 -> 3 -> 4 -> 5
+ *
+ *   Step 1: Create gap of n+1 = 3 (fast moves 3 steps)
+ *
+ *   dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> NULL
+ *     ^                ^
+ *    slow             fast    (gap of 3 nodes)
+ *
+ *   Step 2: Move both until fast reaches NULL
+ *
+ *   dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> NULL
+ *                      ^              ^
+ *                     slow           fast
+ *
+ *   Step 3: slow->next is the node to remove (4)
+ *           slow->next = slow->next->next
+ *
+ *   Result: 1 -> 2 -> 3 -> 5
+ *
+ * WHY DUMMY NODE?
+ *   Handle the case when we need to remove the HEAD.
+ *   Example: Remove 5th from end in a 5-node list = remove head
+ *
+ *   Without dummy: Special case needed
+ *   With dummy: Same logic works for all cases
+ *
+ *   dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> NULL
+ *     ^                               ^
+ *    slow                            fast
+ *
+ *   slow->next = 1 (the head), which gets removed
+ *   Return dummy.next = 2 (new head)
+ *
+ * ============================================================================
+ */
+
+/*
  * REMOVE NTH NODE FROM END - Two Pointer with Gap
  *
  * Time Complexity: O(n) - Single pass through the list

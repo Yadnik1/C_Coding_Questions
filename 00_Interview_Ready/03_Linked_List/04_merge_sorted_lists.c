@@ -1,4 +1,86 @@
 /*
+ * ============================================================================
+ * PROBLEM: Merge Two Sorted Linked Lists
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given the heads of two sorted linked lists, merge them into one sorted
+ * list. The merged list should be made by splicing together the nodes of
+ * the first two lists (not creating new nodes).
+ *
+ * EXAMPLES:
+ *   Input:  List 1: 1 -> 3 -> 5
+ *           List 2: 2 -> 4 -> 6
+ *   Output: 1 -> 2 -> 3 -> 4 -> 5 -> 6
+ *
+ *   Input:  List 1: 1 -> 2 -> 4
+ *           List 2: 1 -> 3 -> 4
+ *   Output: 1 -> 1 -> 2 -> 3 -> 4 -> 4 (duplicates preserved)
+ *
+ *   Input:  List 1: NULL (empty)
+ *           List 2: 1 -> 2
+ *   Output: 1 -> 2 (return the non-empty list)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ *   - Core operation in Merge Sort for linked lists
+ *   - Tests two-pointer technique with different data structures
+ *   - Shows understanding of the "dummy head" pattern
+ *   - Foundation for "Merge K Sorted Lists" (harder variant)
+ *   - Real-world: merging sorted data streams
+ *
+ * KEY CONCEPT: Two Pointer Merge with Dummy Head
+ *   Use a dummy node to simplify edge cases:
+ *   - No special handling for "first node"
+ *   - Always have a valid "tail" to append to
+ *   - Return dummy.next as the actual head
+ *
+ *   Compare heads of both lists, take the smaller one,
+ *   advance that list's pointer, repeat until one list is empty,
+ *   then attach the remaining list.
+ *
+ * VISUAL:
+ *
+ *   l1: 1 -> 3 -> 5
+ *       ^
+ *   l2: 2 -> 4 -> 6
+ *       ^
+ *
+ *   dummy -> ?     (tail points to dummy)
+ *
+ *   Step 1: 1 < 2, take 1
+ *   dummy -> 1     l1 advances to 3
+ *
+ *   Step 2: 3 > 2, take 2
+ *   dummy -> 1 -> 2     l2 advances to 4
+ *
+ *   Step 3: 3 < 4, take 3
+ *   dummy -> 1 -> 2 -> 3     l1 advances to 5
+ *
+ *   Step 4: 5 > 4, take 4
+ *   dummy -> 1 -> 2 -> 3 -> 4     l2 advances to 6
+ *
+ *   Step 5: 5 < 6, take 5
+ *   dummy -> 1 -> 2 -> 3 -> 4 -> 5     l1 is now NULL
+ *
+ *   Step 6: l1 is NULL, attach remaining l2
+ *   dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> 6
+ *
+ *   Return: dummy.next = 1 (actual merged head)
+ *
+ * WHY DUMMY HEAD?
+ *   +-------+
+ *   | dummy | -> merged list starts here
+ *   +-------+
+ *       ^
+ *      tail (always points to last node of merged list)
+ *
+ *   Without dummy: Need "if (head == NULL)" check for first insertion
+ *   With dummy: tail->next = newNode always works!
+ *
+ * ============================================================================
+ */
+
+/*
  * MERGE TWO SORTED LINKED LISTS - Two Pointer Merge
  *
  * Time Complexity: O(n + m) - Visit each node once

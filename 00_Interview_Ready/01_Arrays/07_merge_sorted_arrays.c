@@ -1,3 +1,52 @@
+/*
+ * ============================================================================
+ * PROBLEM: Merge Two Sorted Arrays
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given two sorted arrays, merge them into a single sorted array.
+ * This is the core operation in merge sort and has many real-world uses.
+ *
+ * EXAMPLES:
+ * - Input: [1, 3, 5], [2, 4, 6]    ->  Output: [1, 2, 3, 4, 5, 6]
+ * - Input: [1, 2, 3], [4, 5]       ->  Output: [1, 2, 3, 4, 5]
+ * - Input: [], [1, 2]              ->  Output: [1, 2]
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Core algorithm in merge sort (divide-and-conquer)
+ * - Tests understanding of linear merge technique
+ * - Foundation for merging sorted database results
+ * - Common in external sorting scenarios (large files)
+ *
+ * KEY CONCEPT:
+ * Three-Pointer Merge - Use one pointer for each input array and one
+ * for the result. Compare current elements, pick smaller, advance that
+ * pointer. When one array is exhausted, copy remaining from the other.
+ *
+ * VISUAL:
+ *     Array A: [1, 3, 5]      Array B: [2, 4]
+ *              i                       j
+ *     Result:  [ ]
+ *              k
+ *
+ *     Step 1: Compare A[i]=1 vs B[j]=2, pick 1
+ *             Result: [1], i++
+ *
+ *     Step 2: Compare A[i]=3 vs B[j]=2, pick 2
+ *             Result: [1, 2], j++
+ *
+ *     Step 3: Compare A[i]=3 vs B[j]=4, pick 3
+ *             Result: [1, 2, 3], i++
+ *
+ *     Step 4: Compare A[i]=5 vs B[j]=4, pick 4
+ *             Result: [1, 2, 3, 4], j++
+ *
+ *     Array B exhausted, copy remaining from A:
+ *             Result: [1, 2, 3, 4, 5]
+ *
+ * ============================================================================
+ */
+
 // Merge two sorted arrays into one sorted array
 // Time: O(m+n), Space: O(m+n) - Linear merge
 

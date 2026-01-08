@@ -1,3 +1,88 @@
+/*
+ * ============================================================================
+ * PROBLEM: Rotate Bits Left and Right (Circular Shift)
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Rotate (circular shift) the bits of an integer left or right. Unlike a
+ * regular shift where bits fall off and are lost, rotation wraps the bits
+ * around - bits that fall off one end reappear on the other end.
+ *
+ * EXAMPLES (with 8-bit binary for clarity):
+ *   Original:    1011_0001 (0xB1 = 177)
+ *
+ *   ROTATE LEFT by 2:
+ *   - Bits 7,6 (10) move to positions 1,0
+ *   - All other bits shift left by 2
+ *   Result:      1100_0110 (0xC6 = 198)
+ *                ^^        came from right
+ *
+ *   ROTATE RIGHT by 2:
+ *   - Bits 1,0 (01) move to positions 7,6
+ *   - All other bits shift right by 2
+ *   Result:      0110_1100 (0x6C = 108)
+ *                          ^^ came from left
+ *
+ *   Compare with regular SHIFT:
+ *   SHIFT LEFT by 2:  1100_0100 (bits 7,6 LOST, zeros fill right)
+ *   SHIFT RIGHT by 2: 0010_1100 (bits 1,0 LOST, zeros fill left)
+ *
+ * WHY IS THIS ASKED IN EMBEDDED INTERVIEWS?
+ * - Cryptography algorithms (AES, SHA use rotations)
+ * - CRC calculations
+ * - Hash functions
+ * - Circular buffer index calculations
+ * - Some communication protocols
+ * - Many CPUs have dedicated ROL/ROR instructions
+ *
+ * KEY CONCEPT - ROTATION FORMULAS:
+ *   ROTATE LEFT:  (value << n) | (value >> (bits - n))
+ *   ROTATE RIGHT: (value >> n) | (value << (bits - n))
+ *
+ *   Where 'bits' is the width (8, 16, 32, etc.)
+ *
+ *   Why this works:
+ *   - First part shifts in the desired direction
+ *   - Second part captures bits that would fall off
+ *   - OR combines them
+ *
+ * VISUAL:
+ *   ROTATE LEFT by 2 (8-bit):
+ *
+ *   Original:      1 0|1 1 0 0 0 1
+ *                  ^^^ these will wrap around
+ *
+ *   Step 1: value << 2 (shift left, zeros fill right)
+ *                  1 1 0 0 0 1|0 0
+ *                              ^^^ zeros
+ *
+ *   Step 2: value >> (8-2) = value >> 6 (get wrapped bits)
+ *                  0 0 0 0 0 0|1 0
+ *                              ^^^ the bits that fell off
+ *
+ *   Step 3: OR them together
+ *   Shift <<:      1 1 0 0 0 1 0 0
+ *   Shift >>:      0 0 0 0 0 0 1 0
+ *   OR result:     1 1 0 0 0 1 1 0  <- rotated!
+ *
+ *   -----------------------------------------------
+ *
+ *   ROTATE RIGHT by 1 (32-bit, value = 0x80000001):
+ *
+ *   Before:   1 0 0 0 ... 0 0 0 1   (MSB and LSB set)
+ *   After:    1 1 0 0 ... 0 0 0 0   (LSB wrapped to MSB position)
+ *             ^                     came from bit 0
+ *
+ * IMPORTANT: Normalize shift to prevent undefined behavior
+ *   shift = shift % bits_width;
+ *   (Rotating by 32 is same as rotating by 0)
+ *
+ * TIME COMPLEXITY: O(1)
+ * SPACE COMPLEXITY: O(1)
+ *
+ * ============================================================================
+ */
+
 // Rotate bits left/right - Different from shift (bits wrap around)
 // Time: O(1), Space: O(1)
 

@@ -1,4 +1,85 @@
 /*
+ * ============================================================================
+ * PROBLEM: Remove Duplicates from Sorted Linked List
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given the head of a SORTED linked list, delete all duplicate values,
+ * keeping only the first occurrence of each value. The list should remain
+ * sorted after removing duplicates.
+ *
+ * KEY INSIGHT: Since the list is SORTED, all duplicates are ADJACENT!
+ * This makes the problem much simpler than unsorted lists.
+ *
+ * EXAMPLES:
+ *   Input:  1 -> 1 -> 2 -> 3 -> 3 -> 3 -> 4
+ *   Output: 1 -> 2 -> 3 -> 4
+ *
+ *   Input:  5 -> 5 -> 5 (all same)
+ *   Output: 5
+ *
+ *   Input:  1 -> 2 -> 3 (no duplicates)
+ *   Output: 1 -> 2 -> 3 (unchanged)
+ *
+ *   VARIANT (Remove ALL occurrences of duplicated values):
+ *   Input:  1 -> 1 -> 2 -> 3 -> 3 -> 4
+ *   Output: 2 -> 4 (only unique values kept)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ *   - Tests understanding of sorted data properties
+ *   - Simple but shows pointer manipulation skills
+ *   - Often followed by harder variant: remove ALL duplicates
+ *   - Memory management: freeing deleted nodes
+ *   - Compare with unsorted list approach (harder)
+ *
+ * KEY CONCEPT: Skip Adjacent Duplicates
+ *   Since list is sorted, duplicates are next to each other.
+ *   For each node, check if next node has same value.
+ *   If yes, skip over it. If no, move to next node.
+ *
+ *   IMPORTANT: After deleting, don't advance! Check new next node
+ *   (it might also be a duplicate).
+ *
+ * VISUAL:
+ *
+ *   1 -> 1 -> 2 -> 3 -> 3 -> 3 -> 4
+ *   ^
+ *  curr
+ *
+ *   curr->data == curr->next->data? (1 == 1) YES!
+ *   Skip: curr->next = curr->next->next
+ *
+ *   1 -> 2 -> 3 -> 3 -> 3 -> 4
+ *   ^
+ *  curr
+ *
+ *   curr->data == curr->next->data? (1 == 2) NO
+ *   Advance: curr = curr->next
+ *
+ *   1 -> 2 -> 3 -> 3 -> 3 -> 4
+ *        ^
+ *       curr
+ *
+ *   Continue until end...
+ *
+ *   Final: 1 -> 2 -> 3 -> 4
+ *
+ * VARIANT: Remove ALL Nodes with Duplicates
+ *
+ *   Input:  1 -> 1 -> 2 -> 3 -> 3 -> 4
+ *   Output: 2 -> 4
+ *
+ *   +-------+    +---+    +---+    +---+
+ *   | dummy | -> | 2 | -> | 4 | -> NULL
+ *   +-------+    +---+    +---+
+ *
+ *   Need dummy node because head might be removed (1 is duplicated)
+ *   Need prev pointer to reconnect after removing all copies
+ *
+ * ============================================================================
+ */
+
+/*
  * REMOVE DUPLICATES FROM SORTED LIST - Skip Duplicates
  *
  * Time Complexity: O(n) - Single pass through the list

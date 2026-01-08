@@ -1,4 +1,58 @@
-// Find first non-repeating character in string
+/*
+ * ============================================================================
+ * PROBLEM: Find First Non-Repeating Character in a String
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given a string, find the FIRST character that appears only ONCE in the
+ * entire string (i.e., it doesn't repeat anywhere else).
+ *
+ * EXAMPLES:
+ * - "leetcode"     -> 'l' (appears only once, and it's first such char)
+ * - "loveleetcode" -> 'v' ('l' repeats, 'o' repeats, but 'v' appears once)
+ * - "aabb"         -> '\0' (no unique character exists)
+ * - "abcabc"       -> '\0' (every char appears twice)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Classic frequency counting problem
+ * - Tests understanding of two-pass algorithms
+ * - Important for text processing, parsing, data deduplication
+ * - Variation: "first repeating character" (very similar approach)
+ *
+ * LIBRARY FUNCTIONS USED:
+ * - None specific (uses basic C arrays)
+ *
+ * KEY INSIGHT - WHY TWO PASSES?
+ * We can't determine if a character is unique until we've seen the ENTIRE string.
+ * The first 'a' in "aab" looks unique until we see the second 'a'.
+ *
+ * APPROACH (Two-Pass):
+ * Pass 1: Count frequency of every character (build histogram)
+ * Pass 2: Find first character with frequency == 1
+ *
+ * WHY SCAN IN ORDER ON SECOND PASS?
+ * We need the FIRST non-repeating character. Scanning the frequency array
+ * wouldn't preserve the original order of characters in the string.
+ *
+ * VISUAL for "leetcode":
+ *   Pass 1 - Build frequency:
+ *   l:1, e:3, t:1, c:1, o:1, d:1
+ *
+ *   Pass 2 - Scan string in order:
+ *   'l' -> freq=1 -> FOUND! Return 'l'
+ *
+ * VISUAL for "loveleetcode":
+ *   Pass 1 - Build frequency:
+ *   l:2, o:2, v:1, e:4, t:1, c:1, d:1
+ *
+ *   Pass 2 - Scan in order:
+ *   'l' -> freq=2 -> skip
+ *   'o' -> freq=2 -> skip
+ *   'v' -> freq=1 -> FOUND! Return 'v'
+ *
+ * ============================================================================
+ */
+
 // Time: O(n), Space: O(1) - using fixed size frequency array
 
 #include <stdio.h>

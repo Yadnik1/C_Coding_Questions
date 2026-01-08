@@ -1,3 +1,45 @@
+/*
+ * ============================================================================
+ * PROBLEM: Find Duplicate Number (Floyd's Cycle Detection)
+ * ============================================================================
+ *
+ * WHAT IS THIS PROBLEM?
+ * Given an array of n+1 integers where each integer is in range [1, n],
+ * there is exactly one duplicate number. Find it without modifying the
+ * array and using only O(1) extra space.
+ *
+ * EXAMPLES:
+ * - Input: [1, 3, 4, 2, 2]  ->  Output: 2
+ * - Input: [3, 1, 3, 4, 2]  ->  Output: 3
+ * - Input: [1, 1]           ->  Output: 1
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Tests understanding of Floyd's cycle detection (tortoise and hare)
+ * - Shows creative problem-solving (treating array as linked list)
+ * - Demonstrates O(1) space constraint handling
+ * - Classic algorithm question asked at Google, Amazon, Microsoft
+ *
+ * KEY CONCEPT:
+ * Floyd's Cycle Detection - Treat array values as "next pointers."
+ * If arr[i] = 3, then index i points to index 3. A duplicate creates
+ * a cycle. Use slow (1 step) and fast (2 steps) pointers to detect
+ * the cycle, then find the cycle start (the duplicate).
+ *
+ * VISUAL:
+ *     Array: [1, 3, 4, 2, 2]
+ *     Index:  0  1  2  3  4
+ *
+ *     Following values as pointers:
+ *     0 -> arr[0]=1 -> arr[1]=3 -> arr[3]=2 -> arr[2]=4 -> arr[4]=2 -> ...
+ *                                              ^                    |
+ *                                              |____ CYCLE! ________|
+ *
+ *     Phase 1: Find meeting point inside cycle (slow/fast)
+ *     Phase 2: Reset slow to start, move both by 1, meet at duplicate
+ *
+ * ============================================================================
+ */
+
 // Find duplicate in array [1, n] with one duplicate
 // Time: O(n), Space: O(1) - Floyd's Cycle Detection
 

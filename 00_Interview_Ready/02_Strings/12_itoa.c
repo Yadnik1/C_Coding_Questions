@@ -1,4 +1,61 @@
-// Implement itoa - Integer to ASCII string conversion
+/*
+ * ============================================================================
+ * PROBLEM: Implement itoa() - Integer to ASCII String Conversion
+ * ============================================================================
+ *
+ * WHAT IS itoa()?
+ * itoa() is the OPPOSITE of atoi(). It converts an integer to its string
+ * representation. "itoa" stands for "Integer TO ASCII".
+ *
+ * Note: itoa() is NOT a standard C function! It's a common extension.
+ * Standard alternative: sprintf(buf, "%d", num);
+ *
+ * FUNCTION SIGNATURE:
+ * char* itoa(int value, char* str, int base);
+ *
+ * EXAMPLES:
+ * - itoa(123, buf, 10)  -> "123"
+ * - itoa(-456, buf, 10) -> "-456"
+ * - itoa(255, buf, 16)  -> "ff"      (hexadecimal)
+ * - itoa(10, buf, 2)    -> "1010"    (binary)
+ * - itoa(64, buf, 8)    -> "100"     (octal)
+ *
+ * WHY IS THIS ASKED IN INTERVIEWS?
+ * - Companion to atoi (shows complete understanding)
+ * - Tests modulo and division operations
+ * - Tests understanding of digit-to-character conversion
+ * - Embedded: debug output without printf, LCD displays, protocol formatting
+ *
+ * KEY CONCEPT - WHY WE BUILD BACKWARDS:
+ * To extract digits, we use modulo (%) which gives the LAST digit first!
+ *   123 % 10 = 3 (last digit)
+ *   12 % 10 = 2  (second-to-last)
+ *   1 % 10 = 1   (first digit)
+ *
+ * So we get "321" and must REVERSE to get "123"!
+ *
+ * ALGORITHM:
+ * 1. Handle special case: num == 0 (just return "0")
+ * 2. Handle negative numbers (add '-' sign for base 10)
+ * 3. Extract digits using: digit = num % base
+ * 4. Convert digit to char: '0' + digit (for 0-9) or 'a' + digit - 10 (for a-z)
+ * 5. Remove extracted digit: num = num / base
+ * 6. Reverse the string
+ *
+ * VISUAL for itoa(123, buf, 10):
+ *   123 % 10 = 3 -> str = "3"
+ *   12 % 10 = 2  -> str = "32"
+ *   1 % 10 = 1   -> str = "321"
+ *   Reverse      -> str = "123"
+ *
+ * BUFFER SIZE REQUIREMENTS:
+ * - Base 2: 32 bits + sign + null = 34 bytes
+ * - Base 10: max 10 digits + sign + null = 12 bytes
+ * - Base 16: max 8 chars + null = 9 bytes
+ *
+ * ============================================================================
+ */
+
 // Time: O(log n), Space: O(1) - digits in number
 
 #include <stdio.h>
