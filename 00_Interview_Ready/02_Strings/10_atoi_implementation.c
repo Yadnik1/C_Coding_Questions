@@ -82,27 +82,314 @@ int my_atoi(const char *str) {
         i++;           // Say: "Plus sign is optional, just skip it"
     }
 
-    // Say: "Step 3: Process digits"
+    // ========================================================================
+    // STEP 3: PROCESS DIGITS - THE HEART OF THE ALGORITHM
+    // ========================================================================
+    //
+    // Say: "Now comes the main conversion loop - this is the core logic"
+    //
+    // WHAT THIS WHILE LOOP DOES:
+    // - Checks if current character is a digit ('0' through '9')
+    // - Converts that digit character to its numeric value
+    // - Builds the result number digit by digit
+    // - Checks for overflow after each digit
+    // - Stops at the first non-digit character
+    //
+    // ========================================================================
+
     while (str[i] >= '0' && str[i] <= '9') {
-        // Say: "Convert digit char to integer: '5' - '0' = 5"
+        // ====================================================================
+        // LOOP CONDITION EXPLAINED: str[i] >= '0' && str[i] <= '9'
+        // ====================================================================
+        //
+        // Say: "I check if the current character is a digit using ASCII range"
+        //
+        // WHY THIS WORKS - ASCII TABLE FOR DIGITS:
+        //   Character:  '0'  '1'  '2'  '3'  '4'  '5'  '6'  '7'  '8'  '9'
+        //   ASCII:       48   49   50   51   52   53   54   55   56   57
+        //
+        // So checking str[i] >= '0' && str[i] <= '9' means:
+        //   str[i] >= 48 && str[i] <= 57
+        //
+        // This catches ONLY digit characters, nothing else!
+        //
+        // EXAMPLES:
+        //   'a' = 97  -> 97 >= 48? YES, but 97 <= 57? NO  -> NOT a digit
+        //   '5' = 53  -> 53 >= 48? YES, and 53 <= 57? YES -> IS a digit
+        //   ' ' = 32  -> 32 >= 48? NO                     -> NOT a digit
+        //   '@' = 64  -> 64 >= 48? YES, but 64 <= 57? NO  -> NOT a digit
+        //
+        // WHY NOT USE isdigit()?
+        // - In embedded systems, you might not have <ctype.h>
+        // - This manual check has zero dependencies
+        // - Interviewers want to see you understand ASCII
+        //
+        // ====================================================================
+
+
+        // ====================================================================
+        // CHARACTER TO INTEGER CONVERSION: int digit = str[i] - '0';
+        // ====================================================================
+        //
+        // Say: "I convert the character digit to its numeric value using ASCII math"
+        //
         int digit = str[i] - '0';
+        //
+        // THIS IS THE MAGIC LINE! Here's exactly what happens:
+        //
+        // EXAMPLE 1: str[i] = '5'
+        //   digit = '5' - '0'
+        //   digit = 53 - 48      (ASCII values)
+        //   digit = 5            (the actual number five!)
+        //
+        // EXAMPLE 2: str[i] = '0'
+        //   digit = '0' - '0'
+        //   digit = 48 - 48
+        //   digit = 0
+        //
+        // EXAMPLE 3: str[i] = '9'
+        //   digit = '9' - '0'
+        //   digit = 57 - 48
+        //   digit = 9
+        //
+        // WHY THIS WORKS:
+        // The digits '0' through '9' are CONSECUTIVE in ASCII!
+        //   '0' = 48, '1' = 49, '2' = 50, ... '9' = 57
+        //
+        // So subtracting '0' (which is 48) gives us:
+        //   '0' - '0' = 48 - 48 = 0
+        //   '1' - '0' = 49 - 48 = 1
+        //   '2' - '0' = 50 - 48 = 2
+        //   ... and so on!
+        //
+        // VISUAL:
+        //   ASCII:     48  49  50  51  52  53  54  55  56  57
+        //   Character: '0' '1' '2' '3' '4' '5' '6' '7' '8' '9'
+        //   After -48:  0   1   2   3   4   5   6   7   8   9
+        //
+        // Say: "This is a fundamental technique used everywhere in C"
+        //
+        // ====================================================================
 
-        // Say: "Build result: multiply existing by 10 and add new digit"
+
+        // ====================================================================
+        // BUILDING THE NUMBER: result = result * 10 + digit;
+        // ====================================================================
+        //
+        // Say: "I build the number by shifting existing digits left and adding new one"
+        //
         result = result * 10 + digit;
+        //
+        // THIS IS HOW WE BUILD A MULTI-DIGIT NUMBER!
+        //
+        // STEP-BY-STEP EXAMPLE: Converting "4273" to integer
+        //
+        // Initially: result = 0
+        //
+        // Iteration 1: See '4'
+        //   digit = '4' - '0' = 4
+        //   result = 0 * 10 + 4 = 0 + 4 = 4
+        //   result is now: 4
+        //
+        // Iteration 2: See '2'
+        //   digit = '2' - '0' = 2
+        //   result = 4 * 10 + 2 = 40 + 2 = 42
+        //   result is now: 42
+        //
+        // Iteration 3: See '7'
+        //   digit = '7' - '0' = 7
+        //   result = 42 * 10 + 7 = 420 + 7 = 427
+        //   result is now: 427
+        //
+        // Iteration 4: See '3'
+        //   digit = '3' - '0' = 3
+        //   result = 427 * 10 + 3 = 4270 + 3 = 4273
+        //   result is now: 4273
+        //
+        // Loop ends (next char is not a digit or end of string)
+        // Final result: 4273
+        //
+        // WHY MULTIPLY BY 10?
+        // - When we see a new digit, all previous digits move one place LEFT
+        // - In decimal, moving left means multiplying by 10
+        // - Example: 42 becomes 420 (4 moves from tens to hundreds, 2 moves to tens)
+        //
+        // VISUAL - Place Values:
+        //
+        //   Building "4273":
+        //
+        //   After '4':    [4]           = 4
+        //                  ^ones
+        //
+        //   After '2':    [4][2]        = 42
+        //                  ^   ^
+        //                 tens ones
+        //
+        //   After '7':    [4][2][7]     = 427
+        //                  ^   ^   ^
+        //                 100s 10s 1s
+        //
+        //   After '3':    [4][2][7][3]  = 4273
+        //                  ^   ^   ^  ^
+        //                1000 100 10  1
+        //
+        // THE FORMULA PATTERN:
+        //   result = result * 10 + digit
+        //
+        //   This is equivalent to:
+        //   - Shift all current digits one place left (multiply by 10)
+        //   - Put new digit in the ones place (add digit)
+        //
+        // Say: "Multiplying by 10 shifts digits left, then we add the new digit"
+        //
+        // ====================================================================
 
-        // Say: "Step 4: Check for overflow BEFORE it happens"
+
+        // ====================================================================
+        // STEP 4: OVERFLOW DETECTION - CRITICAL FOR ROBUSTNESS!
+        // ====================================================================
+        //
+        // Say: "I check for overflow AFTER each digit to catch it early"
+        //
+        // WHY WE NEED OVERFLOW CHECKING:
+        // - 32-bit signed int can only hold: -2,147,483,648 to 2,147,483,647
+        // - If someone passes "99999999999", we'd overflow without checking
+        // - Overflow causes UNDEFINED BEHAVIOR in C (could crash, give wrong answer, etc.)
+        //
+        // WHY USE 'long' FOR result?
+        // - 'long' is typically 64-bit, can hold much larger values
+        // - This lets us detect when the value exceeds int range
+        // - We can check BEFORE the overflow actually happens
+        //
+        // INT_MAX = 2147483647  (2^31 - 1)
+        // INT_MIN = -2147483648 (-2^31)
+        //
+        // Note: INT_MIN has ONE MORE negative value than INT_MAX has positive!
+        // This asymmetry is because of how two's complement works.
+        //
+        // ====================================================================
+
         if (result * sign > INT_MAX) {
-            return INT_MAX;  // Say: "Clamp to INT_MAX on positive overflow"
+            // Say: "Positive overflow detected - return maximum allowed value"
+            //
+            // WHEN THIS TRIGGERS:
+            // - sign is +1 (positive number)
+            // - result has grown beyond 2147483647
+            //
+            // EXAMPLE: Converting "9999999999"
+            //   After several iterations, result becomes 9999999999
+            //   9999999999 * 1 > 2147483647? YES!
+            //   Return INT_MAX (2147483647) instead of garbage
+            //
+            return INT_MAX;
         }
+
         if (result * sign < INT_MIN) {
-            return INT_MIN;  // Say: "Clamp to INT_MIN on negative overflow"
+            // Say: "Negative overflow detected - return minimum allowed value"
+            //
+            // WHEN THIS TRIGGERS:
+            // - sign is -1 (negative number)
+            // - result * -1 goes below -2147483648
+            //
+            // EXAMPLE: Converting "-9999999999"
+            //   sign = -1
+            //   After several iterations, result becomes 9999999999
+            //   9999999999 * -1 = -9999999999
+            //   -9999999999 < -2147483648? YES!
+            //   Return INT_MIN (-2147483648) instead of garbage
+            //
+            return INT_MIN;
         }
 
-        i++;  // Say: "Move to next character"
-    }
-    // Say: "Stop at first non-digit character"
+        // ====================================================================
+        // WHY CHECK OVERFLOW HERE (after result update)?
+        // ====================================================================
+        //
+        // We check AFTER updating result because:
+        // 1. We need to see if the NEW result overflows
+        // 2. 'long' can hold the potentially overflowed value safely
+        // 3. We catch it before the next iteration makes it worse
+        //
+        // Alternative: Check BEFORE updating (more complex math):
+        //   if (result > (INT_MAX - digit) / 10) { overflow! }
+        //
+        // Our approach is simpler because 'long' gives us headroom.
+        //
+        // ====================================================================
 
-    return (int)(result * sign);  // Say: "Apply sign and return"
+
+        // ====================================================================
+        // MOVE TO NEXT CHARACTER: i++;
+        // ====================================================================
+        //
+        i++;
+        //
+        // Say: "Move to the next character in the string"
+        //
+        // After processing current digit, we advance to look at the next char.
+        // The while loop condition will then check if it's also a digit.
+        //
+        // EXAMPLE: For string "123abc"
+        //   i=0: str[0]='1' is digit, process it, i becomes 1
+        //   i=1: str[1]='2' is digit, process it, i becomes 2
+        //   i=2: str[2]='3' is digit, process it, i becomes 3
+        //   i=3: str[3]='a' -> 'a' >= '0' && 'a' <= '9'? NO! Loop exits.
+        //
+        // We successfully extracted 123 and stopped at 'a'.
+        //
+        // ====================================================================
+    }
+
+    // ========================================================================
+    // AFTER THE LOOP: WHY DID WE EXIT?
+    // ========================================================================
+    //
+    // Say: "The loop stops at the first non-digit character"
+    //
+    // The loop exits when str[i] is NOT a digit. This could be:
+    //   1. End of string: str[i] = '\0' (null terminator)
+    //   2. Non-digit character: letter, space, punctuation, etc.
+    //
+    // EXAMPLES:
+    //   "123"      -> Loop processes 1,2,3, exits at '\0', result = 123
+    //   "123abc"   -> Loop processes 1,2,3, exits at 'a', result = 123
+    //   "   -42 x" -> Loop processes 4,2, exits at ' ', result = 42 (with sign = -1)
+    //   ""         -> Loop never runs (first char is '\0'), result = 0
+    //
+    // ========================================================================
+
+
+    // ========================================================================
+    // FINAL STEP: APPLY SIGN AND RETURN
+    // ========================================================================
+    //
+    // Say: "Finally, I apply the sign we saved earlier and return the result"
+    //
+    return (int)(result * sign);
+    //
+    // WHAT THIS LINE DOES:
+    //
+    // 1. result * sign
+    //    - If sign = 1 (positive):  result * 1 = result (unchanged)
+    //    - If sign = -1 (negative): result * -1 = -result (negated)
+    //
+    // 2. (int) cast
+    //    - result is 'long', we need to return 'int'
+    //    - Safe to cast because we already checked for overflow above
+    //    - If we didn't overflow, the value fits in int
+    //
+    // EXAMPLES:
+    //   "42":   result=42, sign=1  -> 42 * 1 = 42
+    //   "-42":  result=42, sign=-1 -> 42 * -1 = -42
+    //   "+123": result=123, sign=1 -> 123 * 1 = 123
+    //   "-0":   result=0, sign=-1  -> 0 * -1 = 0 (negative zero is just zero)
+    //
+    // WHY APPLY SIGN AT THE END (not during loop)?
+    // - Simpler logic: always build positive number, negate at end if needed
+    // - Avoids dealing with negative arithmetic during the build process
+    // - Cleaner overflow checking (always compare positive result)
+    //
+    // ========================================================================
 }
 
 // Simpler version without overflow handling (for basic interviews)
