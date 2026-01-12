@@ -3,43 +3,21 @@
  * PROBLEM: Find Missing Number
  * ============================================================================
  *
- * WHAT IS THIS PROBLEM?
- * Given an array containing n distinct numbers from 0 to n (inclusive),
- * find the one number that is missing from the sequence.
- * The array has n elements but the range is 0 to n, so exactly one is missing.
+ * Given an array containing n distinct numbers from 0 to n,
+ * find the one number that is missing.
  *
  * EXAMPLES:
- * - Input: [0, 1, 2, 4, 5, 6]  ->  Output: 3 (missing from 0-6)
- * - Input: [3, 0, 1]          ->  Output: 2 (missing from 0-3)
- * - Input: [0]                ->  Output: 1 (missing from 0-1)
+ *   [0, 1, 2, 4, 5, 6]  ->  3 (missing from 0-6)
+ *   [3, 0, 1]          ->  2 (missing from 0-3)
+ *   [0]                ->  1 (missing from 0-1)
  *
- * WHY IS THIS ASKED IN INTERVIEWS?
- * - Tests mathematical thinking (sum formula vs brute force)
- * - Shows awareness of XOR alternative for overflow prevention
- * - Common in data integrity and validation scenarios
- * - Demonstrates O(n) thinking over O(n log n) sorting approach
+ * KEY INSIGHT: Use XOR! a ^ a = 0, so pairs cancel out.
  *
- * KEY CONCEPT:
- * Mathematical Sum Formula - Expected sum of 0 to n is n*(n+1)/2.
- * Subtract actual sum of array elements from expected sum.
- * The difference is the missing number.
- *
- * VISUAL:
- *     Array: [0, 1, 3, 4]  (n=4 elements, range 0-4)
- *
- *     Expected sum (0+1+2+3+4) = 4*5/2 = 10
- *     Actual sum   (0+1+3+4)   = 8
- *     Missing = 10 - 8 = 2
- *
- *     Alternative XOR method (no overflow risk):
- *     XOR all numbers 0 to n, then XOR with all array elements
- *     Result = missing number (pairs cancel out)
+ * TIME COMPLEXITY: O(n)
+ * SPACE COMPLEXITY: O(1)
  *
  * ============================================================================
  */
-
-// Find missing number in array [0, n] with one missing
-// Time: O(n), Space: O(1)
 
 #include <stdio.h>
 
@@ -47,48 +25,58 @@ void print_array(int arr[], int n) {
     printf("[");
     for (int i = 0; i < n; i++)
         printf("%d%s", arr[i], i < n-1 ? ", " : "");
-    printf("]\n");
+    printf("]");
 }
 
 int find_missing(int arr[], int n) {
-    // Say: "I use math formula for sum of 0 to n"
-    // Say: "Formula is n*(n+1)/2 for sum from 1 to n"
-    int expected_sum = n * (n + 1) / 2;
-
-    // Say: "Calculate actual sum of array elements"
-    int actual_sum = 0;
+    int xor_result = n;                    // Start with n (largest expected)
     for (int i = 0; i < n; i++) {
-        actual_sum += arr[i];  // Say: "Add each element"
+        xor_result ^= i;                   // XOR with expected number
+        xor_result ^= arr[i];              // XOR with actual number
     }
-
-    // Say: "The difference is the missing number"
-    return expected_sum - actual_sum;
+    return xor_result;                     // Pairs cancel, missing remains
 }
 
 int main() {
-    int arr[] = {0, 1, 2, 4, 5, 6};  // Missing: 3
+    int arr[] = {0, 1, 2, 4, 5, 6};
     int n = sizeof(arr) / sizeof(arr[0]);
 
     printf("Array: ");
     print_array(arr, n);
-
-    printf("Missing number: %d\n", find_missing(arr, n));
+    printf("\nMissing: %d\n", find_missing(arr, n));
 
     return 0;
 }
 
 /*
-INTERVIEW EXPLANATION:
-"I use the mathematical formula for sum of 0 to n.
- Expected sum = n*(n+1)/2
- Then I calculate actual sum by iterating through array.
- The difference gives us the missing number.
-
- Why this approach vs XOR?
- - Both are O(n) time, O(1) space
- - Sum formula is more intuitive to explain
- - XOR is equally valid: XOR all numbers 0 to n, then XOR with array
-
- Edge case to mention: Integer overflow for large n
- - For very large arrays, use XOR method instead"
-*/
+ * ============================================================================
+ * DRY RUN: find_missing([0, 1, 3], n=3)
+ * ============================================================================
+ *
+ * Range: 0 to 3, Missing: 2
+ *
+ * xor_result = n = 3 = 0011 (binary)
+ *
+ * i=0: xor_result ^= 0 -> 0011 ^ 0000 = 0011
+ *      xor_result ^= arr[0]=0 -> 0011 ^ 0000 = 0011
+ *
+ * i=1: xor_result ^= 1 -> 0011 ^ 0001 = 0010
+ *      xor_result ^= arr[1]=1 -> 0010 ^ 0001 = 0011
+ *
+ * i=2: xor_result ^= 2 -> 0011 ^ 0010 = 0001
+ *      xor_result ^= arr[2]=3 -> 0001 ^ 0011 = 0010
+ *
+ * RESULT: 0010 = 2 (THE MISSING NUMBER!)
+ *
+ * WHY IT WORKS:
+ *   XORed values: 3, 0, 0, 1, 1, 2, 3
+ *   Rearranged: (0^0) ^ (1^1) ^ (3^3) ^ 2 = 0 ^ 0 ^ 0 ^ 2 = 2
+ *   Pairs cancel, only missing number survives!
+ *
+ * ============================================================================
+ * INTERVIEW TIPS:
+ * - XOR is better than sum formula (no overflow risk)
+ * - a ^ a = 0 (cancel), a ^ 0 = a (identity)
+ * - Same trick works for "find single number" problems
+ * ============================================================================
+ */

@@ -1,87 +1,69 @@
 /*
  * ============================================================================
- * PROBLEM: Merge Bytes into Integer and Split Back
+ * PROBLEM: Merge Two Nibbles into a Byte and Split Back
  * ============================================================================
  *
  * WHAT IS THIS PROBLEM?
- * Combine multiple individual bytes into a larger integer (16-bit, 32-bit),
- * and split a larger integer back into its component bytes. Essential for
- * parsing communication protocols and working with multi-byte sensor data.
+ * Combine two 4-bit nibbles into one 8-bit byte, and split a byte back into
+ * its two nibbles. This is the foundation for all byte/word merging in embedded.
  *
- * EXAMPLES (with binary/hex representation):
- *   MERGE 4 bytes into 32-bit (Big Endian order):
- *   Bytes: 0x12, 0x34, 0x56, 0x78
+ * SIMPLIFIED FOR PRACTICE:
+ * Instead of 32-bit values, we work with 8-bit values (easier to visualize!)
+ * Same concepts apply to 16-bit, 32-bit, etc.
  *
- *   0x12 << 24 = 0x12_00_00_00   (byte at bits [31:24])
- *   0x34 << 16 = 0x00_34_00_00   (byte at bits [23:16])
- *   0x56 << 8  = 0x00_00_56_00   (byte at bits [15:8])
- *   0x78 << 0  = 0x00_00_00_78   (byte at bits [7:0])
- *   OR all:    = 0x12_34_56_78
+ * ============================================================================
+ * EXAMPLES (8-bit values with binary):
+ * ============================================================================
  *
- *   SPLIT 0x12345678 into bytes:
- *   (value >> 24) & 0xFF = 0x12  (MSB)
- *   (value >> 16) & 0xFF = 0x34
- *   (value >> 8)  & 0xFF = 0x56
- *   (value >> 0)  & 0xFF = 0x78  (LSB)
+ * MERGE two 4-bit nibbles into 8-bit byte:
  *
- *   BYTE SWAP (Little <-> Big Endian):
- *   0x12345678 -> 0x78563412
- *   Each byte moves to opposite position.
+ *   high_nibble = 0x5 = 0101 (binary)
+ *   low_nibble  = 0xA = 1010 (binary)
+ *
+ *   Step 1: Shift high nibble left by 4
+ *   0x5 << 4 = 0101_0000 = 0x50
+ *
+ *   Step 2: OR with low nibble
+ *   0101_0000 | 0000_1010 = 0101_1010 = 0x5A
+ *
+ *   VISUAL:
+ *   +------+------+
+ *   | 0101 | 1010 |  = 0x5A
+ *   +------+------+
+ *   bits 7-4  3-0
+ *    high    low
+ *
+ * ============================================================================
+ *
+ * SPLIT 8-bit byte into two 4-bit nibbles:
+ *
+ *   value = 0x5A = 0101_1010
+ *
+ *   Get high nibble: (0x5A >> 4) & 0x0F
+ *     0101_1010 >> 4 = 0000_0101 = 0x05
+ *     0000_0101 & 0x0F = 0x05
+ *
+ *   Get low nibble: 0x5A & 0x0F
+ *     0101_1010 & 0000_1111 = 0000_1010 = 0x0A
+ *
+ *   VISUAL:
+ *   0101_1010
+ *   ^^^^ ^^^^
+ *   high low
+ *   0x5  0xA
+ *
+ * ============================================================================
  *
  * WHY IS THIS ASKED IN EMBEDDED INTERVIEWS?
  * - Receiving multi-byte data over UART/SPI/I2C
- * - Parsing network packets (TCP/IP headers)
- * - Reading sensor values (ADC, temperature, etc.)
- * - Working with binary file formats
- * - Endianness conversion between protocols and CPU
- * - VERY COMMON IN REAL EMBEDDED WORK!
+ * - Parsing sensor readings (temperature, ADC, etc.)
+ * - Working with packed data structures
+ * - Same pattern scales to 16-bit, 32-bit, 64-bit
  *
- * KEY CONCEPT - SHIFT AND MASK:
- *   MERGE:  (b3 << 24) | (b2 << 16) | (b1 << 8) | b0
- *           Cast bytes to larger type BEFORE shifting!
- *
- *   SPLIT:  (value >> position) & 0xFF
- *           Shift byte to lowest position, mask with 0xFF
- *
- * VISUAL:
- *   MERGE bytes 0x12, 0x34, 0x56, 0x78:
- *
- *   Byte positions in 32-bit word:
- *   +------+------+------+------+
- *   | 0x12 | 0x34 | 0x56 | 0x78 |
- *   +------+------+------+------+
- *   bits 31-24  23-16  15-8   7-0
- *        MSB                  LSB
- *
- *   Step 1: Shift each to position
- *   0x12 << 24: 0001_0010 0000_0000 0000_0000 0000_0000
- *   0x34 << 16: 0000_0000 0011_0100 0000_0000 0000_0000
- *   0x56 << 8:  0000_0000 0000_0000 0101_0110 0000_0000
- *   0x78 << 0:  0000_0000 0000_0000 0000_0000 0111_1000
- *
- *   Step 2: OR all together
- *   Result:     0001_0010 0011_0100 0101_0110 0111_1000
- *               = 0x12345678
- *
- *   -----------------------------------------------
- *
- *   BYTE SWAP 0x12345678 -> 0x78563412:
- *
- *   Before: | 12 | 34 | 56 | 78 |
- *           pos3  pos2  pos1  pos0
- *
- *   After:  | 78 | 56 | 34 | 12 |
- *           pos3  pos2  pos1  pos0
- *
- *   Formula:
- *   ((val >> 24) & 0xFF) << 0   -> 0x12 to pos0
- *   ((val >> 16) & 0xFF) << 8   -> 0x34 to pos1
- *   ((val >> 8)  & 0xFF) << 16  -> 0x56 to pos2
- *   ((val >> 0)  & 0xFF) << 24  -> 0x78 to pos3
- *
- * CRITICAL: Cast bytes to uint32_t BEFORE shifting!
- *   WRONG: uint8_t b = 0x12; b << 24;  // overflow!
- *   RIGHT: (uint32_t)b << 24;          // correct!
+ * KEY FORMULAS:
+ *   MERGE:  (high << 4) | low
+ *   SPLIT:  high = (value >> 4) & 0x0F
+ *           low  = value & 0x0F
  *
  * TIME COMPLEXITY: O(1)
  * SPACE COMPLEXITY: O(1)
@@ -89,155 +71,261 @@
  * ============================================================================
  */
 
-// Merge bytes into larger integer and split back - ESSENTIAL for protocol parsing
-// Time: O(1), Space: O(1)
-
 #include <stdio.h>
 #include <stdint.h>
 
-void print_binary(uint32_t n) {
+/* ==================== HELPER: Print 8-bit binary ==================== */
+
+void print_binary_8(uint8_t n) {
+    // Say: "Print 8 bits with separator between nibbles"
     printf("0b");
-    for (int i = 31; i >= 0; i--) {
+    for (int i = 7; i >= 0; i--) {
         printf("%d", (n >> i) & 1);
-        if (i % 4 == 0 && i != 0) printf("_");
+        if (i == 4) printf("_");  // Separator between nibbles
     }
 }
 
-// Say: "Merge 4 bytes into 32-bit integer (Big Endian order)"
-uint32_t merge_bytes_be(uint8_t b3, uint8_t b2, uint8_t b1, uint8_t b0) {
-    // Say: "b3 is MSB, b0 is LSB (Big Endian: most significant first)"
-    // Say: "Shift each byte to its position and OR together"
-    return ((uint32_t)b3 << 24) |  // Say: "MSB at bits 31-24"
-           ((uint32_t)b2 << 16) |  // Say: "Next byte at bits 23-16"
-           ((uint32_t)b1 << 8)  |  // Say: "Next byte at bits 15-8"
-           ((uint32_t)b0);         // Say: "LSB at bits 7-0"
+/* ==================== SOLUTION 1: MERGE NIBBLES ==================== */
+
+/*
+ * ============================================================================
+ * DRY-RUN DIAGRAM: Merge Two Nibbles
+ * ============================================================================
+ *
+ * INPUT: high = 0x5 (0101), low = 0xA (1010)
+ *
+ * STEP 1: Shift high nibble to upper position
+ * -----------------------------------------
+ *   high << 4:
+ *
+ *   Before shift:  0000_0101  (0x05)
+ *   After shift:   0101_0000  (0x50)
+ *
+ *   VISUAL:
+ *   0101 moves from bits [3:0] to bits [7:4]
+ *
+ *        Before:  0000_0101
+ *                      ^^^^
+ *                      here
+ *
+ *        After:   0101_0000
+ *                 ^^^^
+ *                 now here
+ *
+ * STEP 2: OR with low nibble
+ * --------------------------
+ *     0101_0000   (high << 4)
+ *   | 0000_1010   (low)
+ *   -----------
+ *     0101_1010   (0x5A)
+ *
+ *   VISUAL:
+ *   +------+------+
+ *   | 0101 | 1010 |  = 0x5A (result!)
+ *   +------+------+
+ *    high    low
+ *
+ * ============================================================================
+ */
+uint8_t merge_nibbles(uint8_t high, uint8_t low) {
+    /*
+     * Say: "Merge two 4-bit nibbles into one 8-bit byte"
+     *
+     * high goes to bits [7:4] (upper nibble)
+     * low  goes to bits [3:0] (lower nibble)
+     */
+
+    // Say: "Shift high nibble left by 4 to put it in upper position"
+    uint8_t high_shifted = high << 4;
+    // high = 0101 (0x5)
+    // high << 4 = 0101_0000 (0x50)
+
+    // Say: "OR combines them - each bit comes from one or the other"
+    uint8_t result = high_shifted | low;
+    // 0101_0000 | 0000_1010 = 0101_1010 (0x5A)
+
+    return result;
+
+    // One-liner version:
+    // return (high << 4) | low;
 }
 
-// Say: "Merge 4 bytes into 32-bit integer (Little Endian order)"
-uint32_t merge_bytes_le(uint8_t b0, uint8_t b1, uint8_t b2, uint8_t b3) {
-    // Say: "b0 is at lowest address but contains LSB in little endian"
-    return ((uint32_t)b3 << 24) |
-           ((uint32_t)b2 << 16) |
-           ((uint32_t)b1 << 8)  |
-           ((uint32_t)b0);
+/* ==================== SOLUTION 2: SPLIT BYTE ==================== */
+
+/*
+ * ============================================================================
+ * DRY-RUN DIAGRAM: Split Byte into Nibbles
+ * ============================================================================
+ *
+ * INPUT: value = 0x5A = 0101_1010
+ *
+ * GOAL: Extract high nibble (0x5) and low nibble (0xA)
+ *
+ * EXTRACT HIGH NIBBLE: (value >> 4) & 0x0F
+ * -----------------------------------------
+ *
+ *   Step 1: Shift right by 4
+ *     0101_1010 >> 4 = 0000_0101
+ *
+ *     VISUAL:
+ *     Before: 0101_1010
+ *             ^^^^
+ *             high nibble here
+ *
+ *     After:  0000_0101
+ *                  ^^^^
+ *                  now in low position
+ *
+ *   Step 2: Mask with 0x0F (to be safe/clear upper bits)
+ *     0000_0101 & 0000_1111 = 0000_0101 = 0x05
+ *
+ * EXTRACT LOW NIBBLE: value & 0x0F
+ * --------------------------------
+ *
+ *   Mask directly (no shift needed):
+ *     0101_1010 & 0000_1111 = 0000_1010 = 0x0A
+ *
+ *     VISUAL:
+ *     0101_1010
+ *   & 0000_1111  (mask = 0x0F)
+ *   -----------
+ *     0000_1010  (0x0A)
+ *
+ *   The mask 0x0F keeps only the lower 4 bits!
+ *
+ * RESULT: high = 0x05, low = 0x0A
+ *
+ * ============================================================================
+ */
+void split_byte(uint8_t value, uint8_t *high, uint8_t *low) {
+    /*
+     * Say: "Split one 8-bit byte into two 4-bit nibbles"
+     *
+     * Extract bits [7:4] for high nibble
+     * Extract bits [3:0] for low nibble
+     */
+
+    // Say: "Shift right by 4 to bring high nibble to low position, then mask"
+    *high = (value >> 4) & 0x0F;
+    // value = 0101_1010
+    // value >> 4 = 0000_0101
+    // & 0x0F = 0000_0101 (0x05)
+
+    // Say: "Mask with 0x0F to extract low nibble directly"
+    *low = value & 0x0F;
+    // 0101_1010 & 0000_1111 = 0000_1010 (0x0A)
 }
 
-// Say: "Extract individual bytes from 32-bit integer"
-void split_bytes(uint32_t value, uint8_t *b3, uint8_t *b2, uint8_t *b1, uint8_t *b0) {
-    // Say: "Shift and mask to extract each byte"
-    *b3 = (value >> 24) & 0xFF;  // Say: "Get bits 31-24"
-    *b2 = (value >> 16) & 0xFF;  // Say: "Get bits 23-16"
-    *b1 = (value >> 8) & 0xFF;   // Say: "Get bits 15-8"
-    *b0 = value & 0xFF;          // Say: "Get bits 7-0"
-}
-
-// Say: "Merge 2 bytes into 16-bit integer"
-uint16_t merge_bytes_16(uint8_t high, uint8_t low) {
-    return ((uint16_t)high << 8) | low;
-}
-
-// Say: "Split 16-bit integer into 2 bytes"
-void split_bytes_16(uint16_t value, uint8_t *high, uint8_t *low) {
-    *high = (value >> 8) & 0xFF;
-    *low = value & 0xFF;
-}
-
-// Say: "Byte swap for endianness conversion"
-uint32_t byte_swap_32(uint32_t value) {
-    // Say: "Reverse byte order: ABCD becomes DCBA"
-    return ((value >> 24) & 0x000000FF) |  // Say: "Move byte 3 to byte 0"
-           ((value >> 8)  & 0x0000FF00) |  // Say: "Move byte 2 to byte 1"
-           ((value << 8)  & 0x00FF0000) |  // Say: "Move byte 1 to byte 2"
-           ((value << 24) & 0xFF000000);   // Say: "Move byte 0 to byte 3"
-}
-
-uint16_t byte_swap_16(uint16_t value) {
-    return ((value >> 8) & 0x00FF) |
-           ((value << 8) & 0xFF00);
-}
+/* ==================== TEST ==================== */
 
 int main() {
-    // Simulate receiving 4 bytes from UART/SPI
-    uint8_t rx_buffer[] = {0x12, 0x34, 0x56, 0x78};
+    printf("=== MERGE NIBBLES ===\n\n");
 
-    printf("Received bytes: 0x%02X 0x%02X 0x%02X 0x%02X\n",
-           rx_buffer[0], rx_buffer[1], rx_buffer[2], rx_buffer[3]);
+    uint8_t high_nibble = 0x5;  // 0101 in binary
+    uint8_t low_nibble = 0xA;   // 1010 in binary
 
-    // Merge assuming big endian protocol (network byte order)
-    uint32_t value_be = merge_bytes_be(rx_buffer[0], rx_buffer[1],
-                                        rx_buffer[2], rx_buffer[3]);
-    printf("\nMerged (Big Endian):    0x%08X\n", value_be);
-    print_binary(value_be);
+    printf("High nibble: 0x%X = ", high_nibble);
+    print_binary_8(high_nibble);
     printf("\n");
 
-    // Merge assuming little endian protocol
-    uint32_t value_le = merge_bytes_le(rx_buffer[0], rx_buffer[1],
-                                        rx_buffer[2], rx_buffer[3]);
-    printf("\nMerged (Little Endian): 0x%08X\n", value_le);
-    print_binary(value_le);
+    printf("Low nibble:  0x%X = ", low_nibble);
+    print_binary_8(low_nibble);
+    printf("\n\n");
+
+    uint8_t merged = merge_nibbles(high_nibble, low_nibble);
+
+    printf("Merged:      0x%02X = ", merged);
+    print_binary_8(merged);
     printf("\n");
 
-    // Split back into bytes
-    printf("\nSplit 0x12345678 into bytes:\n");
-    uint8_t b3, b2, b1, b0;
-    split_bytes(0x12345678, &b3, &b2, &b1, &b0);
-    printf("Bytes: 0x%02X 0x%02X 0x%02X 0x%02X\n", b3, b2, b1, b0);
+    printf("\n=== SPLIT BYTE ===\n\n");
 
-    // Byte swap demonstration
-    printf("\nByte swap 0x12345678:\n");
-    uint32_t swapped = byte_swap_32(0x12345678);
-    printf("Swapped: 0x%08X\n", swapped);
+    uint8_t value = 0x5A;
+    printf("Value to split: 0x%02X = ", value);
+    print_binary_8(value);
+    printf("\n\n");
+
+    uint8_t extracted_high, extracted_low;
+    split_byte(value, &extracted_high, &extracted_low);
+
+    printf("Extracted high: 0x%X = ", extracted_high);
+    print_binary_8(extracted_high);
+    printf("\n");
+
+    printf("Extracted low:  0x%X = ", extracted_low);
+    print_binary_8(extracted_low);
+    printf("\n");
+
+    printf("\n=== VERIFY ROUNDTRIP ===\n\n");
+
+    // Split and merge back - should get original value
+    uint8_t original = 0xAB;
+    printf("Original: 0x%02X = ", original);
+    print_binary_8(original);
+    printf("\n");
+
+    uint8_t h, l;
+    split_byte(original, &h, &l);
+    printf("Split -> high=0x%X, low=0x%X\n", h, l);
+
+    uint8_t reconstructed = merge_nibbles(h, l);
+    printf("Merged back: 0x%02X = ", reconstructed);
+    print_binary_8(reconstructed);
+    printf("\n");
+
+    printf("Match: %s\n", (original == reconstructed) ? "YES" : "NO");
 
     return 0;
 }
 
 /*
-INTERVIEW EXPLANATION:
-"Byte merging and splitting is essential for protocol parsing and hardware communication.
-
- MERGE BYTES (reconstruct multi-byte value):
- - Cast each byte to target size to prevent overflow
- - Shift each byte to its position
- - OR all bytes together
-
- Formula: (b3 << 24) | (b2 << 16) | (b1 << 8) | b0
-
- WHY CAST TO uint32_t:
- - uint8_t << 24 would overflow before shifting
- - Cast BEFORE shift: ((uint32_t)byte << 24)
- - Common bug: forgetting the cast
-
- SPLIT BYTES (extract individual bytes):
- - Shift right to bring byte to lowest position
- - AND with 0xFF to mask off other bytes
-
- ENDIANNESS MATTERS:
- - Network protocols typically use Big Endian
- - x86/ARM are Little Endian
- - Must know which convention the data uses
-
- EMBEDDED EXAMPLE - Receive sensor reading over UART:
- // Receive 2 bytes representing 16-bit temperature
- uint8_t high = uart_receive();
- uint8_t low = uart_receive();
- uint16_t temp = merge_bytes_16(high, low);
-
- BYTE SWAP for endianness conversion:
- - Reverses byte order in a value
- - Used when converting between big/little endian
- - Same as htonl()/ntohl() for 32-bit
-
- ALTERNATIVE - Using union (hardware access):
- union {
-     uint32_t word;
-     uint8_t bytes[4];
- } data;
- data.bytes[0] = rx_buffer[0];  // etc.
-
- WARNING: Union approach is endianness-dependent!
-
- COMMON MISTAKES:
- - Forgetting to cast bytes before shifting
- - Wrong byte order (big vs little endian)
- - Using signed char instead of uint8_t"
-*/
+ * ============================================================================
+ * INTERVIEW EXPLANATION
+ * ============================================================================
+ *
+ * MERGE NIBBLES (combine two 4-bit values into one 8-bit value):
+ *
+ *   Formula: (high << 4) | low
+ *
+ *   Visual:
+ *   high = 0101, low = 1010
+ *
+ *   high << 4:  0101_0000
+ *   low:        0000_1010
+ *   OR result:  0101_1010  (0x5A)
+ *
+ * SPLIT BYTE (extract two 4-bit values from one 8-bit value):
+ *
+ *   Formula: high = (value >> 4) & 0x0F
+ *            low  = value & 0x0F
+ *
+ *   Visual for 0x5A = 0101_1010:
+ *
+ *   High: shift right 4, then mask
+ *   0101_1010 >> 4 = 0000_0101 = 0x05
+ *
+ *   Low: just mask (no shift needed)
+ *   0101_1010 & 0x0F = 0000_1010 = 0x0A
+ *
+ * SCALING TO LARGER TYPES:
+ *
+ *   16-bit from 2 bytes:  (high << 8) | low
+ *   32-bit from 4 bytes:  (b3 << 24) | (b2 << 16) | (b1 << 8) | b0
+ *
+ *   CRITICAL: Cast bytes before shifting large amounts!
+ *   WRONG: uint8_t b = 0x12; b << 24;  // overflow!
+ *   RIGHT: ((uint32_t)b) << 24;        // correct!
+ *
+ * COMMON MISTAKES:
+ * - Forgetting to mask when extracting (can have garbage bits)
+ * - Wrong shift amount (4 for nibbles, 8 for bytes, etc.)
+ * - Not casting to larger type before large shifts
+ *
+ * EMBEDDED EXAMPLE:
+ *   // Receive 2-byte sensor reading over UART
+ *   uint8_t high = uart_receive();
+ *   uint8_t low = uart_receive();
+ *   uint16_t temperature = ((uint16_t)high << 8) | low;
+ *
+ * ============================================================================
+ */
